@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<base target="_top">
+<style>
+:root{
+  --ink:#16232A; --ink-2:#3B4A50; --paper:#E9EDE8; --panel:#FFFFFF;
+  --rule:#C6CFC9; --rule-2:#DDE3DE;
+  --blue:#2C5F80; --blue-pale:#BCCEDA;
+  --green:#3F7D4E; --amber:#C08A2E; --red:#B23A3A; --grey:#8A9490; --done:#6E7A74;
+  --mono:'Consolas','Roboto Mono','Courier New',monospace;
+  --sans:'Microsoft JhengHei','微軟正黑體','PingFang TC',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.55}
+button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* 版面 */
+header{background:var(--ink);color:var(--paper);padding:10px 16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;position:sticky;top:0;z-index:20}
+header h1{margin:0;font-size:15px;font-weight:700;letter-spacing:.14em}
+header .today{margin-left:auto;font-size:12px;opacity:.75}
+nav{display:flex;gap:0;background:var(--panel);border-bottom:1px solid var(--rule);overflow-x:auto;position:sticky;top:44px;z-index:19}
+nav button{background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;white-space:nowrap;cursor:pointer;color:var(--ink-2)}
+nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--blue);font-weight:700}
+main{padding:16px;max-width:1400px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--rule);margin-bottom:14px}
+.card>h2{margin:0;padding:9px 12px;font-size:12px;letter-spacing:.12em;border-bottom:1px solid var(--rule-2);background:#F4F6F3;font-weight:700}
+.card>.body{padding:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+select,input[type=text],input[type=date],input[type=number],textarea{background:var(--panel);border:1px solid var(--rule);padding:6px 8px;border-radius:0}
+button.act{background:var(--ink);color:var(--paper);border:none;padding:7px 14px;cursor:pointer}
+button.act.ghost{background:none;color:var(--ink);border:1px solid var(--rule)}
+button.act:hover{opacity:.86}
+
+/* 表格 */
+table{width:100%;border-collapse:collapse}
+th,td{padding:7px 8px;border-bottom:1px solid var(--rule-2);text-align:left;vertical-align:top}
+th{font-size:11px;letter-spacing:.06em;color:var(--ink-2);border-bottom:1px solid var(--rule);white-space:nowrap}
+tbody tr:hover{background:#F5F8F4;cursor:pointer}
+td.r,th.r{text-align:right}
+.scroll{overflow-x:auto}
+
+/* 燈號 */
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+.green{background:var(--green)} .amber{background:var(--amber)} .red{background:var(--red)}
+.grey{background:var(--grey)} .done{background:var(--done)}
+.tag{display:inline-block;padding:1px 7px;border:1px solid var(--rule);font-size:11px;white-space:nowrap}
+
+/* 指標 */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--rule-2)}
+.kpi{background:var(--panel);padding:12px}
+.kpi .label{font-size:11px;color:var(--ink-2);letter-spacing:.06em}
+.kpi .value{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1.2}
+.kpi .sub{font-size:11px;color:var(--ink-2)}
+
+/* 進度條 */
+.prog{position:relative;height:16px;background:#EEF1EE;border:1px solid var(--rule-2);min-width:110px}
+.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--blue-pale)}
+.prog b{position:absolute;left:0;top:0;bottom:0;background:var(--blue)}
+.prog span{position:absolute;right:4px;top:-1px;font-family:var(--mono);font-size:10px}
+
+/* 甘特圖 */
+.gantt{display:grid;grid-template-columns:300px 1fr;border-top:1px solid var(--rule)}
+.gantt .names{border-right:1px solid var(--rule);background:var(--panel)}
+.gantt .chart{overflow-x:auto;background:
+  repeating-linear-gradient(to right,transparent 0,transparent calc(var(--dw) - 1px),var(--rule-2) calc(var(--dw) - 1px),var(--rule-2) var(--dw))}
+.grow{height:30px;border-bottom:1px solid var(--rule-2);position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 8px;font-size:12px}
+.grow.lvl1{font-weight:700;background:#F4F6F3}
+.grow.lvl2{padding-left:22px}
+.grow.lvl3{padding-left:38px}
+.gcell{height:30px;border-bottom:1px solid var(--rule-2);position:relative}
+.gcell.lvl1{background:rgba(244,246,243,.6)}
+.bar-plan{position:absolute;top:6px;height:8px;background:var(--blue-pale);border:1px solid var(--blue)}
+.bar-act{position:absolute;top:16px;height:6px;background:var(--blue)}
+.bar-act.late{background:var(--red)}
+.ms{position:absolute;top:9px;width:11px;height:11px;background:var(--panel);border:2px solid var(--ink);transform:rotate(45deg)}
+.ms.filled{background:var(--ink)}
+.pin{position:absolute;top:2px;width:2px;height:26px;background:var(--amber)}
+.pin.red{background:var(--red)}
+.today-line{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--red);z-index:5}
+.axis{height:34px;position:relative;border-bottom:1px solid var(--rule);background:var(--panel)}
+.axis .m{position:absolute;top:0;height:34px;border-left:1px solid var(--rule);padding:3px 5px;font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--ink-2);padding:8px 12px}
+.legend i{display:inline-block;width:16px;height:8px;vertical-align:0;margin-right:4px}
+
+/* 側邊編輯面板 */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--panel);border-left:1px solid var(--rule);transform:translateX(100%);transition:transform .18s ease;z-index:40;display:flex;flex-direction:column}
+.drawer.open{transform:none}
+.drawer h3{margin:0;padding:12px 16px;border-bottom:1px solid var(--rule);font-size:13px;background:var(--ink);color:var(--paper);display:flex;align-items:center;gap:8px}
+.drawer h3 button{margin-left:auto;background:none;border:none;color:var(--paper);cursor:pointer;font-size:18px;line-height:1}
+.drawer .form{padding:16px;overflow:auto;flex:1}
+.drawer label{display:block;margin-bottom:12px;font-size:11px;color:var(--ink-2);letter-spacing:.06em}
+.drawer label input,.drawer label select,.drawer label textarea{display:block;width:100%;margin-top:4px;font-size:13px;color:var(--ink)}
+.drawer .foot{padding:12px 16px;border-top:1px solid var(--rule);display:flex;gap:8px}
+.backdrop{position:fixed;inset:0;background:rgba(22,35,42,.35);z-index:35;display:none}
+.backdrop.open{display:block}
+.readonly{background:#F4F6F3;padding:8px;border:1px solid var(--rule-2);margin-bottom:12px;font-size:12px}
+
+.pareto{width:100%;border-collapse:collapse}
+.pareto td{padding:5px 8px;border-bottom:1px solid var(--rule-2);vertical-align:middle}
+.pareto .bar{position:relative;height:18px;background:#EEF1EE}
+.pareto .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--blue)}
+.pareto .bar i.hot{background:var(--red)}
+.pareto .cum{font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+.heat td.c{text-align:center;font-family:var(--mono)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.chip{border:1px solid var(--rule);padding:3px 10px;cursor:pointer;background:var(--panel);font-size:12px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.muted{color:var(--ink-2)}
+.empty{padding:28px 12px;text-align:center;color:var(--ink-2)}
+.hide{display:none}
+@media(max-width:720px){
+  .gantt{grid-template-columns:150px 1fr}
+  main{padding:10px}
+  header h1{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>專案履約管理</h1>
+  <span class="today num" id="todayLabel"></span>
+</header>
+
+<nav id="nav">
+  <button data-v="summary" aria-selected="true">總表</button>
+  <button data-v="gantt">甘特圖</button>
+  <button data-v="owner">業主交辦</button>
+  <button data-v="internal">內部交辦</button>
+  <button data-v="defect">缺失分析</button>
+  <button data-v="load">人員負荷</button>
+  <button data-v="stats">統計</button>
+  <button data-v="import">匯入</button>
+</nav>
+
+<main id="main"><div class="empty">載入中…</div></main>
+
+<div class="backdrop" id="backdrop"></div>
+<div class="drawer" id="drawer">
+  <h3><span id="drawerTitle">編輯</span><button id="drawerClose">×</button></h3>
+  <div class="form" id="drawerForm"></div>
+  <div class="foot">
+    <button class="act" id="drawerSave">儲存</button>
+    <button class="act ghost" id="drawerCancel">取消</button>
+  </div>
+</div>
+
+<script>
+var DB = null, VIEW = 'summary', PROJ = '', EDIT = null;
+
+/* ---------- 工具 ---------- */
+function roc(ymd){ if(!ymd) return '—';
+  var p = ymd.split('-'); return (Number(p[0])-1911) + '.' + p[1] + '.' + p[2]; }
+function d(ymd){ if(!ymd) return null; var p = ymd.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function days(a,b){ return Math.round((b-a)/86400000); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function lightDot(l){ return '<span class="dot '+l+'"></span>'; }
+function pct(n){ return (Math.round(n*10)/10) + '%'; }
+function rocWeek(ymd){
+  var dt = d(ymd); if(!dt) return '';
+  var t = new Date(dt.getTime()); t.setDate(t.getDate() + 4 - (t.getDay()||7));
+  var y0 = new Date(t.getFullYear(),0,1);
+  var wk = Math.ceil((((t-y0)/86400000)+1)/7);
+  return (t.getFullYear()-1911) + '-W' + (wk<10?'0':'') + wk;
+}
+function progBar(planned, actual){
+  return '<div class="prog"><i style="width:'+Math.min(planned,100)+'%"></i>'+
+         '<b style="width:'+Math.min(actual,100)+'%"></b>'+
+         '<span>'+pct(actual)+'</span></div>';
+}
+
+/* ---------- 載入 ---------- */
+function load(){
+  google.script.run.withSuccessHandler(function(json){
+    DB = JSON.parse(json);
+    document.getElementById('todayLabel').textContent = '今日　' + roc(DB.today);
+    if(!PROJ && DB.projects.length) PROJ = DB.projects[0].code;
+    render();
+  }).withFailureHandler(function(e){
+    document.getElementById('main').innerHTML =
+      '<div class="card"><div class="body">讀取資料失敗：'+esc(e.message)+
+      '<br>請先在試算表選單執行「專案履約管理 → 初始化分頁」。</div></div>';
+  }).getDashboard();
+}
+
+document.getElementById('nav').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-v]'); if(!b) return;
+  VIEW = b.dataset.v;
+  [].forEach.call(this.querySelectorAll('button'), function(x){
+    x.setAttribute('aria-selected', x===b ? 'true':'false'); });
+  render();
+});
+
+function render(){
+  var m = document.getElementById('main');
+  if(!DB){ m.innerHTML = '<div class="empty">載入中…</div>'; return; }
+  if(!DB.projects.length && VIEW!=='import' && VIEW!=='defect'){
+    m.innerHTML='<div class="card"><div class="body">尚未建立任何專案。請在試算表的「01_專案主檔」新增一列，或到「匯入」頁貼上資料。</div></div>';
+    return;
+  }
+  ({summary:viewSummary, gantt:viewGantt, owner:viewOwner, internal:viewInternal,
+    defect:viewDefect, load:viewLoad, stats:viewStats, import:viewImport})[VIEW](m);
+}
+
+/* ---------- 總表 ---------- */
+function viewSummary(m){
+  var rows = DB.projects.map(function(p){
+    return '<tr data-proj="'+esc(p.code)+'">'+
+      '<td>'+lightDot(p.light)+'<b>'+esc(p.code||'—')+'</b></td>'+
+      '<td>'+esc(p.name)+'<div class="muted">'+esc(p.client||'')+'</div></td>'+
+      '<td class="num">'+roc(p.finish)+'</td>'+
+      '<td class="num r">'+(p.remain===''?'—':p.remain)+'</td>'+
+      '<td>'+progBar(p.planned,p.actual)+'<div class="muted num">預計 '+pct(p.planned)+'</div></td>'+
+      '<td class="num r" style="color:'+(p.diff<0?'var(--red)':'var(--green)')+'">'+(p.diff>0?'+':'')+p.diff+'%</td>'+
+      '<td class="num r">'+p.openOwner+'</td>'+
+      '<td class="num r">'+(p.overdue?'<b style="color:var(--red)">'+p.overdue+'</b>':'0')+'</td>'+
+      '<td class="num r">'+p.waiting+'</td>'+
+      '<td class="num r">'+p.openInternal+'</td>'+
+      '<td><span class="tag">'+esc(p.status||'')+'</span></td></tr>';
+  }).join('');
+
+  var totalOpen = DB.owner.concat(DB.internal).filter(openTask).length;
+  var overdue = DB.projects.reduce(function(a,p){return a+p.overdue;},0);
+  var active = DB.projects.filter(function(p){return p.status==='履約中';}).length;
+  var avgActual = DB.projects.length ?
+    Math.round(DB.projects.reduce(function(a,p){return a+p.actual;},0)/DB.projects.length*10)/10 : 0;
+
+  m.innerHTML =
+   '<div class="card"><div class="kpis">'+
+     kpi('在履約案件', active, '共 '+DB.projects.length+' 案') +
+     kpi('平均實際進度', avgActual+'%', '') +
+     kpi('未結案事項', totalOpen, '業主 '+DB.owner.filter(openTask).length+'　內部 '+DB.internal.filter(openTask).length) +
+     kpi('逾期事項', overdue, overdue? '需優先處理':'目前無逾期') +
+   '</div></div>'+
+   '<div class="card"><h2>專案總表</h2><div class="scroll"><table>'+
+   '<thead><tr><th>代號</th><th>專案／業主</th><th>契約完工日</th><th class="r">剩餘天</th>'+
+   '<th>進度（實際／預計）</th><th class="r">差異</th><th class="r">業主未結</th>'+
+   '<th class="r">逾期</th><th class="r">待回覆</th><th class="r">內部未結</th><th>狀態</th></tr></thead>'+
+   '<tbody>'+rows+'</tbody></table></div>'+
+   '<div class="legend"><span>燈號｜差異 &lt; −10% 或有逾期事項 → 紅；差異 −5%～−10% → 黃；其餘 → 綠</span></div></div>';
+
+  [].forEach.call(m.querySelectorAll('tr[data-proj]'), function(tr){
+    tr.onclick = function(){ PROJ = tr.dataset.proj; VIEW='gantt';
+      [].forEach.call(document.querySelectorAll('#nav button'),function(x){
+        x.setAttribute('aria-selected', x.dataset.v==='gantt'?'true':'false'); });
+      render(); };
+  });
+}
+function kpi(label,value,sub){
+  return '<div class="kpi"><div class="label">'+label+'</div><div class="value">'+value+
+         '</div><div class="sub">'+esc(sub)+'</div></div>';
+}
+function openTask(t){ return ['已完成','已結案','已取消'].indexOf(t.status)<0; }
+
+/* ---------- 甘特圖 ---------- */
+function viewGantt(m){
+  var p = DB.projects.filter(function(x){return x.code===PROJ;})[0] || DB.projects[0];
+  PROJ = p.code;
+  var items = DB.workItems[p.code] || [];
+  var dated = items.filter(function(i){return i.start && i.end;});
+
+  var head = '<div class="card"><div class="body"><div class="toolbar">'+
+    '<select id="projSel">'+DB.projects.map(function(x){
+      return '<option value="'+esc(x.code)+'"'+(x.code===p.code?' selected':'')+'>'+esc(x.code)+'　'+esc(x.name)+'</option>';}).join('')+'</select>'+
+    '<select id="zoom"><option value="3">縮放：季</option><option value="6" selected>縮放：月</option><option value="14">縮放：週</option></select>'+
+    '<span class="muted num">履約起始 '+roc(p.start)+'　契約完工 '+roc(p.finish)+'　工期 '+p.duration+' '+esc(p.mode)+
+    (p.extend? '（展延 '+p.extend+'）':'')+'　權重合計 '+p.weightSum+'%</span>'+
+    '</div></div></div>';
+
+  if(!dated.length){
+    m.innerHTML = head + '<div class="card"><div class="empty">此專案尚無可排程的工項。請在「02_契約工項」填入工項編號與工期天數。</div></div>';
+    bindProjSel(); return;
+  }
+
+  var min = dated.reduce(function(a,i){var s=d(i.start);return (!a||s<a)?s:a;},null);
+  var max = dated.reduce(function(a,i){var e=d(i.end);return (!a||e>a)?e:a;},null);
+  var fin = d(p.finish); if(fin && fin>max) max = fin;
+  min = new Date(min.getFullYear(), min.getMonth(), 1);
+  max = new Date(max.getFullYear(), max.getMonth()+1, 0);
+  var span = days(min,max)+1;
+  var dw = Number(localStorage_get('zoom') || 6);
+  var width = span*dw;
+
+  // 月刻度
+  var axis = '', cur = new Date(min.getFullYear(), min.getMonth(), 1);
+  while(cur <= max){
+    var x = days(min,cur)*dw;
+    axis += '<div class="m" style="left:'+x+'px">'+(cur.getFullYear()-1911)+'.'+
+            ('0'+(cur.getMonth()+1)).slice(-2)+'</div>';
+    cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
+  }
+  var todayX = days(min, d(DB.today))*dw;
+
+  // 交辦事項圖釘（掛在關聯工項那一列）
+  var pins = {};
+  DB.owner.filter(function(o){return o.project===p.code && o.link && openTask(o);}).forEach(function(o){
+    (pins[o.link] = pins[o.link] || []).push(o);
+  });
+
+  var names = '', cells = '';
+  items.forEach(function(i){
+    var lvl = 'lvl'+Math.min(i.level||1,3);
+    names += '<div class="grow '+lvl+'" title="'+esc(i.code+' '+i.name)+'">'+
+             '<span class="num muted">'+esc(i.code)+'</span>　'+esc(i.name)+'</div>';
+    var inner = '';
+    if(i.start && i.end){
+      var x = days(min,d(i.start))*dw;
+      var w = Math.max((days(d(i.start),d(i.end))+1)*dw, 3);
+      if(i.milestone){
+        inner += '<div class="ms'+(i.pct>=100?' filled':'')+'" style="left:'+(x-5)+'px" title="里程碑 '+roc(i.end)+'"></div>';
+      } else {
+        inner += '<div class="bar-plan" style="left:'+x+'px;width:'+w+'px" title="預計 '+roc(i.start)+' – '+roc(i.end)+'"></div>';
+        if(i.pct>0){
+          var late = i.pct < i.plannedPct - 5;
+          inner += '<div class="bar-act'+(late?' late':'')+'" style="left:'+x+'px;width:'+Math.max(w*i.pct/100,2)+'px" title="實際 '+i.pct+'%（預計 '+i.plannedPct+'%）"></div>';
+        }
+      }
+    }
+    (pins[i.code]||[]).forEach(function(o){
+      if(!o.due) return;
+      var px = days(min,d(o.due))*dw;
+      inner += '<div class="pin'+(o.light==='red'?' red':'')+'" style="left:'+px+'px" title="'+esc(o.id+'　'+o.content)+'"></div>';
+    });
+    cells += '<div class="gcell '+lvl+'">'+inner+'</div>';
+  });
+
+  m.innerHTML = head +
+    '<div class="card"><h2>履約甘特圖</h2>'+
+    '<div class="gantt" style="--dw:'+dw+'px">'+
+      '<div class="names"><div class="axis"></div>'+names+'</div>'+
+      '<div class="chart"><div style="width:'+width+'px;position:relative">'+
+        '<div class="axis">'+axis+'</div>'+
+        '<div style="position:relative">'+cells+
+          '<div class="today-line" style="left:'+todayX+'px"></div></div>'+
+      '</div></div>'+
+    '</div>'+
+    '<div class="legend">'+
+      '<span><i style="background:var(--blue-pale);border:1px solid var(--blue)"></i>預計工期</span>'+
+      '<span><i style="background:var(--blue)"></i>實際完成</span>'+
+      '<span><i style="background:var(--red)"></i>落後預計 5% 以上</span>'+
+      '<span><i style="background:var(--amber);width:3px"></i>未結交辦事項到期日</span>'+
+      '<span>◇ 里程碑　┊ 今日</span>'+
+    '</div></div>'+
+    workItemTable(items);
+
+  bindProjSel();
+  document.getElementById('zoom').value = String(dw);
+  document.getElementById('zoom').onchange = function(){ localStorage_set('zoom', this.value); render(); };
+  [].forEach.call(m.querySelectorAll('tr[data-wrow]'), function(tr){
+    tr.onclick = function(){ openWorkItem(Number(tr.dataset.wrow)); };
+  });
+}
+
+function bindProjSel(){
+  var s = document.getElementById('projSel');
+  if(s) s.onchange = function(){ PROJ = this.value; render(); };
+}
+
+function workItemTable(items){
+  var rows = items.map(function(i){
+    var lag = i.parent ? '' : (i.pct - i.plannedPct);
+    return '<tr data-wrow="'+i.row+'">'+
+      '<td class="num">'+esc(i.code)+'</td>'+
+      '<td style="padding-left:'+(8+(i.level-1)*14)+'px">'+(i.level===1?'<b>':'')+esc(i.name)+(i.level===1?'</b>':'')+
+        (i.milestone?' <span class="tag">里程碑</span>':'')+'</td>'+
+      '<td class="num r">'+(i.duration||'—')+'</td>'+
+      '<td class="num">'+roc(i.start)+'</td>'+
+      '<td class="num">'+roc(i.end)+'</td>'+
+      '<td class="num r">'+(i.weight||'—')+'</td>'+
+      '<td>'+esc(i.owner||'')+'</td>'+
+      '<td class="num r">'+(i.parent?'—':i.plannedPct+'%')+'</td>'+
+      '<td class="num r">'+(i.parent?'—':i.pct+'%')+'</td>'+
+      '<td class="num r" style="color:'+(lag<0?'var(--red)':'var(--green)')+'">'+(i.parent?'':(lag>0?'+':'')+lag+'%')+'</td>'+
+      '<td><span class="tag">'+esc(i.status||'')+'</span></td></tr>';
+  }).join('');
+  return '<div class="card"><h2>契約工項</h2><div class="scroll"><table>'+
+    '<thead><tr><th>工項</th><th>名稱</th><th class="r">工期</th><th>預計開始</th><th>預計完成</th>'+
+    '<th class="r">權重</th><th>負責人</th><th class="r">預計%</th><th class="r">實際%</th>'+
+    '<th class="r">差異</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div class="legend"><span>點任一列可更新實際起訖日與完成百分比</span></div></div>';
+}
+
+/* ---------- 交辦表 ---------- */
+function taskFilterBar(showProject){
+  return '<div class="toolbar">'+
+    (showProject? '<select id="fProj"><option value="">全部專案</option>'+
+      DB.projects.map(function(x){return '<option value="'+esc(x.code)+'">'+esc(x.code)+'</option>';}).join('')+
+      '<option value="內部">內部</option></select>':'')+
+    '<select id="fOwner"><option value="">全部承辦人</option>'+
+      DB.people.map(function(x){return '<option value="'+esc(x.name)+'">'+esc(x.name)+'</option>';}).join('')+'</select>'+
+    '<select id="fStatus"><option value="open">僅未結案</option><option value="">全部狀態</option>'+
+      ['未開始','進行中','待業主回覆','已完成','已結案'].map(function(s){
+        return '<option value="'+s+'">'+s+'</option>';}).join('')+'</select>'+
+    '<button class="act" id="btnAdd">新增事項</button></div>';
+}
+function applyFilter(list){
+  var fp = document.getElementById('fProj'), fo = document.getElementById('fOwner'), fs = document.getElementById('fStatus');
+  var vp = fp?fp.value:'', vo = fo?fo.value:'', vs = fs?fs.value:'open';
+  return list.filter(function(t){
+    if(vp && t.project!==vp) return false;
+    if(vo && t.owner!==vo) return false;
+    if(vs==='open') return openTask(t);
+    if(vs) return t.status===vs;
+    return true;
+  });
+}
+function bindFilters(){
+  ['fProj','fOwner','fStatus'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.onchange = redrawTaskBody;
+  });
+}
+
+function viewOwner(m){
+  m.innerHTML = '<div class="card"><div class="body">'+taskFilterBar(true)+'</div></div>'+
+    '<div class="card"><h2>業主交辦事項</h2><div class="scroll" id="taskWrap"></div>'+
+    '<div class="legend"><span>灰＝待業主回覆（不計我方逾期）　黃＝7 日內到期或逾兩週未更新　紅＝已逾期</span></div></div>';
+  bindFilters();
+  document.getElementById('btnAdd').onclick = function(){ openNew('owner'); };
+  redrawTaskBody();
+}
+function viewInternal(m){
+  m.innerHTML = '<div class="card"><div class="body">'+taskFilterBar(true)+'</div></div>'+
+    '<div class="card"><h2>內部作業交辦</h2><div class="scroll" id="taskWrap"></div></div>';
+  bindFilters();
+  document.getElementById('btnAdd').onclick = function(){ openNew('internal'); };
+  redrawTaskBody();
+}
+function redrawTaskBody(){
+  var wrap = document.getElementById('taskWrap'); if(!wrap) return;
+  var isOwner = VIEW==='owner';
+  var list = applyFilter(isOwner ? DB.owner : DB.internal);
+  if(!list.length){ wrap.innerHTML = '<div class="empty">目前沒有符合條件的事項。</div>'; return; }
+  var rows = list.map(function(t){
+    var over = t.due && d(t.due) < d(DB.today) && openTask(t);
+    var dueCell = '<td class="num'+(over?'" style="color:var(--red)':'"')+'">'+roc(t.due)+'</td>';
+    if(isOwner){
+      return '<tr data-tr="'+t.row+'">'+
+        '<td class="num">'+lightDot(t.light)+esc(t.id)+'</td>'+
+        '<td class="num">'+esc(t.project)+'</td>'+
+        '<td><span class="tag">'+esc(t.source)+'</span></td>'+
+        '<td>'+esc(t.content)+(t.blocker?'<div style="color:var(--red)">卡點：'+esc(t.blocker)+'</div>':'')+
+          (t.note?'<div class="muted">'+esc(t.note)+'</div>':'')+'</td>'+
+        '<td class="num">'+esc(t.link||'—')+'</td>'+
+        '<td>'+esc(t.owner)+'</td>'+ dueCell +
+        '<td class="num">'+esc(t.week||'')+'</td>'+
+        '<td class="num r">'+(t.effort||'')+'</td>'+
+        '<td>'+(t.affectSchedule==='是'?'<span class="tag" style="color:var(--red)">影響工期</span>':'')+
+             (t.changeOrder==='是'?' <span class="tag" style="color:var(--red)">契變</span>':'')+'</td>'+
+        '<td><span class="tag">'+esc(t.status)+'</span></td></tr>';
+    }
+    return '<tr data-tr="'+t.row+'">'+
+      '<td class="num">'+lightDot(t.light)+esc(t.id)+'</td>'+
+      '<td class="num">'+esc(t.project)+'</td>'+
+      '<td><span class="tag">'+esc(t.type)+'</span></td>'+
+      '<td>'+esc(t.content)+(t.blocker?'<div style="color:var(--red)">卡點：'+esc(t.blocker)+'</div>':'')+'</td>'+
+      '<td>'+esc(t.owner)+'</td>'+ dueCell +
+      '<td class="num">'+esc(t.week||'')+'</td>'+
+      '<td class="num r">'+(t.effort||'')+'</td>'+
+      '<td><span class="tag">'+esc(t.status)+'</span></td></tr>';
+  }).join('');
+
+  var head = isOwner
+    ? '<tr><th>編號</th><th>專案</th><th>來源</th><th>事項內容／現況</th><th>關聯工項</th><th>主辦</th>'+
+      '<th>承諾完成</th><th>排定週</th><th class="r">人天</th><th>契約影響</th><th>狀態</th></tr>'
+    : '<tr><th>編號</th><th>專案</th><th>類別</th><th>事項內容</th><th>主辦</th><th>要求完成</th>'+
+      '<th>排定週</th><th class="r">人天</th><th>狀態</th></tr>';
+  wrap.innerHTML = '<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>';
+  [].forEach.call(wrap.querySelectorAll('tr[data-tr]'), function(tr){
+    tr.onclick = function(){ openTaskEdit(isOwner?'owner':'internal', Number(tr.dataset.tr)); };
+  });
+}
+
+
+/* ---------- 缺失分析 ---------- */
+var DEF_DIM = 'minor';   // 統計維度
+var DEF_FILTER = {proj:'', stage:'', trade:'', sev:'', open:'all'};
+
+function defList(){
+  return (DB.defects||[]).filter(function(x){
+    if(DEF_FILTER.proj && x.project!==DEF_FILTER.proj) return false;
+    if(DEF_FILTER.stage && x.stage!==DEF_FILTER.stage) return false;
+    if(DEF_FILTER.trade && x.trade!==DEF_FILTER.trade) return false;
+    if(DEF_FILTER.sev && x.severity!==DEF_FILTER.sev) return false;
+    if(DEF_FILTER.open==='open' && !x.open) return false;
+    if(DEF_FILTER.open==='closed' && x.open) return false;
+    return true;
+  });
+}
+function uniq(list, key){
+  var seen = {}, out = [];
+  list.forEach(function(x){ var v=x[key]; if(v && !seen[v]){seen[v]=1;out.push(v);} });
+  return out.sort();
+}
+function tally(list, key){
+  var m = {};
+  list.forEach(function(x){ var v = x[key] || '（未分類）'; m[v] = (m[v]||0)+1; });
+  return Object.keys(m).map(function(k){return {k:k, n:m[k]};})
+    .sort(function(a,b){return b.n-a.n;});
+}
+
+function viewDefect(m){
+  var all = DB.defects || [];
+  if(!all.length){
+    m.innerHTML = '<div class="card"><div class="empty">尚無缺失紀錄。請在「07_缺失紀錄」填入，或用「匯入」頁整批貼上。<br><br>'+
+      '<button class="act" onclick="openNewDefect()">新增第一筆缺失</button></div></div>';
+    return;
+  }
+  var list = defList();
+  var open = list.filter(function(x){return x.open;});
+  var overdue = list.filter(function(x){return x.overdue;});
+  var failed = list.filter(function(x){return x.result==='未通過';});
+  var rechecked = list.filter(function(x){return x.result==='通過'||x.result==='未通過';});
+  var failRate = rechecked.length ? Math.round(failed.length/rechecked.length*1000)/10 : 0;
+  var fixDays = list.filter(function(x){return x.fixDays!==null;}).map(function(x){return x.fixDays;});
+  var avgFix = fixDays.length ? Math.round(fixDays.reduce(function(a,b){return a+b;},0)/fixDays.length) : 0;
+  var sev = list.filter(function(x){return x.severity==='重大'||x.severity==='影響驗收';});
+
+  var DIMS = [['minor','中類'],['major','大類'],['trade','專業別'],['cause','根本原因'],
+              ['duty','責任歸屬'],['zone','樓層區域'],['stage','查驗階段']];
+
+  m.innerHTML =
+   '<div class="card"><div class="kpis">'+
+     kpi('缺失總筆數', list.length, '未結案 '+open.length+' 筆') +
+     kpi('逾期未改善', overdue.length, overdue.length? '需優先催辦':'目前無逾期') +
+     kpi('複驗未通過率', failRate+'%', '已複驗 '+rechecked.length+' 筆') +
+     kpi('平均改善天數', avgFix, '重大以上 '+sev.length+' 筆') +
+   '</div></div>'+
+
+   '<div class="card"><div class="body"><div class="toolbar">'+
+     selFilter('dfProj','全部專案', uniq(all,'project'), DEF_FILTER.proj)+
+     selFilter('dfStage','全部階段', uniq(all,'stage'), DEF_FILTER.stage)+
+     selFilter('dfTrade','全部專業', uniq(all,'trade'), DEF_FILTER.trade)+
+     selFilter('dfSev','全部嚴重度', uniq(all,'severity'), DEF_FILTER.sev)+
+     '<select id="dfOpen">'+
+       [['all','未結案＋已結案'],['open','僅未結案'],['closed','僅已結案']].map(function(o){
+         return '<option value="'+o[0]+'"'+(DEF_FILTER.open===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+
+     '</select>'+
+     '<button class="act" onclick="openNewDefect()">新增缺失</button>'+
+   '</div></div></div>'+
+
+   '<div class="card"><h2>常見問題分布（柏拉圖）</h2><div class="body">'+
+     '<div class="chips">'+DIMS.map(function(d){
+       return '<button class="chip" data-dim="'+d[0]+'" aria-pressed="'+(DEF_DIM===d[0])+'">'+d[1]+'</button>';
+     }).join('')+'</div>'+
+     paretoTable(list, DEF_DIM)+
+   '</div></div>'+
+
+   '<div class="card"><h2>中類 × 專業別交叉</h2><div class="scroll">'+crossTable(list)+'</div></div>'+
+   '<div class="card"><h2>重複發生排行（同專案同細項 ≥ 2 次）</h2><div class="scroll">'+repeatTable(list)+'</div></div>'+
+   '<div class="card"><h2>缺失明細</h2><div class="scroll">'+defectTable(list)+'</div>'+
+     '<div class="legend"><span>紅＝逾期或複驗未通過　黃＝7 日內到期　點任一列可更新改善與複驗狀態</span></div></div>';
+
+  [].forEach.call(m.querySelectorAll('.chip[data-dim]'), function(b){
+    b.onclick = function(){ DEF_DIM = b.dataset.dim; render(); };
+  });
+  bindDefFilter('dfProj','proj'); bindDefFilter('dfStage','stage');
+  bindDefFilter('dfTrade','trade'); bindDefFilter('dfSev','sev');
+  document.getElementById('dfOpen').onchange = function(){ DEF_FILTER.open = this.value; render(); };
+  [].forEach.call(m.querySelectorAll('tr[data-drow]'), function(tr){
+    tr.onclick = function(){ openDefectEdit(Number(tr.dataset.drow)); };
+  });
+}
+function selFilter(id, allLabel, options, cur){
+  return '<select id="'+id+'"><option value="">'+allLabel+'</option>'+
+    options.map(function(o){return '<option'+(o===cur?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
+}
+function bindDefFilter(id, key){
+  var el = document.getElementById(id); if(!el) return;
+  el.onchange = function(){ DEF_FILTER[key] = this.value; render(); };
+}
+
+function paretoTable(list, dim){
+  var data = tally(list, dim);
+  if(!data.length) return '<div class="empty">沒有符合條件的缺失。</div>';
+  var total = data.reduce(function(a,b){return a+b.n;},0);
+  var max = data[0].n, cum = 0;
+  var rows = data.map(function(d, i){
+    cum += d.n;
+    var cp = Math.round(cum/total*1000)/10;
+    var hot = cp <= 80.5 ? ' hot' : '';
+    return '<tr><td class="num muted" style="width:26px">'+(i+1)+'</td>'+
+      '<td style="width:200px">'+esc(d.k)+'</td>'+
+      '<td class="bar-cell"><div class="bar"><i class="'+hot.trim()+'" style="width:'+(d.n/max*100)+'%"></i></div></td>'+
+      '<td class="num r" style="width:50px">'+d.n+'</td>'+
+      '<td class="num r" style="width:60px">'+Math.round(d.n/total*1000)/10+'%</td>'+
+      '<td class="cum r" style="width:70px">累計 '+cp+'%</td></tr>';
+  }).join('');
+  var c=0, k=0;
+  for(var i=0;i<data.length;i++){ c+=data[i].n; k++; if(c/total>=0.8) break; }
+  return '<table class="pareto"><tbody>'+rows+'</tbody></table>'+
+    '<div class="legend"><span>紅色為累計 80% 以內的關鍵少數——'+
+    '前 '+k+' 類即佔全部缺失的 '+Math.round(c/total*1000)/10+'%，改善資源應集中於此。</span></div>';
+}
+
+function crossTable(list){
+  var minors = tally(list,'minor').slice(0,12).map(function(d){return d.k;});
+  var trades = uniq(list,'trade');
+  if(!minors.length || !trades.length) return '<div class="empty">資料不足。</div>';
+  var grid = {};
+  list.forEach(function(x){
+    var mi = x.minor||'（未分類）', tr = x.trade||'（未填）';
+    grid[mi+'|'+tr] = (grid[mi+'|'+tr]||0)+1;
+  });
+  var maxv = 1;
+  minors.forEach(function(mi){ trades.forEach(function(tr){ maxv = Math.max(maxv, grid[mi+'|'+tr]||0); }); });
+  var head = '<tr><th>中類 ＼ 專業</th>'+trades.map(function(t){return '<th class="r">'+esc(t)+'</th>';}).join('')+'<th class="r">小計</th></tr>';
+  var rows = minors.map(function(mi){
+    var sum = 0;
+    var tds = trades.map(function(tr){
+      var v = grid[mi+'|'+tr]||0; sum += v;
+      var a = v ? (0.12 + 0.68*v/maxv) : 0;
+      return '<td class="c" style="background:rgba(178,58,58,'+a.toFixed(2)+')">'+(v||'')+'</td>';
+    }).join('');
+    return '<tr><td>'+esc(mi)+'</td>'+tds+'<td class="c"><b>'+sum+'</b></td></tr>';
+  }).join('');
+  return '<table class="heat"><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>';
+}
+
+function repeatTable(list){
+  var m = {};
+  list.forEach(function(x){
+    var key = (x.project||'—')+'|'+(x.detail||x.minor||'（未分類）');
+    if(!m[key]) m[key] = {project:x.project, detail:x.detail||x.minor, n:0, open:0, zones:{}};
+    m[key].n++;
+    if(x.open) m[key].open++;
+    if(x.zone) m[key].zones[x.zone] = 1;
+  });
+  var rows = Object.keys(m).map(function(k){return m[k];})
+    .filter(function(r){return r.n>=2;})
+    .sort(function(a,b){return b.n-a.n;}).slice(0,15);
+  if(!rows.length) return '<div class="empty">目前沒有重複發生 2 次以上的缺失細項。</div>';
+  return '<table><thead><tr><th>專案</th><th>缺失細項</th><th class="r">次數</th>'+
+    '<th class="r">未結</th><th>發生區域</th></tr></thead><tbody>'+
+    rows.map(function(r){
+      return '<tr><td class="num">'+esc(r.project)+'</td><td>'+esc(r.detail)+'</td>'+
+        '<td class="num r"><b>'+r.n+'</b></td><td class="num r">'+r.open+'</td>'+
+        '<td class="muted">'+esc(Object.keys(r.zones).join('、'))+'</td></tr>';
+    }).join('')+'</tbody></table>'+
+    '<div class="legend"><span>重複 3 次以上通常不是個案，應回頭檢討工序、教育訓練或圖說。</span></div>';
+}
+
+function defectTable(list){
+  var rows = list.slice().sort(function(a,b){
+    if(a.open!==b.open) return a.open?-1:1;
+    return (b.raised||'').localeCompare(a.raised||'');
+  }).map(function(x){
+    return '<tr data-drow="'+x.row+'">'+
+      '<td class="num">'+lightDot(x.light)+esc(x.id)+'</td>'+
+      '<td class="num">'+esc(x.project)+'</td>'+
+      '<td class="num">'+roc(x.raised)+'</td>'+
+      '<td>'+esc(x.zone||'')+'<div class="muted">'+esc(x.trade||'')+'</div></td>'+
+      '<td><span class="tag">'+esc(x.minor||'')+'</span><div class="muted">'+esc(x.detail||'')+'</div></td>'+
+      '<td>'+esc(x.desc||'')+'</td>'+
+      '<td>'+esc(x.severity||'')+'</td>'+
+      '<td>'+esc(x.cause||'')+'</td>'+
+      '<td class="num"'+(x.overdue?' style="color:var(--red)"':'')+'>'+roc(x.due)+'</td>'+
+      '<td class="num r">'+(x.fixDays!==null?x.fixDays:(x.ageDays!==null?'已 '+x.ageDays:'—'))+'</td>'+
+      '<td>'+esc(x.result||'')+'</td>'+
+      '<td><span class="tag">'+esc(x.status||'')+'</span></td></tr>';
+  }).join('');
+  return '<table><thead><tr><th>編號</th><th>專案</th><th>開立日</th><th>區域／專業</th>'+
+    '<th>分類</th><th>缺失描述</th><th>嚴重度</th><th>根本原因</th><th>要求改善</th>'+
+    '<th class="r">改善天</th><th>複驗</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+
+function defectCatOptions(){
+  var cats = DB.defectCats || [];
+  return {
+    majors: uniq(cats.map(function(c){return {v:c.major};}),'v'),
+    minors: uniq(cats.map(function(c){return {v:c.minor};}),'v'),
+    details: uniq(cats.map(function(c){return {v:c.detail};}),'v')
+  };
+}
+
+function openDefectEdit(row){
+  var x = (DB.defects||[]).filter(function(d){return d.row===row;})[0];
+  if(!x) return;
+  var o = defectCatOptions();
+  var html = '<div class="readonly"><b class="num">'+esc(x.id)+'</b>　'+esc(x.project)+
+    '　'+esc(x.zone||'')+'<div style="margin-top:4px">'+esc(x.desc||'')+'</div>'+
+    '<div class="muted num" style="margin-top:4px">開立 '+roc(x.raised)+
+    (x.ageDays!==null?'（已 '+x.ageDays+' 日）':'')+'</div></div>'+
+    field('狀態','狀態',x.status,'select',['已開立','改善中','待複驗','已結案','不列計'])+
+    field('大類','大類',x.major,'select',o.majors)+
+    field('中類','中類',x.minor,'select',o.minors)+
+    field('細項','細項',x.detail,'select',o.details)+
+    field('嚴重度','嚴重度',x.severity,'select',['輕微','一般','重大','影響驗收'])+
+    field('根本原因','根本原因',x.cause,'select',
+      ['人員疏忽','教育訓練不足','圖說不清或矛盾','界面協調不足','材料設備問題',
+       '工序安排不當','自主檢查機制不足','設計變更未落實','其他'])+
+    field('責任歸屬','責任歸屬',x.duty,'select',['承包商','分包廠商','設計單位','監造單位','業主','待釐清'])+
+    field('改善負責人','改善負責人',x.fixer)+
+    field('要求改善日','要求改善日',x.due,'date')+
+    field('實際改善日','實際改善日',x.fixed,'date')+
+    field('複驗日','複驗日',x.recheck,'date')+
+    field('複驗結果','複驗結果',x.result,'select',['未複驗','通過','未通過'])+
+    field('佐證','佐證',x.evidence)+
+    field('備註','備註',x.note,'textarea');
+  openDrawer('更新缺失　'+x.id, html, function(data, ok, fail){
+    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).updateRecord('defect', row, data);
+  });
+}
+
+function openNewDefect(){
+  var o = defectCatOptions();
+  var pOpts = DB.projects.map(function(p){return p.code;});
+  var people = DB.people.map(function(p){return p.name;});
+  var next = 'D-' + ('000' + ((DB.defects||[]).length + 1)).slice(-4);
+  var html = field('缺失編號','缺失編號',next)+
+    field('專案代號','專案代號',DEF_FILTER.proj||pOpts[0],'select',pOpts)+
+    field('開立日','開立日',DB.today,'date')+
+    field('查驗階段','查驗階段','初驗','select',['設計審查','施工中查驗','初驗','複驗','驗收後保固'])+
+    field('樓層區域','樓層區域','')+
+    field('專業別','專業別','建築','select',
+      ['建築','結構','給排水','電氣','消防','空調','弱電','景觀','整合介面','其他'])+
+    field('大類','大類',o.majors[0],'select',o.majors)+
+    field('中類','中類',o.minors[0],'select',o.minors)+
+    field('細項','細項',o.details[0],'select',o.details)+
+    field('缺失描述','缺失描述','','textarea')+
+    field('嚴重度','嚴重度','一般','select',['輕微','一般','重大','影響驗收'])+
+    field('責任歸屬','責任歸屬','承包商','select',['承包商','分包廠商','設計單位','監造單位','業主','待釐清'])+
+    field('根本原因','根本原因','人員疏忽','select',
+      ['人員疏忽','教育訓練不足','圖說不清或矛盾','界面協調不足','材料設備問題',
+       '工序安排不當','自主檢查機制不足','設計變更未落實','其他'])+
+    field('關聯工項編號','關聯工項編號','')+
+    field('開立人','開立人',people[0],'select',people)+
+    field('改善負責人','改善負責人','')+
+    field('要求改善日','要求改善日','','date')+
+    field('狀態','狀態','已開立','select',['已開立','改善中','待複驗'])+
+    field('佐證','佐證','');
+  openDrawer('新增缺失', html, function(data, ok, fail){
+    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).addRecord('defect', data);
+  });
+}
+
+/* ---------- 人員負荷 ---------- */
+function viewLoad(m){
+  var weeks = [];
+  var base = d(DB.today);
+  for(var i=0;i<4;i++){
+    var dt = new Date(base.getTime()); dt.setDate(dt.getDate()+i*7);
+    weeks.push(rocWeek(dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2)));
+  }
+  var all = DB.owner.concat(DB.internal);
+  var rows = DB.people.map(function(pe){
+    var mine = all.filter(function(t){ return t.owner===pe.name; });
+    var open = mine.filter(openTask);
+    var overdue = open.filter(function(t){return t.light==='red';}).length;
+    var waiting = open.filter(function(t){return t.status==='待業主回覆';}).length;
+    var cells = weeks.map(function(w){
+      var e = open.filter(function(t){return t.week===w;})
+                  .reduce(function(a,t){return a+(t.effort||0);},0);
+      var color = e > pe.capacity+1 ? 'var(--red)' : (e > pe.capacity ? 'var(--amber)' : 'inherit');
+      return '<td class="num r" style="color:'+color+'">'+(e||'—')+'</td>';
+    }).join('');
+    return '<tr data-person="'+esc(pe.name)+'"><td><b>'+esc(pe.name)+'</b><div class="muted">'+esc(pe.dept||'')+'</div></td>'+
+      '<td class="num r">'+open.length+'</td>'+
+      '<td class="num r">'+(overdue?'<b style="color:var(--red)">'+overdue+'</b>':'0')+'</td>'+
+      '<td class="num r">'+waiting+'</td>'+cells+
+      '<td class="num r">'+pe.capacity+'</td></tr>';
+  }).join('');
+
+  m.innerHTML = '<div class="card"><h2>人員負荷（未結案事項，依排定週次）</h2><div class="scroll"><table>'+
+    '<thead><tr><th>承辦人</th><th class="r">未結</th><th class="r">逾期</th><th class="r">待回覆</th>'+
+    weeks.map(function(w){return '<th class="r num">'+w+'</th>';}).join('')+
+    '<th class="r">週可用</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div class="legend"><span>單週人天超過可用量亮黃、超過 1 天以上亮紅。點承辦人可看個人週報。</span></div></div>'+
+    '<div id="weekly"></div>';
+
+  [].forEach.call(m.querySelectorAll('tr[data-person]'), function(tr){
+    tr.onclick = function(){ renderWeekly(tr.dataset.person, weeks[0], weeks[1]); };
+  });
+}
+
+function renderWeekly(name, thisWeek, nextWeek){
+  var all = DB.owner.concat(DB.internal).filter(function(t){return t.owner===name;});
+  function li(list, fmt){ return list.length
+    ? '<ul style="margin:6px 0 0;padding-left:20px">'+list.map(fmt).join('')+'</ul>'
+    : '<div class="muted" style="margin-top:6px">無</div>'; }
+  var doneThis = all.filter(function(t){return !openTask(t) && t.done && rocWeek(t.done)===thisWeek;});
+  var doing = all.filter(function(t){return t.status==='進行中';});
+  var blocked = all.filter(function(t){return openTask(t) && t.blocker;});
+  var next = all.filter(function(t){return openTask(t) && t.week===nextWeek;});
+  var waiting = all.filter(function(t){return t.status==='待業主回覆';});
+
+  document.getElementById('weekly').innerHTML =
+    '<div class="card"><h2>'+esc(name)+'　'+thisWeek+' 工作週報</h2><div class="body">'+
+    '<b>本週完成</b>'+ li(doneThis, function(t){return '<li>'+esc(t.id)+'　'+esc(t.content)+'</li>';}) +
+    '<b style="display:block;margin-top:12px">本週進行中</b>'+ li(doing, function(t){
+        return '<li>'+esc(t.id)+'　'+esc(t.content)+(t.note?'<div class="muted">'+esc(t.note)+'</div>':'')+'</li>';}) +
+    '<b style="display:block;margin-top:12px">卡點與需協助</b>'+ li(blocked, function(t){
+        return '<li>'+esc(t.id)+'　'+esc(t.blocker)+'</li>';}) +
+    '<b style="display:block;margin-top:12px">下週預計（'+nextWeek+'）</b>'+ li(next, function(t){
+        return '<li>'+esc(t.id)+'　'+esc(t.content)+'（'+(t.effort||0)+' 人天）</li>';}) +
+    '<b style="display:block;margin-top:12px">待他人回覆</b>'+ li(waiting, function(t){
+        var w = t.updated ? days(d(t.updated), d(DB.today)) : '—';
+        return '<li>'+esc(t.id)+'　'+esc(t.content)+'（已等 '+w+' 日）</li>';}) +
+    '<div style="margin-top:14px"><button class="act ghost" onclick="copyWeekly()">複製週報文字</button></div>'+
+    '</div></div>';
+  document.getElementById('weekly').scrollIntoView({behavior:'smooth'});
+}
+function copyWeekly(){
+  var t = document.getElementById('weekly').innerText;
+  navigator.clipboard.writeText(t).then(function(){ alert('週報已複製，可直接貼到郵件或會議紀錄。'); });
+}
+
+/* ---------- 統計 ---------- */
+function viewStats(m){
+  var all = DB.owner.concat(DB.internal);
+  var open = all.filter(openTask);
+  var waits = DB.owner.filter(function(t){return t.status==='待業主回覆' && t.updated;})
+    .map(function(t){ return days(d(t.updated), d(DB.today)); });
+  var avgWait = waits.length ? Math.round(waits.reduce(function(a,b){return a+b;},0)/waits.length) : 0;
+  var d30 = new Date(d(DB.today).getTime()); d30.setDate(d30.getDate()-30);
+  var added = all.filter(function(t){ return t.raised && d(t.raised) >= d30; }).length;
+  var closed = all.filter(function(t){ return t.done && d(t.done) >= d30; }).length;
+  var change = DB.owner.filter(function(t){return t.changeOrder==='是';});
+  var affect = DB.owner.filter(function(t){return t.affectSchedule==='是';});
+
+  var bySource = {};
+  DB.owner.forEach(function(t){ bySource[t.source] = (bySource[t.source]||0)+1; });
+  var byType = {};
+  DB.internal.forEach(function(t){ byType[t.type] = (byType[t.type]||0)+1; });
+
+  function barList(obj){
+    var max = Math.max.apply(null, Object.keys(obj).map(function(k){return obj[k];}).concat([1]));
+    return Object.keys(obj).map(function(k){
+      return '<tr><td>'+esc(k)+'</td><td style="width:60%"><div style="height:12px;background:var(--blue);width:'+
+        (obj[k]/max*100)+'%"></div></td><td class="num r">'+obj[k]+'</td></tr>';
+    }).join('') || '<tr><td colspan="3" class="muted">無資料</td></tr>';
+  }
+
+  m.innerHTML =
+    '<div class="card"><div class="kpis">'+
+      kpi('未結事項', open.length, '近 30 日新增 '+added+'、結案 '+closed) +
+      kpi('待業主回覆', DB.owner.filter(function(t){return t.status==='待業主回覆';}).length, '平均已等 '+avgWait+' 日') +
+      kpi('涉及契約變更', change.length, '需併入變更程序') +
+      kpi('可能影響工期', affect.length, '展延主張之依據') +
+    '</div></div>'+
+    '<div class="card"><h2>業主交辦來源分布</h2><div class="body"><table>'+barList(bySource)+'</table></div></div>'+
+    '<div class="card"><h2>內部交辦類別分布</h2><div class="body"><table>'+barList(byType)+'</table></div></div>'+
+    '<div class="card"><h2>各案進度差異</h2><div class="scroll"><table>'+
+      '<thead><tr><th>專案</th><th>預計</th><th>實際</th><th class="r">差異</th><th>權重合計</th></tr></thead><tbody>'+
+      DB.projects.map(function(p){
+        return '<tr><td>'+lightDot(p.light)+esc(p.name)+'</td><td class="num">'+pct(p.planned)+
+          '</td><td class="num">'+pct(p.actual)+'</td><td class="num r" style="color:'+
+          (p.diff<0?'var(--red)':'var(--green)')+'">'+(p.diff>0?'+':'')+p.diff+'%</td>'+
+          '<td class="num">'+p.weightSum+'%'+(Math.abs(p.weightSum-100)>0.5?' <span style="color:var(--amber)">（未達 100）</span>':'')+'</td></tr>';
+      }).join('')+'</tbody></table></div></div>';
+}
+
+/* ---------- 匯入 ---------- */
+var TABLE_LABEL = {project:'01_專案主檔', workitem:'02_契約工項', owner:'03_業主交辦',
+  internal:'04_內部交辦', defect:'07_缺失紀錄', defectcat:'08_缺失類別'};
+function viewImport(m){
+  m.innerHTML = '<div class="card"><h2>批次匯入</h2><div class="body">'+
+    '<div class="toolbar">'+
+      '<select id="impTable">'+Object.keys(TABLE_LABEL).map(function(k){
+        return '<option value="'+k+'">'+TABLE_LABEL[k]+'</option>';}).join('')+'</select>'+
+      '<button class="act ghost" id="btnHeaders">取得欄位標題</button>'+
+      '<button class="act" id="btnImport">匯入</button>'+
+    '</div>'+
+    '<p class="muted">從 Excel 直接複製整塊資料（含標題列）貼到下方，欄位順序不限，系統依標題比對。日期可用 2026-08-06 或 115.08.06。</p>'+
+    '<textarea id="impText" rows="12" style="width:100%" placeholder="貼上資料…"></textarea>'+
+    '<div id="impMsg" style="margin-top:10px"></div>'+
+    '</div></div>';
+
+  document.getElementById('btnHeaders').onclick = function(){
+    var t = document.getElementById('impTable').value;
+    google.script.run.withSuccessHandler(function(json){
+      document.getElementById('impText').value = JSON.parse(json).join('\t') + '\n';
+    }).getTemplateHeaders(t);
+  };
+  document.getElementById('btnImport').onclick = doImport;
+}
+function doImport(){
+  var t = document.getElementById('impTable').value;
+  var text = document.getElementById('impText').value.trim();
+  var msg = document.getElementById('impMsg');
+  if(!text){ msg.innerHTML = '<span style="color:var(--red)">請先貼上資料。</span>'; return; }
+  var lines = text.split(/\r?\n/).filter(function(l){return l.trim();});
+  var sep = lines[0].indexOf('\t')>=0 ? '\t' : ',';
+  var head = lines[0].split(sep).map(function(s){return s.trim().replace(/^"|"$/g,'');});
+  var rows = lines.slice(1).map(function(l){
+    var cells = l.split(sep), o = {};
+    head.forEach(function(h,i){ o[h] = (cells[i]||'').trim().replace(/^"|"$/g,''); });
+    return o;
+  });
+  if(!rows.length){ msg.innerHTML = '<span style="color:var(--red)">只有標題列，沒有資料。</span>'; return; }
+  msg.textContent = '匯入中…';
+  google.script.run.withSuccessHandler(function(r){
+    msg.innerHTML = '<span style="color:var(--green)">'+esc(r)+'</span>';
+    document.getElementById('impText').value = '';
+    load();
+  }).withFailureHandler(function(e){
+    msg.innerHTML = '<span style="color:var(--red)">匯入失敗：'+esc(e.message)+'</span>';
+  }).importRows(t, rows);
+}
+
+/* ---------- 編輯抽屜 ---------- */
+function field(label, name, value, type, options){
+  var input;
+  if(type==='select'){
+    input = '<select name="'+name+'">'+options.map(function(o){
+      return '<option'+(o===value?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
+  } else if(type==='textarea'){
+    input = '<textarea name="'+name+'" rows="3">'+esc(value||'')+'</textarea>';
+  } else {
+    input = '<input type="'+(type||'text')+'" name="'+name+'" value="'+esc(value||'')+'">';
+  }
+  return '<label>'+label+input+'</label>';
+}
+function openDrawer(title, html, onSave){
+  document.getElementById('drawerTitle').textContent = title;
+  document.getElementById('drawerForm').innerHTML = html;
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('backdrop').classList.add('open');
+  EDIT = onSave;
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('open');
+  EDIT = null;
+}
+document.getElementById('drawerClose').onclick = closeDrawer;
+document.getElementById('drawerCancel').onclick = closeDrawer;
+document.getElementById('backdrop').onclick = closeDrawer;
+document.getElementById('drawerSave').onclick = function(){
+  if(!EDIT) return;
+  var data = {};
+  [].forEach.call(document.querySelectorAll('#drawerForm [name]'), function(el){
+    data[el.name] = el.value;
+  });
+  this.disabled = true; this.textContent = '儲存中…';
+  var btn = this;
+  EDIT(data, function(){
+    btn.disabled = false; btn.textContent = '儲存';
+    closeDrawer(); load();
+  }, function(e){
+    btn.disabled = false; btn.textContent = '儲存';
+    alert('儲存失敗：'+e.message);
+  });
+};
+
+function openTaskEdit(table, row){
+  var t = (table==='owner'?DB.owner:DB.internal).filter(function(x){return x.row===row;})[0];
+  if(!t) return;
+  var statuses = ['未開始','進行中','待業主回覆','已完成','已結案','已取消'];
+  var html = '<div class="readonly"><b class="num">'+esc(t.id)+'</b>　'+esc(t.project)+
+    '<div style="margin-top:4px">'+esc(t.content)+'</div>'+
+    (t.basis?'<div class="muted num" style="margin-top:4px">依據：'+esc(t.basis)+'</div>':'')+'</div>'+
+    field('狀態','狀態',t.status,'select',statuses)+
+    field('現況說明（只寫本週變化）','現況說明',t.note,'textarea')+
+    field(table==='owner'?'卡點與需決策事項':'卡點', table==='owner'?'卡點與需決策事項':'卡點', t.blocker,'textarea')+
+    field('主辦人','主辦人',t.owner,'select',DB.people.map(function(p){return p.name;}))+
+    field(table==='owner'?'我方承諾完成日':'要求完成日', table==='owner'?'我方承諾完成日':'要求完成日', t.due,'date')+
+    field('排定週次','排定週次',t.week)+
+    field('預估人天','預估人天',t.effort,'number')+
+    (table==='owner' ? field('是否影響工期','是否影響工期',t.affectSchedule,'select',['否','是','待評估'])+
+                       field('是否涉及契約變更','是否涉及契約變更',t.changeOrder,'select',['否','是','待評估'])+
+                       field('佐證（文號／附件）','佐證',t.evidence) : '')+
+    field('實際完成日','實際完成日',t.done,'date');
+
+  openDrawer('更新事項　'+t.id, html, function(data, ok, fail){
+    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).updateRecord(table, row, data);
+  });
+}
+
+function openWorkItem(row){
+  var items = DB.workItems[PROJ]||[];
+  var i = items.filter(function(x){return x.row===row;})[0];
+  if(!i) return;
+  var html = '<div class="readonly"><b class="num">'+esc(i.code)+'</b>　'+esc(i.name)+
+    '<div class="muted num" style="margin-top:4px">預計 '+roc(i.start)+' – '+roc(i.end)+
+    '（'+(i.duration||0)+' 天）　預計進度 '+i.plannedPct+'%</div></div>'+
+    field('狀態','狀態',i.status,'select',['未開始','進行中','已完成','暫停'])+
+    field('完成百分比(%)','完成百分比(%)',i.pct,'number')+
+    field('實際開始日','實際開始日',i.actualStart,'date')+
+    field('實際完成日','實際完成日',i.actualEnd,'date')+
+    field('工期天數','工期天數',i.duration,'number')+
+    field('權重(%)','權重(%)',i.weight,'number')+
+    field('負責人','負責人',i.owner,'select',DB.people.map(function(p){return p.name;}))+
+    field('備註','備註','','textarea');
+  openDrawer('更新工項　'+i.code, html, function(data, ok, fail){
+    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).updateRecord('workitem', row, data);
+  });
+}
+
+function openNew(table){
+  var pOpts = DB.projects.map(function(p){return p.code;}).concat(['內部']);
+  var people = DB.people.map(function(p){return p.name;});
+  var thisWeek = rocWeek(DB.today);
+  var html;
+  if(table==='owner'){
+    html = field('事項編號','事項編號','O-')+
+      field('專案代號','專案代號',PROJ,'select',pOpts)+
+      field('來源','來源','業主交辦','select',['業主交辦','會議決議','查驗缺失','公文'])+
+      field('來源依據（文號／會議日期）','來源依據','')+
+      field('事項內容','事項內容','','textarea')+
+      field('關聯工項編號','關聯工項編號','')+
+      field('主辦人','主辦人',people[0],'select',people)+
+      field('提出日','提出日',DB.today,'date')+
+      field('業主要求完成日','業主要求完成日','','date')+
+      field('我方承諾完成日','我方承諾完成日','','date')+
+      field('排定週次','排定週次',thisWeek)+
+      field('預估人天','預估人天',1,'number')+
+      field('是否影響工期','是否影響工期','否','select',['否','是','待評估'])+
+      field('是否涉及契約變更','是否涉及契約變更','否','select',['否','是','待評估'])+
+      field('狀態','狀態','未開始','select',['未開始','進行中','待業主回覆']);
+  } else {
+    html = field('事項編號','事項編號','I-')+
+      field('專案代號','專案代號','內部','select',pOpts)+
+      field('事項類別','事項類別','行政作業','select',['行政作業','投標研提','教育訓練','院內交辦','研發'])+
+      field('交辦者','交辦者','')+
+      field('事項內容','事項內容','','textarea')+
+      field('主辦人','主辦人',people[0],'select',people)+
+      field('交辦日','交辦日',DB.today,'date')+
+      field('要求完成日','要求完成日','','date')+
+      field('排定週次','排定週次',thisWeek)+
+      field('預估人天','預估人天',0.5,'number')+
+      field('狀態','狀態','未開始','select',['未開始','進行中']);
+  }
+  openDrawer(table==='owner'?'新增業主交辦':'新增內部交辦', html, function(data, ok, fail){
+    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).addRecord(table, data);
+  });
+}
+
+/* localStorage 在 Apps Script 沙箱可用，但包一層避免例外中斷畫面 */
+function localStorage_get(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+function localStorage_set(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+
+load();
+</script>
+</body>
+</html>
