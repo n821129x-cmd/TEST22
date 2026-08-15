@@ -123,6 +123,7 @@ td.r,th.r{text-align:right}
 <header>
   <h1>專案履約管理</h1>
   <span class="today num" id="todayLabel"></span>
+  <span class="today num" id="modeLabel" style="margin-left:12px"></span>
 </header>
 
 <nav id="nav">
@@ -149,7 +150,93 @@ td.r,th.r{text-align:right}
 </div>
 
 <script>
+/* ============================================================
+   連線設定
+   ------------------------------------------------------------
+   這份檔案可以在兩種地方執行，程式會自動判斷：
+
+   A) 放在 Apps Script 專案裡當 Index.html
+      → 直接用 google.script.run，不需要下面的網址。
+
+   B) 放在任何靜態主機（GitHub Pages、公司網站、本機開檔）
+      → 用下面的 API_URL 連回 Apps Script 讀寫試算表。
+         此時 Apps Script 的部署「存取權」必須設為「任何人」。
+   ============================================================ */
+var API_URL   = 'https://script.google.com/macros/s/AKfycby2cDiVqYnY5Suqv7IHsuSIiEEhk588AKTnBWh3pXPVrHhgiATp2eVCRJi1uoD3SrEe/exec';
+var API_TOKEN = 'tcri-pm-2026';   // 必須與 Code.gs 的 API_TOKEN 相同
+
 var DB = null, VIEW = 'summary', PROJ = '', EDIT = null;
+
+/* ---------- 呼叫後端：自動選用 google.script.run 或 fetch ---------- */
+var RPC_ARGS = {
+  getDashboard: [],
+  getTemplateHeaders: ['table'],
+  updateRecord: ['table', 'row', 'patch'],
+  addRecord: ['table', 'data'],
+  importRows: ['table', 'rows']
+};
+var RPC_JSON = ['getDashboard', 'getTemplateHeaders'];   // 回傳字串，需再解析
+var RPC_WRITE = ['updateRecord', 'addRecord', 'importRows'];
+
+function inAppsScript(){
+  return typeof google !== 'undefined' && google.script && google.script.run;
+}
+
+function rpc(name, params, ok, fail){
+  params = params || {};
+  fail = fail || function(e){ console.error(name, e); };
+
+  if(inAppsScript()){
+    var runner = google.script.run
+      .withSuccessHandler(function(res){
+        ok(RPC_JSON.indexOf(name) >= 0 ? JSON.parse(res) : res);
+      })
+      .withFailureHandler(fail);
+    var args = (RPC_ARGS[name] || []).map(function(k){ return params[k]; });
+    runner[name].apply(runner, args);
+    return;
+  }
+
+  if(!API_URL || API_URL.indexOf('script.google.com') < 0){
+    fail(new Error('尚未設定 API_URL。請把 Apps Script 的 /exec 網址填進檔案開頭的 API_URL。'));
+    return;
+  }
+
+  var body = Object.assign({ api: name, token: API_TOKEN }, params);
+  var req;
+  if(RPC_WRITE.indexOf(name) >= 0){
+    // 寫入用 POST；text/plain 可避開預檢請求（Apps Script 不處理 OPTIONS）
+    req = fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body),
+      redirect: 'follow'
+    });
+  } else {
+    var qs = Object.keys(body).map(function(k){
+      return encodeURIComponent(k) + '=' + encodeURIComponent(body[k]);
+    }).join('&');
+    req = fetch(API_URL + '?' + qs, { method: 'GET', redirect: 'follow' });
+  }
+
+  req.then(function(r){ return r.text(); })
+     .then(function(txt){
+       var res;
+       try { res = JSON.parse(txt); }
+       catch(e){
+         throw new Error('後端回傳的不是 JSON。多半是部署存取權沒設成「任何人」，'
+           + '導致收到 Google 登入頁。開頭內容：' + txt.slice(0, 120));
+       }
+       if(!res.ok) throw new Error(res.error || '後端回報失敗');
+       ok(res.data);
+     })
+     .catch(function(e){
+       if(String(e.message).indexOf('Failed to fetch') >= 0){
+         fail(new Error('無法連線到 Apps Script。請確認：1) API_URL 正確且以 /exec 結尾；'
+           + '2) 部署的「存取權」設為「任何人」；3) 已用「新版本」重新部署。'));
+       } else fail(e);
+     });
+}
 
 /* ---------- 工具 ---------- */
 function roc(ymd){ if(!ymd) return '—';
@@ -174,17 +261,64 @@ function progBar(planned, actual){
 }
 
 /* ---------- 載入 ---------- */
+function fatal(title, lines){
+  document.getElementById('main').innerHTML =
+    '<div class="card"><h2>'+esc(title)+'</h2><div class="body">'+
+    lines.map(function(l){return '<p>'+l+'</p>';}).join('')+'</div></div>';
+}
+
 function load(){
-  google.script.run.withSuccessHandler(function(json){
-    DB = JSON.parse(json);
+  // 靜態主機模式下，API_URL 沒設好就先講清楚
+  if(!inAppsScript() && (!API_URL || API_URL.indexOf('script.google.com') < 0)){
+    fatal('尚未設定連線網址', [
+      '目前網址：<code>'+esc(location.href)+'</code>',
+      '這份檔案不是在 Apps Script 裡執行，需要靠檔案開頭的 <code>API_URL</code> 連回試算表。',
+      '請把 Apps Script 的部署網址（<code>https://script.google.com/macros/s/.../exec</code>）'+
+      '填進檔案開頭的 API_URL，並確認 API_TOKEN 與 Code.gs 一致。'
+    ]);
+    return;
+  }
+
+  var done = false;
+  var timer = setTimeout(function(){
+    if(done) return;
+    fatal('伺服器沒有回應（已等待 25 秒）', [
+      '常見原因：',
+      '1. 試算表分頁還沒建立 —— 回到試算表，選單「專案履約管理 → 初始化分頁」執行一次。'+
+      '若選單沒出現，把試算表關掉重開。',
+      '2. 授權尚未完成 —— 在 Apps Script 編輯器手動執行一次 <code>setupAllSheets</code>，完成授權流程後再回來。',
+      '3. 資料量過大或分頁被改名 —— 分頁名稱必須與程式一致（01_專案主檔、02_契約工項…）。',
+      '4. 若這頁是放在 GitHub Pages 或公司網站，請確認 Apps Script 部署的「存取權」設為「任何人」，'+
+      '且改完程式後有用「新版本」重新部署。',
+      '<button class="act" onclick="load()">重新載入</button>'
+    ]);
+  }, 25000);
+
+  rpc('getDashboard', {}, function(data){
+    done = true; clearTimeout(timer);
+    DB = data;
     document.getElementById('todayLabel').textContent = '今日　' + roc(DB.today);
+    document.getElementById('modeLabel').textContent =
+      inAppsScript() ? '內嵌模式' : '連線模式';
     if(!PROJ && DB.projects.length) PROJ = DB.projects[0].code;
     render();
-  }).withFailureHandler(function(e){
-    document.getElementById('main').innerHTML =
-      '<div class="card"><div class="body">讀取資料失敗：'+esc(e.message)+
-      '<br>請先在試算表選單執行「專案履約管理 → 初始化分頁」。</div></div>';
-  }).getDashboard();
+  }, function(e){
+    done = true; clearTimeout(timer);
+    var msg = (e && e.message) ? e.message : String(e);
+    var hint = '';
+    if(msg.indexOf('getSheetByName') >= 0 || msg.indexOf('null') >= 0){
+      hint = '看起來是分頁不存在。請在試算表執行選單「專案履約管理 → 初始化分頁」。';
+    } else if(msg.indexOf('HEADERS') >= 0 || msg.indexOf('SHEETS') >= 0){
+      hint = '看起來是 Setup.gs 的內容沒有貼進專案。請確認左側有 Setup.gs 且內容完整。';
+    } else if(msg.indexOf('permission') >= 0 || msg.indexOf('授權') >= 0){
+      hint = '權限不足。請在 Apps Script 手動執行一次 setupAllSheets 完成授權。';
+    }
+    fatal('讀取資料失敗', [
+      '<code>'+esc(msg)+'</code>',
+      hint || '請確認試算表分頁已建立，且 Setup.gs 與 Code.gs 內容都已貼入專案。',
+      '<button class="act" onclick="load()">重新載入</button>'
+    ]);
+  });
 }
 
 document.getElementById('nav').addEventListener('click', function(e){
@@ -701,7 +835,7 @@ function openDefectEdit(row){
     field('佐證','佐證',x.evidence)+
     field('備註','備註',x.note,'textarea');
   openDrawer('更新缺失　'+x.id, html, function(data, ok, fail){
-    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).updateRecord('defect', row, data);
+    rpc('updateRecord', {table: 'defect', row: row, patch: data}, ok, fail);
   });
 }
 
@@ -733,7 +867,7 @@ function openNewDefect(){
     field('狀態','狀態','已開立','select',['已開立','改善中','待複驗'])+
     field('佐證','佐證','');
   openDrawer('新增缺失', html, function(data, ok, fail){
-    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).addRecord('defect', data);
+    rpc('addRecord', {table: 'defect', data: data}, ok, fail);
   });
 }
 
@@ -871,9 +1005,9 @@ function viewImport(m){
 
   document.getElementById('btnHeaders').onclick = function(){
     var t = document.getElementById('impTable').value;
-    google.script.run.withSuccessHandler(function(json){
-      document.getElementById('impText').value = JSON.parse(json).join('\t') + '\n';
-    }).getTemplateHeaders(t);
+    rpc('getTemplateHeaders', {table: t}, function(headers){
+      document.getElementById('impText').value = headers.join('\t') + '\n';
+    });
   };
   document.getElementById('btnImport').onclick = doImport;
 }
@@ -892,13 +1026,13 @@ function doImport(){
   });
   if(!rows.length){ msg.innerHTML = '<span style="color:var(--red)">只有標題列，沒有資料。</span>'; return; }
   msg.textContent = '匯入中…';
-  google.script.run.withSuccessHandler(function(r){
+  rpc('importRows', {table: t, rows: rows}, function(r){
     msg.innerHTML = '<span style="color:var(--green)">'+esc(r)+'</span>';
     document.getElementById('impText').value = '';
     load();
-  }).withFailureHandler(function(e){
+  }, function(e){
     msg.innerHTML = '<span style="color:var(--red)">匯入失敗：'+esc(e.message)+'</span>';
-  }).importRows(t, rows);
+  });
 }
 
 /* ---------- 編輯抽屜 ---------- */
@@ -966,7 +1100,7 @@ function openTaskEdit(table, row){
     field('實際完成日','實際完成日',t.done,'date');
 
   openDrawer('更新事項　'+t.id, html, function(data, ok, fail){
-    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).updateRecord(table, row, data);
+    rpc('updateRecord', {table: table, row: row, patch: data}, ok, fail);
   });
 }
 
@@ -986,7 +1120,7 @@ function openWorkItem(row){
     field('負責人','負責人',i.owner,'select',DB.people.map(function(p){return p.name;}))+
     field('備註','備註','','textarea');
   openDrawer('更新工項　'+i.code, html, function(data, ok, fail){
-    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).updateRecord('workitem', row, data);
+    rpc('updateRecord', {table: 'workitem', row: row, patch: data}, ok, fail);
   });
 }
 
@@ -1025,7 +1159,7 @@ function openNew(table){
       field('狀態','狀態','未開始','select',['未開始','進行中']);
   }
   openDrawer(table==='owner'?'新增業主交辦':'新增內部交辦', html, function(data, ok, fail){
-    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).addRecord(table, data);
+    rpc('addRecord', {table: table, data: data}, ok, fail);
   });
 }
 
