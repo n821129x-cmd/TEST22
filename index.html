@@ -3,141 +3,259 @@
 <head>
 <meta charset="utf-8">
 <base target="_top">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#16232A; --ink-2:#3B4A50; --paper:#E9EDE8; --panel:#FFFFFF;
-  --rule:#C6CFC9; --rule-2:#DDE3DE;
-  --blue:#2C5F80; --blue-pale:#BCCEDA;
-  --green:#3F7D4E; --amber:#C08A2E; --red:#B23A3A; --grey:#8A9490; --done:#6E7A74;
-  --mono:'Consolas','Roboto Mono','Courier New',monospace;
-  --sans:'Microsoft JhengHei','微軟正黑體','PingFang TC',sans-serif;
+  --bg:#EDEFF6; --surface:#FFFFFF; --surface-2:#F7F8FC;
+  --ink:#14172B; --ink-2:#5B6376; --ink-3:#8E96AB;
+  --line:#E8EBF3; --line-2:#F0F2F8;
+  --accent:#5B3DF5; --accent-2:#8267FF; --accent-soft:#EDE9FF;
+  --green:#17B26A; --green-soft:#DFF5E8;
+  --amber:#F79009; --amber-soft:#FFEEDC;
+  --red:#F04438;   --red-soft:#FFE6E4;
+  --sky:#2E90FA;   --sky-soft:#DEEDFF;
+  --grey:#98A2B3;  --grey-soft:#EDEFF4;
+  --r-lg:22px; --r-md:16px; --r-sm:11px;
+  --shadow:0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.05);
+  --shadow-lift:0 8px 28px rgba(91,61,245,.18);
+  --sans:'Plus Jakarta Sans','Noto Sans TC','Microsoft JhengHei','PingFang TC',sans-serif;
+  --mono:'JetBrains Mono','Roboto Mono',Consolas,monospace;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.55}
-button,input,select,textarea{font-family:inherit;font-size:13px;color:inherit}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;font-size:13.5px;color:inherit}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:2px 6px;border-radius:6px}
 
-/* 版面 */
-header{background:var(--ink);color:var(--paper);padding:10px 16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;position:sticky;top:0;z-index:20}
-header h1{margin:0;font-size:15px;font-weight:700;letter-spacing:.14em}
-header .today{margin-left:auto;font-size:12px;opacity:.75}
-nav{display:flex;gap:0;background:var(--panel);border-bottom:1px solid var(--rule);overflow-x:auto;position:sticky;top:44px;z-index:19}
-nav button{background:none;border:none;border-bottom:2px solid transparent;padding:10px 16px;white-space:nowrap;cursor:pointer;color:var(--ink-2)}
-nav button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--blue);font-weight:700}
-main{padding:16px;max-width:1400px;margin:0 auto}
-.card{background:var(--panel);border:1px solid var(--rule);margin-bottom:14px}
-.card>h2{margin:0;padding:9px 12px;font-size:12px;letter-spacing:.12em;border-bottom:1px solid var(--rule-2);background:#F4F6F3;font-weight:700}
-.card>.body{padding:12px}
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
-select,input[type=text],input[type=date],input[type=number],textarea{background:var(--panel);border:1px solid var(--rule);padding:6px 8px;border-radius:0}
-button.act{background:var(--ink);color:var(--paper);border:none;padding:7px 14px;cursor:pointer}
-button.act.ghost{background:none;color:var(--ink);border:1px solid var(--rule)}
-button.act:hover{opacity:.86}
+/* ---------- 外框 ---------- */
+.shell{display:flex;min-height:100vh;padding:14px;gap:14px}
+.rail{width:88px;flex:0 0 88px;background:var(--surface);border-radius:var(--r-lg);
+  box-shadow:var(--shadow);padding:16px 8px;display:flex;flex-direction:column;gap:4px;
+  align-items:center;position:sticky;top:14px;height:calc(100vh - 28px)}
+.brand{width:46px;height:46px;border-radius:15px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px;margin-bottom:14px;
+  box-shadow:var(--shadow-lift);flex:0 0 auto}
+.rail button{width:100%;background:none;border:none;border-radius:14px;padding:9px 2px 7px;
+  display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;color:var(--ink-3);
+  transition:background .16s,color .16s}
+.rail button span{font-size:10.5px;letter-spacing:.02em;font-weight:500}
+.rail button svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.rail button:hover{background:var(--surface-2);color:var(--ink-2)}
+.rail button[aria-selected="true"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.rail button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* 表格 */
+.stage{flex:1;min-width:0;display:flex;flex-direction:column;gap:14px}
+.topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:2px 6px}
+.topbar h1{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em}
+.topbar .sub{color:var(--ink-2);font-size:12.5px;margin-top:1px}
+.pill{margin-left:auto;display:flex;gap:8px;align-items:center}
+.pill span{background:var(--surface);border-radius:999px;padding:7px 14px;font-size:12px;
+  color:var(--ink-2);box-shadow:var(--shadow);white-space:nowrap}
+main{padding:0 0 24px}
+
+/* ---------- 卡片 ---------- */
+.card{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);
+  margin-bottom:14px;overflow:hidden}
+.card>h2{margin:0;padding:16px 20px 12px;font-size:14px;font-weight:700;letter-spacing:-.01em}
+.card>.body{padding:4px 20px 18px}
+.card>h2+.scroll,.card>h2+.body{padding-top:0}
+.toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin:10px 0 14px}
+select,input[type=text],input[type=date],input[type=number],textarea{
+  background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:9px 12px;
+  color:var(--ink);transition:border-color .15s,box-shadow .15s}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-soft)}
+button.act{background:var(--accent);color:#fff;border:none;border-radius:11px;padding:9px 18px;
+  cursor:pointer;font-weight:600;box-shadow:var(--shadow-lift);transition:transform .12s,filter .15s}
+button.act:hover{filter:brightness(1.06);transform:translateY(-1px)}
+button.act:active{transform:none}
+button.act.ghost{background:var(--surface-2);color:var(--ink);box-shadow:none;border:1px solid var(--line)}
+button.act.ghost:hover{background:var(--line-2)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- 表格 ---------- */
 table{width:100%;border-collapse:collapse}
-th,td{padding:7px 8px;border-bottom:1px solid var(--rule-2);text-align:left;vertical-align:top}
-th{font-size:11px;letter-spacing:.06em;color:var(--ink-2);border-bottom:1px solid var(--rule);white-space:nowrap}
-tbody tr:hover{background:#F5F8F4;cursor:pointer}
+th,td{padding:11px 12px;text-align:left;vertical-align:top}
+th{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--ink-3);white-space:nowrap;
+  text-transform:uppercase;padding-bottom:8px}
+tbody tr{border-top:1px solid var(--line-2)}
+tbody tr:hover{background:var(--surface-2);cursor:pointer}
 td.r,th.r{text-align:right}
-.scroll{overflow-x:auto}
+.scroll{overflow-x:auto;padding:0 20px 8px}
+.scroll table{min-width:1080px}
+td.num{white-space:nowrap}
+td .tag{white-space:nowrap}
 
-/* 燈號 */
-.dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+/* ---------- 燈號與標籤 ---------- */
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;vertical-align:1px;margin-right:7px}
 .green{background:var(--green)} .amber{background:var(--amber)} .red{background:var(--red)}
-.grey{background:var(--grey)} .done{background:var(--done)}
-.tag{display:inline-block;padding:1px 7px;border:1px solid var(--rule);font-size:11px;white-space:nowrap}
+.grey{background:var(--grey)} .done{background:var(--ink-3)}
+.tag{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--surface-2);
+  color:var(--ink-2);font-size:11.5px;font-weight:500;white-space:nowrap}
 
-/* 指標 */
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--rule-2)}
-.kpi{background:var(--panel);padding:12px}
-.kpi .label{font-size:11px;color:var(--ink-2);letter-spacing:.06em}
-.kpi .value{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1.2}
-.kpi .sub{font-size:11px;color:var(--ink-2)}
+/* ---------- 指標卡 ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:14px}
+.kpi{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);
+  padding:18px;display:flex;gap:14px;align-items:flex-start}
+.ktile{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;flex:0 0 auto}
+.ktile svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+.t-mint{background:var(--green-soft);color:var(--green)}
+.t-peach{background:var(--amber-soft);color:var(--amber)}
+.t-sky{background:var(--sky-soft);color:var(--sky)}
+.t-lilac{background:var(--accent-soft);color:var(--accent)}
+.t-rose{background:var(--red-soft);color:var(--red)}
+.kbody{min-width:0}
+.kpi .label{font-size:12px;color:var(--ink-2);font-weight:500}
+.kpi .value{font-size:26px;font-weight:800;line-height:1.25;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:11.5px;color:var(--ink-3)}
 
-/* 進度條 */
-.prog{position:relative;height:16px;background:#EEF1EE;border:1px solid var(--rule-2);min-width:110px}
-.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--blue-pale)}
-.prog b{position:absolute;left:0;top:0;bottom:0;background:var(--blue)}
-.prog span{position:absolute;right:4px;top:-1px;font-family:var(--mono);font-size:10px}
+/* ---------- 主視覺卡 ---------- */
+.hero{background:linear-gradient(125deg,#5B3DF5 0%,#7B5BFF 55%,#9C7BFF 100%);
+  border-radius:var(--r-lg);color:#fff;padding:24px;position:relative;overflow:hidden;
+  box-shadow:var(--shadow-lift);margin-bottom:14px}
+.hero::after{content:'';position:absolute;right:-60px;top:-70px;width:230px;height:230px;
+  border-radius:50%;background:rgba(255,255,255,.10)}
+.hero::before{content:'';position:absolute;right:40px;bottom:-90px;width:170px;height:170px;
+  border-radius:50%;background:rgba(255,255,255,.07)}
+.hero .cap{font-size:12.5px;opacity:.82;font-weight:500}
+.hero .big{font-size:38px;font-weight:800;letter-spacing:-.035em;margin:4px 0 2px;
+  font-variant-numeric:tabular-nums}
+.hero .meta{font-size:12.5px;opacity:.85}
+.hero .side{position:absolute;right:24px;top:24px;text-align:right;z-index:1}
+.hero .side b{display:block;font-size:20px;font-weight:700;letter-spacing:-.02em}
+.hero .side span{font-size:11.5px;opacity:.82}
+.hero .track{height:7px;border-radius:99px;background:rgba(255,255,255,.25);margin-top:16px;
+  position:relative;max-width:520px}
+.hero .track i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:#fff}
+.hero .track u{position:absolute;top:-4px;width:2px;height:15px;background:rgba(255,255,255,.85)}
 
-/* 甘特圖 */
-.gantt{display:grid;grid-template-columns:300px 1fr;border-top:1px solid var(--rule)}
-.gantt .names{border-right:1px solid var(--rule);background:var(--panel)}
+/* ---------- 進度條 ---------- */
+.prog{position:relative;height:7px;border-radius:99px;background:var(--line);min-width:96px;margin-top:7px}
+.prog i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:#C9BEFF}
+.prog b{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:var(--accent)}
+.prog span{position:absolute;right:0;top:-19px;font-size:11.5px;font-weight:700;
+  font-variant-numeric:tabular-nums}
+
+/* ---------- 甘特圖 ---------- */
+.gantt{display:grid;grid-template-columns:290px 1fr;border-top:1px solid var(--line-2)}
+.gantt .names{border-right:1px solid var(--line-2)}
 .gantt .chart{overflow-x:auto;background:
-  repeating-linear-gradient(to right,transparent 0,transparent calc(var(--dw) - 1px),var(--rule-2) calc(var(--dw) - 1px),var(--rule-2) var(--dw))}
-.grow{height:30px;border-bottom:1px solid var(--rule-2);position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:6px 8px;font-size:12px}
-.grow.lvl1{font-weight:700;background:#F4F6F3}
-.grow.lvl2{padding-left:22px}
-.grow.lvl3{padding-left:38px}
-.gcell{height:30px;border-bottom:1px solid var(--rule-2);position:relative}
-.gcell.lvl1{background:rgba(244,246,243,.6)}
-.bar-plan{position:absolute;top:6px;height:8px;background:var(--blue-pale);border:1px solid var(--blue)}
-.bar-act{position:absolute;top:16px;height:6px;background:var(--blue)}
+  repeating-linear-gradient(to right,transparent 0,transparent calc(var(--dw) - 1px),
+  var(--line-2) calc(var(--dw) - 1px),var(--line-2) var(--dw))}
+.grow{height:34px;border-bottom:1px solid var(--line-2);position:relative;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;padding:8px 14px;font-size:12.5px}
+.grow.lvl1{font-weight:700;background:var(--surface-2)}
+.grow.lvl2{padding-left:28px}
+.grow.lvl3{padding-left:44px}
+.gcell{height:34px;border-bottom:1px solid var(--line-2);position:relative}
+.gcell.lvl1{background:rgba(247,248,252,.7)}
+.bar-plan{position:absolute;top:9px;height:9px;border-radius:99px;background:#D6CEFF}
+.bar-act{position:absolute;top:9px;height:9px;border-radius:99px;background:var(--accent)}
 .bar-act.late{background:var(--red)}
-.ms{position:absolute;top:9px;width:11px;height:11px;background:var(--panel);border:2px solid var(--ink);transform:rotate(45deg)}
-.ms.filled{background:var(--ink)}
-.pin{position:absolute;top:2px;width:2px;height:26px;background:var(--amber)}
+.ms{position:absolute;top:11px;width:11px;height:11px;background:#fff;
+  border:2.5px solid var(--accent);transform:rotate(45deg);border-radius:2px}
+.ms.filled{background:var(--accent)}
+.pin{position:absolute;top:4px;width:2px;height:26px;border-radius:2px;background:var(--amber)}
 .pin.red{background:var(--red)}
 .today-line{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--red);z-index:5}
-.axis{height:34px;position:relative;border-bottom:1px solid var(--rule);background:var(--panel)}
-.axis .m{position:absolute;top:0;height:34px;border-left:1px solid var(--rule);padding:3px 5px;font-family:var(--mono);font-size:11px;color:var(--ink-2)}
-.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--ink-2);padding:8px 12px}
-.legend i{display:inline-block;width:16px;height:8px;vertical-align:0;margin-right:4px}
+.axis{height:36px;position:relative;border-bottom:1px solid var(--line-2)}
+.axis .m{position:absolute;top:0;height:36px;border-left:1px solid var(--line);padding:9px 7px;
+  font-size:11px;color:var(--ink-3);font-weight:600}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-3);padding:12px 20px 16px}
+.legend i{display:inline-block;width:16px;height:7px;border-radius:99px;vertical-align:1px;margin-right:5px}
 
-/* 側邊編輯面板 */
-.drawer{position:fixed;top:0;right:0;bottom:0;width:min(420px,100%);background:var(--panel);border-left:1px solid var(--rule);transform:translateX(100%);transition:transform .18s ease;z-index:40;display:flex;flex-direction:column}
-.drawer.open{transform:none}
-.drawer h3{margin:0;padding:12px 16px;border-bottom:1px solid var(--rule);font-size:13px;background:var(--ink);color:var(--paper);display:flex;align-items:center;gap:8px}
-.drawer h3 button{margin-left:auto;background:none;border:none;color:var(--paper);cursor:pointer;font-size:18px;line-height:1}
-.drawer .form{padding:16px;overflow:auto;flex:1}
-.drawer label{display:block;margin-bottom:12px;font-size:11px;color:var(--ink-2);letter-spacing:.06em}
-.drawer label input,.drawer label select,.drawer label textarea{display:block;width:100%;margin-top:4px;font-size:13px;color:var(--ink)}
-.drawer .foot{padding:12px 16px;border-top:1px solid var(--rule);display:flex;gap:8px}
-.backdrop{position:fixed;inset:0;background:rgba(22,35,42,.35);z-index:35;display:none}
-.backdrop.open{display:block}
-.readonly{background:#F4F6F3;padding:8px;border:1px solid var(--rule-2);margin-bottom:12px;font-size:12px}
-
+/* ---------- 柏拉圖與熱區 ---------- */
 .pareto{width:100%;border-collapse:collapse}
-.pareto td{padding:5px 8px;border-bottom:1px solid var(--rule-2);vertical-align:middle}
-.pareto .bar{position:relative;height:18px;background:#EEF1EE}
-.pareto .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--blue)}
-.pareto .bar i.hot{background:var(--red)}
-.pareto .cum{font-family:var(--mono);font-size:11px;color:var(--ink-2)}
-.heat td.c{text-align:center;font-family:var(--mono)}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.chip{border:1px solid var(--rule);padding:3px 10px;cursor:pointer;background:var(--panel);font-size:12px}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.muted{color:var(--ink-2)}
-.empty{padding:28px 12px;text-align:center;color:var(--ink-2)}
+.pareto td{padding:8px 10px;vertical-align:middle;border-top:1px solid var(--line-2)}
+.pareto tr:first-child td{border-top:none}
+.pareto .bar{position:relative;height:9px;border-radius:99px;background:var(--line)}
+.pareto .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:#C9BEFF}
+.pareto .bar i.hot{background:var(--accent)}
+.pareto .cum{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.heat td.c{text-align:center;padding:7px 6px}
+.heat .hcell{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;
+  font-family:var(--mono);font-size:12px;font-weight:700}
+.heat td:first-child{font-family:var(--sans)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 15px;cursor:pointer;
+  background:var(--surface-2);font-size:12.5px;font-weight:500;color:var(--ink-2);transition:all .15s}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+
+/* ---------- 側邊面板 ---------- */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);
+  transform:translateX(102%);transition:transform .24s cubic-bezier(.4,0,.2,1);z-index:40;
+  display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(16,24,40,.14)}
+.drawer.open{transform:none}
+.drawer h3{margin:0;padding:20px 22px 16px;font-size:15px;font-weight:700;display:flex;
+  align-items:center;gap:8px;border-bottom:1px solid var(--line-2)}
+.drawer h3 button{margin-left:auto;background:var(--surface-2);border:none;color:var(--ink-2);
+  cursor:pointer;font-size:17px;line-height:1;width:30px;height:30px;border-radius:9px}
+.drawer h3 button:hover{background:var(--line-2)}
+.drawer .form{padding:20px 22px;overflow:auto;flex:1}
+.drawer label{display:block;margin-bottom:14px;font-size:11.5px;color:var(--ink-2);font-weight:600}
+.drawer label input,.drawer label select,.drawer label textarea{display:block;width:100%;
+  margin-top:6px;font-size:13.5px;color:var(--ink);font-weight:400}
+.drawer .foot{padding:16px 22px;border-top:1px solid var(--line-2);display:flex;gap:9px}
+.backdrop{position:fixed;inset:0;background:rgba(20,23,43,.32);z-index:35;display:none;
+  backdrop-filter:blur(2px)}
+.backdrop.open{display:block}
+.readonly{background:var(--surface-2);padding:14px;border-radius:var(--r-md);margin-bottom:18px;font-size:12.5px}
+
+.muted{color:var(--ink-3)}
+.empty{padding:44px 20px;text-align:center;color:var(--ink-3)}
 .hide{display:none}
-@media(max-width:720px){
-  .gantt{grid-template-columns:150px 1fr}
-  main{padding:10px}
-  header h1{font-size:13px}
+
+@media(max-width:900px){
+  .shell{flex-direction:column;padding:10px;gap:10px}
+  .rail{width:auto;flex:none;height:auto;position:static;flex-direction:row;overflow-x:auto;
+    padding:10px;gap:2px}
+  .brand{margin:0 8px 0 2px}
+  .rail button{width:auto;padding:8px 12px;flex:0 0 auto}
+  .gantt{grid-template-columns:140px 1fr}
+  .topbar h1{font-size:18px}
+  .hero .side{position:static;text-align:left;margin-top:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important}
 }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>專案履約管理</h1>
-  <span class="today num" id="todayLabel"></span>
-  <span class="today num" id="modeLabel" style="margin-left:12px"></span>
-</header>
+<div class="shell">
+  <aside class="rail" id="nav">
+    <div class="brand">履</div>
+    <button data-v="summary" title="總表" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>總表</span></button>
+    <button data-v="gantt" title="甘特圖"><svg viewBox="0 0 24 24"><path d="M4 6h9"/><path d="M7 12h11"/><path d="M4 18h7"/><circle cx="16" cy="6" r="1.6"/><circle cx="20" cy="12" r="1.6"/><circle cx="13" cy="18" r="1.6"/></svg><span>甘特圖</span></button>
+    <button data-v="owner" title="業主交辦"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 10h16"/><path d="M9 14h6"/></svg><span>業主交辦</span></button>
+    <button data-v="internal" title="內部交辦"><svg viewBox="0 0 24 24"><path d="M8 4h8v3H8z"/><path d="M6 5.5H5v15h14v-15h-1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg><span>內部交辦</span></button>
+    <button data-v="defect" title="缺失分析"><svg viewBox="0 0 24 24"><path d="M12 3.5 21 20H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg><span>缺失分析</span></button>
+    <button data-v="load" title="人員負荷"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M17 11.5a3 3 0 1 0-1.5-5.6"/><path d="M18 20c0-2.4-.9-4.2-2.4-5.3"/></svg><span>人員負荷</span></button>
+    <button data-v="stats" title="統計"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M21 20H3"/></svg><span>統計</span></button>
+    <button data-v="import" title="匯入"><svg viewBox="0 0 24 24"><path d="M12 15V4"/><path d="m8 8 4-4 4 4"/><path d="M4 15v4h16v-4"/></svg><span>匯入</span></button>
+  </aside>
 
-<nav id="nav">
-  <button data-v="summary" aria-selected="true">總表</button>
-  <button data-v="gantt">甘特圖</button>
-  <button data-v="owner">業主交辦</button>
-  <button data-v="internal">內部交辦</button>
-  <button data-v="defect">缺失分析</button>
-  <button data-v="load">人員負荷</button>
-  <button data-v="stats">統計</button>
-  <button data-v="import">匯入</button>
-</nav>
-
-<main id="main"><div class="empty">載入中…</div></main>
+  <div class="stage">
+    <div class="topbar">
+      <div>
+        <h1 id="greet">專案履約管理</h1>
+        <div class="sub" id="greetSub">契約工項、交辦事項與缺失分析</div>
+      </div>
+      <div class="pill">
+        <span class="num" id="todayLabel"></span>
+        <span class="num" id="modeLabel"></span>
+      </div>
+    </div>
+    <main id="main"><div class="empty">載入中…</div></main>
+  </div>
+</div>
 
 <div class="backdrop" id="backdrop"></div>
 <div class="drawer" id="drawer">
@@ -255,9 +373,10 @@ function rocWeek(ymd){
   return (t.getFullYear()-1911) + '-W' + (wk<10?'0':'') + wk;
 }
 function progBar(planned, actual){
-  return '<div class="prog"><i style="width:'+Math.min(planned,100)+'%"></i>'+
-         '<b style="width:'+Math.min(actual,100)+'%"></b>'+
-         '<span>'+pct(actual)+'</span></div>';
+  return '<div style="min-width:110px;padding-top:2px">'+
+         '<div class="prog"><span>'+pct(actual)+'</span>'+
+         '<i style="width:'+Math.min(planned,100)+'%"></i>'+
+         '<b style="width:'+Math.min(actual,100)+'%"></b></div></div>';
 }
 
 /* ---------- 載入 ---------- */
@@ -297,7 +416,12 @@ function load(){
   rpc('getDashboard', {}, function(data){
     done = true; clearTimeout(timer);
     DB = data;
-    document.getElementById('todayLabel').textContent = '今日　' + roc(DB.today);
+    var h = new Date().getHours();
+    var hi = h<6 ? '夜深了' : h<11 ? '早安' : h<13 ? '午安' : h<18 ? '下午好' : '晚安';
+    document.getElementById('greet').textContent = hi + '，今天有 ' +
+      DB.projects.filter(function(p){return p.status==='履約中';}).length + ' 案在履約';
+    document.getElementById('greetSub').textContent = '契約工項、交辦事項與缺失分析';
+    document.getElementById('todayLabel').textContent = roc(DB.today);
     document.getElementById('modeLabel').textContent =
       inAppsScript() ? '內嵌模式' : '連線模式';
     if(!PROJ && DB.projects.length) PROJ = DB.projects[0].code;
@@ -348,8 +472,8 @@ function viewSummary(m){
       '<td>'+esc(p.name)+'<div class="muted">'+esc(p.client||'')+'</div></td>'+
       '<td class="num">'+roc(p.finish)+'</td>'+
       '<td class="num r">'+(p.remain===''?'—':p.remain)+'</td>'+
-      '<td>'+progBar(p.planned,p.actual)+'<div class="muted num">預計 '+pct(p.planned)+'</div></td>'+
-      '<td class="num r" style="color:'+(p.diff<0?'var(--red)':'var(--green)')+'">'+(p.diff>0?'+':'')+p.diff+'%</td>'+
+      '<td>'+progBar(p.planned,p.actual)+'<div class="muted" style="font-size:11px;margin-top:4px">預計 '+pct(p.planned)+'</div></td>'+
+      '<td class="num r" style="font-weight:700;color:'+(p.diff<0?'var(--red)':'var(--green)')+'">'+(p.diff>0?'+':'')+p.diff+'%</td>'+
       '<td class="num r">'+p.openOwner+'</td>'+
       '<td class="num r">'+(p.overdue?'<b style="color:var(--red)">'+p.overdue+'</b>':'0')+'</td>'+
       '<td class="num r">'+p.waiting+'</td>'+
@@ -363,13 +487,28 @@ function viewSummary(m){
   var avgActual = DB.projects.length ?
     Math.round(DB.projects.reduce(function(a,p){return a+p.actual;},0)/DB.projects.length*10)/10 : 0;
 
+  var avgPlanned = DB.projects.length ?
+    Math.round(DB.projects.reduce(function(a,p){return a+p.planned;},0)/DB.projects.length*10)/10 : 0;
+  var gap = Math.round((avgActual-avgPlanned)*10)/10;
+  var nearest = DB.projects.filter(function(p){return p.remain!=='' && p.remain>=0;})
+    .sort(function(a,b){return a.remain-b.remain;})[0];
+
   m.innerHTML =
-   '<div class="card"><div class="kpis">'+
-     kpi('在履約案件', active, '共 '+DB.projects.length+' 案') +
-     kpi('平均實際進度', avgActual+'%', '') +
-     kpi('未結案事項', totalOpen, '業主 '+DB.owner.filter(openTask).length+'　內部 '+DB.internal.filter(openTask).length) +
-     kpi('逾期事項', overdue, overdue? '需優先處理':'目前無逾期') +
-   '</div></div>'+
+   '<div class="hero">'+
+     '<div class="cap">全案加權實際進度</div>'+
+     '<div class="big">'+pct(avgActual)+'</div>'+
+     '<div class="meta">預計 '+pct(avgPlanned)+'　'+
+       (gap<0 ? '落後 '+Math.abs(gap)+' 個百分點' : '超前 '+gap+' 個百分點')+'</div>'+
+     '<div class="track"><i style="width:'+Math.min(avgActual,100)+'%"></i>'+
+       '<u style="left:'+Math.min(avgPlanned,100)+'%"></u></div>'+
+     (nearest ? '<div class="side"><b>'+nearest.remain+' 天</b><span>'+esc(nearest.code||nearest.name)+' 距契約完工</span></div>' : '')+
+   '</div>'+
+   '<div class="kpis">'+
+     kpi('在履約案件', active, '共 '+DB.projects.length+' 案', 'folder', 'lilac') +
+     kpi('未結案事項', totalOpen, '業主 '+DB.owner.filter(openTask).length+'　內部 '+DB.internal.filter(openTask).length, 'inbox', 'sky') +
+     kpi('逾期事項', overdue, overdue? '需優先處理':'目前無逾期', 'alert', overdue? 'rose':'mint') +
+     kpi('待業主回覆', DB.projects.reduce(function(a,p){return a+p.waiting;},0), '平均等待見統計頁', 'clock', 'peach') +
+   '</div>'+
    '<div class="card"><h2>專案總表</h2><div class="scroll"><table>'+
    '<thead><tr><th>代號</th><th>專案／業主</th><th>契約完工日</th><th class="r">剩餘天</th>'+
    '<th>進度（實際／預計）</th><th class="r">差異</th><th class="r">業主未結</th>'+
@@ -384,9 +523,21 @@ function viewSummary(m){
       render(); };
   });
 }
-function kpi(label,value,sub){
-  return '<div class="kpi"><div class="label">'+label+'</div><div class="value">'+value+
-         '</div><div class="sub">'+esc(sub)+'</div></div>';
+var ICON = {
+  folder:'<path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.5h9A1.5 1.5 0 0 1 21 10v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18z"/>',
+  trend:'<path d="m3 16 5.5-5.5 3.5 3.5L21 5"/><path d="M15 5h6v6"/>',
+  inbox:'<path d="M4 13h4l1.5 3h5L16 13h4"/><path d="M5.5 5h13l2.5 8v6H3v-6z"/>',
+  alert:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v4.5"/><circle cx="12" cy="16" r=".7" fill="currentColor"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3 1.8"/>',
+  check:'<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.4 2.4 4.6-4.8"/>',
+  swap:'<path d="M4 8h13"/><path d="m14 5 3 3-3 3"/><path d="M20 16H7"/><path d="m10 13-3 3 3 3"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>'
+};
+function kpi(label,value,sub,icon,tint){
+  return '<div class="kpi">'+
+    (icon ? '<div class="ktile t-'+(tint||'lilac')+'"><svg viewBox="0 0 24 24">'+ICON[icon]+'</svg></div>' : '')+
+    '<div class="kbody"><div class="label">'+label+'</div><div class="value">'+value+
+    '</div><div class="sub">'+esc(sub)+'</div></div></div>';
 }
 function openTask(t){ return ['已完成','已結案','已取消'].indexOf(t.status)<0; }
 
@@ -450,7 +601,7 @@ function viewGantt(m){
         inner += '<div class="bar-plan" style="left:'+x+'px;width:'+w+'px" title="預計 '+roc(i.start)+' – '+roc(i.end)+'"></div>';
         if(i.pct>0){
           var late = i.pct < i.plannedPct - 5;
-          inner += '<div class="bar-act'+(late?' late':'')+'" style="left:'+x+'px;width:'+Math.max(w*i.pct/100,2)+'px" title="實際 '+i.pct+'%（預計 '+i.plannedPct+'%）"></div>';
+          inner += '<div class="bar-act'+(late?' late':'')+'" style="left:'+x+'px;width:'+Math.max(w*i.pct/100,4)+'px" title="實際 '+i.pct+'%（預計 '+i.plannedPct+'%）"></div>';
         }
       }
     }
@@ -473,10 +624,10 @@ function viewGantt(m){
       '</div></div>'+
     '</div>'+
     '<div class="legend">'+
-      '<span><i style="background:var(--blue-pale);border:1px solid var(--blue)"></i>預計工期</span>'+
-      '<span><i style="background:var(--blue)"></i>實際完成</span>'+
+      '<span><i style="background:#D6CEFF"></i>預計工期</span>'+
+      '<span><i style="background:var(--accent)"></i>實際完成</span>'+
       '<span><i style="background:var(--red)"></i>落後預計 5% 以上</span>'+
-      '<span><i style="background:var(--amber);width:3px"></i>未結交辦事項到期日</span>'+
+      '<span><i style="background:var(--amber);width:3px;height:13px;border-radius:2px;margin-right:7px"></i>未結交辦事項到期日</span>'+
       '<span>◇ 里程碑　┊ 今日</span>'+
     '</div></div>'+
     workItemTable(items);
@@ -508,8 +659,8 @@ function workItemTable(items){
       '<td>'+esc(i.owner||'')+'</td>'+
       '<td class="num r">'+(i.parent?'—':i.plannedPct+'%')+'</td>'+
       '<td class="num r">'+(i.parent?'—':i.pct+'%')+'</td>'+
-      '<td class="num r" style="color:'+(lag<0?'var(--red)':'var(--green)')+'">'+(i.parent?'':(lag>0?'+':'')+lag+'%')+'</td>'+
-      '<td><span class="tag">'+esc(i.status||'')+'</span></td></tr>';
+      '<td class="num r" style="font-weight:600;color:'+(lag<0?'var(--red)':'var(--green)')+'">'+(i.parent?'':(lag>0?'+':'')+lag+'%')+'</td>'+
+      '<td>'+(i.status?'<span class="tag">'+esc(i.status)+'</span>':'<span class="muted">—</span>')+'</td></tr>';
   }).join('');
   return '<div class="card"><h2>契約工項</h2><div class="scroll"><table>'+
     '<thead><tr><th>工項</th><th>名稱</th><th class="r">工期</th><th>預計開始</th><th>預計完成</th>'+
@@ -657,12 +808,12 @@ function viewDefect(m){
               ['duty','責任歸屬'],['zone','樓層區域'],['stage','查驗階段']];
 
   m.innerHTML =
-   '<div class="card"><div class="kpis">'+
-     kpi('缺失總筆數', list.length, '未結案 '+open.length+' 筆') +
-     kpi('逾期未改善', overdue.length, overdue.length? '需優先催辦':'目前無逾期') +
-     kpi('複驗未通過率', failRate+'%', '已複驗 '+rechecked.length+' 筆') +
-     kpi('平均改善天數', avgFix, '重大以上 '+sev.length+' 筆') +
-   '</div></div>'+
+   '<div class="kpis">'+
+     kpi('缺失總筆數', list.length, '未結案 '+open.length+' 筆', 'layers', 'lilac') +
+     kpi('逾期未改善', overdue.length, overdue.length? '需優先催辦':'目前無逾期', 'alert', overdue.length? 'rose':'mint') +
+     kpi('複驗未通過率', failRate+'%', '已複驗 '+rechecked.length+' 筆', 'swap', 'peach') +
+     kpi('平均改善天數', avgFix, '重大以上 '+sev.length+' 筆', 'clock', 'sky') +
+   '</div>'+
 
    '<div class="card"><div class="body"><div class="toolbar">'+
      selFilter('dfProj','全部專案', uniq(all,'project'), DEF_FILTER.proj)+
@@ -726,7 +877,7 @@ function paretoTable(list, dim){
   var c=0, k=0;
   for(var i=0;i<data.length;i++){ c+=data[i].n; k++; if(c/total>=0.8) break; }
   return '<table class="pareto"><tbody>'+rows+'</tbody></table>'+
-    '<div class="legend"><span>紅色為累計 80% 以內的關鍵少數——'+
+    '<div class="legend"><span>深色為累計 80% 以內的關鍵少數——'+
     '前 '+k+' 類即佔全部缺失的 '+Math.round(c/total*1000)/10+'%，改善資源應集中於此。</span></div>';
 }
 
@@ -746,8 +897,10 @@ function crossTable(list){
     var sum = 0;
     var tds = trades.map(function(tr){
       var v = grid[mi+'|'+tr]||0; sum += v;
-      var a = v ? (0.12 + 0.68*v/maxv) : 0;
-      return '<td class="c" style="background:rgba(178,58,58,'+a.toFixed(2)+')">'+(v||'')+'</td>';
+      if(!v) return '<td class="c"></td>';
+      var a = 0.16 + 0.74*v/maxv;
+      return '<td class="c"><span class="hcell" style="background:rgba(91,61,245,'+a.toFixed(2)+');'+
+        (a>0.5?'color:#fff':'color:var(--accent)')+'">'+v+'</span></td>';
     }).join('');
     return '<tr><td>'+esc(mi)+'</td>'+tds+'<td class="c"><b>'+sum+'</b></td></tr>';
   }).join('');
@@ -963,18 +1116,19 @@ function viewStats(m){
   function barList(obj){
     var max = Math.max.apply(null, Object.keys(obj).map(function(k){return obj[k];}).concat([1]));
     return Object.keys(obj).map(function(k){
-      return '<tr><td>'+esc(k)+'</td><td style="width:60%"><div style="height:12px;background:var(--blue);width:'+
-        (obj[k]/max*100)+'%"></div></td><td class="num r">'+obj[k]+'</td></tr>';
+      return '<tr><td>'+esc(k)+'</td><td style="width:60%"><div style="height:9px;border-radius:99px;'+
+        'background:var(--accent);width:'+(obj[k]/max*100)+'%"></div></td>'+
+        '<td class="num r">'+obj[k]+'</td></tr>';
     }).join('') || '<tr><td colspan="3" class="muted">無資料</td></tr>';
   }
 
   m.innerHTML =
-    '<div class="card"><div class="kpis">'+
-      kpi('未結事項', open.length, '近 30 日新增 '+added+'、結案 '+closed) +
-      kpi('待業主回覆', DB.owner.filter(function(t){return t.status==='待業主回覆';}).length, '平均已等 '+avgWait+' 日') +
-      kpi('涉及契約變更', change.length, '需併入變更程序') +
-      kpi('可能影響工期', affect.length, '展延主張之依據') +
-    '</div></div>'+
+    '<div class="kpis">'+
+      kpi('未結事項', open.length, '近 30 日新增 '+added+'、結案 '+closed, 'inbox', 'lilac') +
+      kpi('待業主回覆', DB.owner.filter(function(t){return t.status==='待業主回覆';}).length, '平均已等 '+avgWait+' 日', 'clock', 'sky') +
+      kpi('涉及契約變更', change.length, '需併入變更程序', 'swap', 'peach') +
+      kpi('可能影響工期', affect.length, '展延主張之依據', 'alert', affect.length? 'rose':'mint') +
+    '</div>'+
     '<div class="card"><h2>業主交辦來源分布</h2><div class="body"><table>'+barList(bySource)+'</table></div></div>'+
     '<div class="card"><h2>內部交辦類別分布</h2><div class="body"><table>'+barList(byType)+'</table></div></div>'+
     '<div class="card"><h2>各案進度差異</h2><div class="scroll"><table>'+
