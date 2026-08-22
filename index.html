@@ -55,6 +55,11 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:
 .pill{margin-left:auto;display:flex;gap:8px;align-items:center}
 .pill span{background:var(--surface);border-radius:999px;padding:7px 14px;font-size:12px;
   color:var(--ink-2);box-shadow:var(--shadow);white-space:nowrap}
+.pill span.cfgbtn{cursor:pointer;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.pill span.cfgbtn:hover{background:var(--accent);color:#fff}
+.cfgnote{background:var(--surface-2);border-radius:var(--r-md);padding:12px 14px;
+  font-size:12px;color:var(--ink-2);margin-bottom:16px;line-height:1.6}
+.cfgstat{margin-top:10px;font-size:12.5px}
 main{padding:0 0 24px}
 
 /* ---------- 卡片 ---------- */
@@ -86,7 +91,7 @@ tbody tr{border-top:1px solid var(--line-2)}
 tbody tr:hover{background:var(--surface-2);cursor:pointer}
 td.r,th.r{text-align:right}
 .scroll{overflow-x:auto;padding:0 20px 8px}
-.scroll table{min-width:1080px}
+.scroll table{min-width:1240px}
 td.num{white-space:nowrap}
 td .tag{white-space:nowrap}
 
@@ -163,6 +168,10 @@ td .tag{white-space:nowrap}
 .ms.filled{background:var(--accent)}
 .pin{position:absolute;top:4px;width:2px;height:26px;border-radius:2px;background:var(--amber)}
 .pin.red{background:var(--red)}
+.ckmark{position:absolute;bottom:4px;width:8px;height:8px;border-radius:2px;
+  background:var(--ink-3);transform:rotate(45deg)}
+.ckmark.ok{background:var(--green)}
+.ckmark.bad{background:var(--red)}
 .today-line{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--red);z-index:5}
 .axis{height:36px;position:relative;border-bottom:1px solid var(--line-2)}
 .axis .m{position:absolute;top:0;height:36px;border-left:1px solid var(--line);padding:9px 7px;
@@ -208,6 +217,46 @@ td .tag{white-space:nowrap}
 .backdrop.open{display:block}
 .readonly{background:var(--surface-2);padding:14px;border-radius:var(--r-md);margin-bottom:18px;font-size:12.5px}
 
+table.checks tbody tr td,table.checks tr td{border-top:1px solid var(--line-2)}
+table.checks tr:first-child td{border-top:none}
+table.checks{min-width:900px}
+.box{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;
+  border:1.8px solid var(--rule,#D3D8E3);background:var(--surface);cursor:pointer;
+  font-size:12px;font-weight:700;color:#fff;transition:all .15s}
+.box:hover{border-color:var(--accent)}
+.box.on{background:var(--green);border-color:var(--green)}
+.box.off{background:var(--grey);border-color:var(--grey)}
+.box.busy{opacity:.4;pointer-events:none}
+tr.ck.bad td{background:rgba(240,68,56,.05)}
+tr.ck.warn td{background:rgba(247,144,9,.05)}
+tr.ck.na td{opacity:.5}
+.link{color:var(--accent);cursor:pointer;font-weight:600;font-size:12px}
+.link:hover{text-decoration:underline}
+/* 分派看板 */
+.board{display:flex;gap:12px;overflow-x:auto;padding:2px 2px 14px;margin-bottom:14px;align-items:flex-start}
+.bcol{flex:0 0 262px;background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);
+  display:flex;flex-direction:column;max-height:640px;transition:box-shadow .15s,transform .15s}
+.bcol.over{box-shadow:0 0 0 2px var(--accent), var(--shadow-lift);transform:translateY(-2px)}
+.bcol[data-owner=""]{background:linear-gradient(var(--surface-2),var(--surface))}
+.bhead{padding:14px 16px 10px;border-bottom:1px solid var(--line-2);display:flex;
+  align-items:center;gap:8px;flex-wrap:wrap}
+.bhead b{font-size:14px}
+.bcount{background:var(--accent-soft);color:var(--accent);border-radius:999px;
+  padding:1px 9px;font-size:11.5px;font-weight:700}
+.bload{width:100%;font-size:11.5px;color:var(--ink-3);font-family:var(--mono)}
+.bload.over{color:var(--red);font-weight:700}
+.bbody{padding:10px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:8px}
+.bempty{padding:24px 8px;text-align:center;color:var(--ink-3);font-size:12px}
+.bcard{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-md);
+  padding:11px 12px;cursor:grab;transition:all .14s}
+.bcard:hover{border-color:var(--accent);background:var(--surface);
+  box-shadow:0 4px 14px rgba(91,61,245,.10);transform:translateY(-1px)}
+.bcard.dragging{opacity:.4;cursor:grabbing}
+.btop{display:flex;align-items:center;gap:2px;font-size:11.5px;margin-bottom:5px}
+.btitle{font-size:12.5px;font-weight:600;line-height:1.45;margin-bottom:6px}
+.bmeta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;color:var(--ink-3)}
+.bblock{margin-top:7px;padding-top:7px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--red)}
 .muted{color:var(--ink-3)}
 .empty{padding:44px 20px;text-align:center;color:var(--ink-3)}
 .hide{display:none}
@@ -225,8 +274,7 @@ td .tag{white-space:nowrap}
 @media(prefers-reduced-motion:reduce){
   *{transition:none !important;animation:none !important}
 }
-</style>
-</head>
+</style></head>
 <body>
 
 <div class="shell">
@@ -234,26 +282,27 @@ td .tag{white-space:nowrap}
     <div class="brand">履</div>
     <button data-v="summary" title="總表" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg><span>總表</span></button>
     <button data-v="gantt" title="甘特圖"><svg viewBox="0 0 24 24"><path d="M4 6h9"/><path d="M7 12h11"/><path d="M4 18h7"/><circle cx="16" cy="6" r="1.6"/><circle cx="20" cy="12" r="1.6"/><circle cx="13" cy="18" r="1.6"/></svg><span>甘特圖</span></button>
-    <button data-v="owner" title="業主交辦"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 10h16"/><path d="M9 14h6"/></svg><span>業主交辦</span></button>
-    <button data-v="internal" title="內部交辦"><svg viewBox="0 0 24 24"><path d="M8 4h8v3H8z"/><path d="M6 5.5H5v15h14v-15h-1"/><path d="M9 12h6"/><path d="M9 16h4"/></svg><span>內部交辦</span></button>
-    <button data-v="defect" title="缺失分析"><svg viewBox="0 0 24 24"><path d="M12 3.5 21 20H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg><span>缺失分析</span></button>
-    <button data-v="load" title="人員負荷"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M17 11.5a3 3 0 1 0-1.5-5.6"/><path d="M18 20c0-2.4-.9-4.2-2.4-5.3"/></svg><span>人員負荷</span></button>
-    <button data-v="stats" title="統計"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M21 20H3"/></svg><span>統計</span></button>
-    <button data-v="import" title="匯入"><svg viewBox="0 0 24 24"><path d="M12 15V4"/><path d="m8 8 4-4 4 4"/><path d="M4 15v4h16v-4"/></svg><span>匯入</span></button>
+    <button data-v="checks" title="專案檢核"><svg viewBox="0 0 24 24"><path d="M9 4h6v2.5H9z"/><path d="M6.5 5.2H5v15.3h14V5.2h-1.5"/><path d="m8.6 11.8 1.9 1.9 4-4.2"/><path d="m8.6 16.6 1.9 1.9 4-4.2"/></svg><span>專案檢核</span></button>
+    <button data-v="issues" title="議題追蹤"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 10h16"/><path d="M9 14h6"/></svg><span>議題追蹤</span></button>
+    <button data-v="category" title="分類統計"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M21 20H3"/></svg><span>分類統計</span></button>
+    <button data-v="assign" title="工作分派"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M17 11.5a3 3 0 1 0-1.5-5.6"/><path d="M18 20c0-2.4-.9-4.2-2.4-5.3"/></svg><span>工作分派</span></button>
+    <button data-v="import" title="匯入匯出"><svg viewBox="0 0 24 24"><path d="M12 15V4"/><path d="m8 8 4-4 4 4"/><path d="M4 15v4h16v-4"/></svg><span>匯入匯出</span></button>
   </aside>
 
   <div class="stage">
     <div class="topbar">
       <div>
         <h1 id="greet">專案履約管理</h1>
-        <div class="sub" id="greetSub">契約工項、交辦事項與缺失分析</div>
+        <div class="sub" id="greetSub">契約工項與議題追蹤</div>
       </div>
       <div class="pill">
+        <span class="num" id="buildLabel"></span>
         <span class="num" id="todayLabel"></span>
         <span class="num" id="modeLabel"></span>
+        <span class="num cfgbtn" id="cfgBtn" title="設定連線網址與權杖">連線設定</span>
       </div>
     </div>
-    <main id="main"><div class="empty">載入中…</div></main>
+    <main id="main"><div class="empty">連線中…</div></main>
   </div>
 </div>
 
@@ -266,35 +315,36 @@ td .tag{white-space:nowrap}
     <button class="act ghost" id="drawerCancel">取消</button>
   </div>
 </div>
-
 <script>
 /* ============================================================
    連線設定
-   ------------------------------------------------------------
-   這份檔案可以在兩種地方執行，程式會自動判斷：
-
-   A) 放在 Apps Script 專案裡當 Index.html
-      → 直接用 google.script.run，不需要下面的網址。
-
-   B) 放在任何靜態主機（GitHub Pages、公司網站、本機開檔）
-      → 用下面的 API_URL 連回 Apps Script 讀寫試算表。
-         此時 Apps Script 的部署「存取權」必須設為「任何人」。
+   A) 放在 Apps Script 專案裡當 Index.html → 自動用 google.script.run
+   B) 放在 GitHub Pages 等靜態主機 → 用下面的 API_URL 連回 Apps Script
+      此時 Apps Script 部署的「存取權」必須設為「任何人」
    ============================================================ */
-var API_URL   = 'https://script.google.com/macros/s/AKfycby2cDiVqYnY5Suqv7IHsuSIiEEhk588AKTnBWh3pXPVrHhgiATp2eVCRJi1uoD3SrEe/exec';
-var API_TOKEN = 'tcri-pm-2026';   // 必須與 Code.gs 的 API_TOKEN 相同
+var BUILD = 'v2026.08.17-a';
+
+/* 預設連線設定。也可以不改這裡，改用畫面右上角的「連線設定」直接填，
+   填過的值會存在這台電腦的瀏覽器裡，換電腦要再填一次。 */
+var DEFAULT_API_URL   = 'https://script.google.com/macros/s/AKfycbwk0TfBQJivKNCgkBcjnZBte8rkin97mZNxlgBdJSkzUc5G02lwqqHdXtrb1c4fuwP9/exec';
+var DEFAULT_API_TOKEN = 'tcri-pm-2026';
+
+function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+function lsDel(k){ try{ window.localStorage.removeItem(k); }catch(e){} }
+
+function apiUrl(){ return (lsGet('pm.apiUrl') || DEFAULT_API_URL || '').trim(); }
+function apiToken(){ var v = lsGet('pm.apiToken'); return (v===null ? DEFAULT_API_TOKEN : v).trim(); }
 
 var DB = null, VIEW = 'summary', PROJ = '', EDIT = null;
 
-/* ---------- 呼叫後端：自動選用 google.script.run 或 fetch ---------- */
+/* ---------- 呼叫後端 ---------- */
 var RPC_ARGS = {
-  getDashboard: [],
-  getTemplateHeaders: ['table'],
-  updateRecord: ['table', 'row', 'patch'],
-  addRecord: ['table', 'data'],
-  importRows: ['table', 'rows']
+  getDashboard: [], getTemplateHeaders: ['table'],
+  updateRecord: ['table','row','patch'], addRecord: ['table','data'], importRows: ['table','rows']
 };
-var RPC_JSON = ['getDashboard', 'getTemplateHeaders'];   // 回傳字串，需再解析
-var RPC_WRITE = ['updateRecord', 'addRecord', 'importRows'];
+var RPC_JSON  = ['getDashboard','getTemplateHeaders'];
+var RPC_WRITE = ['updateRecord','addRecord','importRows'];
 
 function inAppsScript(){
   return typeof google !== 'undefined' && google.script && google.script.run;
@@ -306,45 +356,33 @@ function rpc(name, params, ok, fail){
 
   if(inAppsScript()){
     var runner = google.script.run
-      .withSuccessHandler(function(res){
-        ok(RPC_JSON.indexOf(name) >= 0 ? JSON.parse(res) : res);
-      })
+      .withSuccessHandler(function(res){ ok(RPC_JSON.indexOf(name)>=0 ? JSON.parse(res) : res); })
       .withFailureHandler(fail);
-    var args = (RPC_ARGS[name] || []).map(function(k){ return params[k]; });
-    runner[name].apply(runner, args);
+    runner[name].apply(runner, (RPC_ARGS[name]||[]).map(function(k){ return params[k]; }));
+    return;
+  }
+  var url = apiUrl();
+  if(!url || url.indexOf('script.google.com') < 0){
+    fail(new Error('尚未設定連線網址。請按右上角的「連線設定」填入 Apps Script 的 /exec 網址。'));
     return;
   }
 
-  if(!API_URL || API_URL.indexOf('script.google.com') < 0){
-    fail(new Error('尚未設定 API_URL。請把 Apps Script 的 /exec 網址填進檔案開頭的 API_URL。'));
-    return;
-  }
-
-  var body = Object.assign({ api: name, token: API_TOKEN }, params);
-  var req;
+  var body = Object.assign({ api:name, token:apiToken() }, params), req;
   if(RPC_WRITE.indexOf(name) >= 0){
-    // 寫入用 POST；text/plain 可避開預檢請求（Apps Script 不處理 OPTIONS）
-    req = fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(body),
-      redirect: 'follow'
-    });
+    req = fetch(url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(body), redirect:'follow' });
   } else {
     var qs = Object.keys(body).map(function(k){
-      return encodeURIComponent(k) + '=' + encodeURIComponent(body[k]);
-    }).join('&');
-    req = fetch(API_URL + '?' + qs, { method: 'GET', redirect: 'follow' });
+      return encodeURIComponent(k)+'='+encodeURIComponent(body[k]); }).join('&');
+    req = fetch(url+'?'+qs, { method:'GET', redirect:'follow' });
   }
 
   req.then(function(r){ return r.text(); })
      .then(function(txt){
        var res;
        try { res = JSON.parse(txt); }
-       catch(e){
-         throw new Error('後端回傳的不是 JSON。多半是部署存取權沒設成「任何人」，'
-           + '導致收到 Google 登入頁。開頭內容：' + txt.slice(0, 120));
-       }
+       catch(e){ throw new Error('後端回傳的不是 JSON。多半是部署存取權沒設成「任何人」，'
+         + '導致收到 Google 登入頁。開頭內容：'+txt.slice(0,120)); }
        if(!res.ok) throw new Error(res.error || '後端回報失敗');
        ok(res.data);
      })
@@ -357,26 +395,115 @@ function rpc(name, params, ok, fail){
 }
 
 /* ---------- 工具 ---------- */
-function roc(ymd){ if(!ymd) return '—';
-  var p = ymd.split('-'); return (Number(p[0])-1911) + '.' + p[1] + '.' + p[2]; }
-function d(ymd){ if(!ymd) return null; var p = ymd.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
+function roc(ymd){ if(!ymd) return '—'; var p=ymd.split('-'); return (Number(p[0])-1911)+'.'+p[1]+'.'+p[2]; }
+function d(ymd){ if(!ymd) return null; var p=ymd.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
 function days(a,b){ return Math.round((b-a)/86400000); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function lightDot(l){ return '<span class="dot '+l+'"></span>'; }
-function pct(n){ return (Math.round(n*10)/10) + '%'; }
+function pct(n){ return (Math.round(n*10)/10)+'%'; }
 function rocWeek(ymd){
-  var dt = d(ymd); if(!dt) return '';
-  var t = new Date(dt.getTime()); t.setDate(t.getDate() + 4 - (t.getDay()||7));
-  var y0 = new Date(t.getFullYear(),0,1);
-  var wk = Math.ceil((((t-y0)/86400000)+1)/7);
-  return (t.getFullYear()-1911) + '-W' + (wk<10?'0':'') + wk;
+  var dt=d(ymd); if(!dt) return '';
+  var t=new Date(dt.getTime()); t.setDate(t.getDate()+4-(t.getDay()||7));
+  var y0=new Date(t.getFullYear(),0,1);
+  var wk=Math.ceil((((t-y0)/86400000)+1)/7);
+  return (t.getFullYear()-1911)+'-W'+(wk<10?'0':'')+wk;
 }
 function progBar(planned, actual){
-  return '<div style="min-width:110px;padding-top:2px">'+
-         '<div class="prog"><span>'+pct(actual)+'</span>'+
-         '<i style="width:'+Math.min(planned,100)+'%"></i>'+
-         '<b style="width:'+Math.min(actual,100)+'%"></b></div></div>';
+  return '<div style="min-width:112px;padding-top:2px"><div class="prog"><span>'+pct(actual)+'</span>'+
+    '<i style="width:'+Math.min(planned,100)+'%"></i><b style="width:'+Math.min(actual,100)+'%"></b></div></div>';
+}
+function uniq(list,key){ var seen={},out=[];
+  list.forEach(function(x){ var v=x[key]; if(v&&!seen[v]){seen[v]=1;out.push(v);} });
+  return out.sort(); }
+function tally(list,key){ var m={};
+  list.forEach(function(x){ var v=x[key]||'（未填）'; m[v]=(m[v]||0)+1; });
+  return Object.keys(m).map(function(k){return {k:k,n:m[k]};}).sort(function(a,b){return b.n-a.n;}); }
+function openIssue(t){ return t.open; }
+
+var ICON = {
+  folder:'<path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.5h9A1.5 1.5 0 0 1 21 10v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18z"/>',
+  inbox:'<path d="M4 13h4l1.5 3h5L16 13h4"/><path d="M5.5 5h13l2.5 8v6H3v-6z"/>',
+  alert:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v4.5"/><circle cx="12" cy="16" r=".7" fill="currentColor"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3 1.8"/>',
+  swap:'<path d="M4 8h13"/><path d="m14 5 3 3-3 3"/><path d="M20 16H7"/><path d="m10 13-3 3 3 3"/>',
+  layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  check:'<path d="M9 4h6v2.5H9z"/><path d="M6.5 5.2H5v15.3h14V5.2h-1.5"/><path d="m8.6 12 1.9 1.9 4-4.2"/>'
+};
+function kpi(label,value,sub,icon,tint){
+  return '<div class="kpi">'+
+    (icon?'<div class="ktile t-'+(tint||'lilac')+'"><svg viewBox="0 0 24 24">'+ICON[icon]+'</svg></div>':'')+
+    '<div class="kbody"><div class="label">'+label+'</div><div class="value">'+value+
+    '</div><div class="sub">'+esc(sub)+'</div></div></div>';
+}
+
+/* ---------- 連線設定 ---------- */
+function openConfig(){
+  var embedded = inAppsScript();
+  var html =
+    '<div class="cfgnote">'+
+      (embedded
+        ? '目前是<b>內嵌模式</b>——這個頁面由 Apps Script 直接輸出，資料走內部通道，'+
+          '<b>不需要填任何網址</b>。下面的設定只有在把 index.html 放到 GitHub Pages 或本機開啟時才會用到。'
+        : '目前是<b>連線模式</b>——這個頁面靠下面的網址連回 Apps Script。'+
+          '填好按儲存即可，設定存在這台電腦的瀏覽器，換電腦要再填一次。')+
+    '</div>'+
+    field('Apps Script 網址（/exec 結尾）','apiUrl', lsGet('pm.apiUrl')||'')+
+    field('存取權杖（須與 Code.gs 的 API_TOKEN 相同）','apiToken', lsGet('pm.apiToken')||'')+
+    '<div class="cfgnote" style="margin-top:4px">'+
+      '目前實際使用中：<br><code style="word-break:break-all">'+esc(apiUrl()||'（未設定）')+'</code><br>'+
+      '權杖 <code>'+esc(apiToken()||'（空白）')+'</code>'+
+      (lsGet('pm.apiUrl')?'<br><br>（來自本機設定，優先於檔案內的預設值）':'<br><br>（來自檔案內的預設值）')+
+    '</div>'+
+    '<div class="toolbar" style="margin:0">'+
+      '<button class="act ghost" id="cfgTest">測試連線</button>'+
+      '<button class="act ghost" id="cfgClear">清除本機設定</button>'+
+    '</div>'+
+    '<div class="cfgstat" id="cfgStat"></div>';
+
+  openDrawer('連線設定', html, function(data, ok, fail){
+    var u = String(data.apiUrl||'').trim(), t = String(data.apiToken||'').trim();
+    if(u) lsSet('pm.apiUrl', u); else lsDel('pm.apiUrl');
+    if(t) lsSet('pm.apiToken', t); else lsDel('pm.apiToken');
+    ok();
+  });
+
+  document.getElementById('cfgTest').onclick = function(){
+    var st = document.getElementById('cfgStat');
+    var u = document.querySelector('[name=apiUrl]').value.trim() || apiUrl();
+    var t = document.querySelector('[name=apiToken]').value.trim() || apiToken();
+    if(!u || u.indexOf('script.google.com')<0){
+      st.innerHTML = '<span style="color:var(--red)">網址格式不對，應以 script.google.com 開頭、/exec 結尾。</span>';
+      return;
+    }
+    st.textContent = '測試中…';
+    fetch(u+'?api=ping&token='+encodeURIComponent(t), {redirect:'follow'})
+      .then(function(r){ return r.text(); })
+      .then(function(txt){
+        var res;
+        try { res = JSON.parse(txt); }
+        catch(e){
+          st.innerHTML = '<span style="color:var(--red)">回傳的不是 JSON，多半是部署存取權沒設成「任何人」，'+
+            '收到的是 Google 登入頁。</span>';
+          return;
+        }
+        st.innerHTML = res.ok
+          ? '<span style="color:var(--green)">連線正常，可以按儲存。</span>'
+          : '<span style="color:var(--red)">'+esc(res.error||'後端回報失敗')+'</span>';
+      })
+      .catch(function(e){
+        st.innerHTML = '<span style="color:var(--red)">連不上：'+esc(e.message)+
+          '　（檢查網址是否正確、部署存取權是否為「任何人」、是否已用新版本重新部署）</span>';
+      });
+  };
+
+  document.getElementById('cfgClear').onclick = function(){
+    lsDel('pm.apiUrl'); lsDel('pm.apiToken');
+    document.querySelector('[name=apiUrl]').value = '';
+    document.querySelector('[name=apiToken]').value = '';
+    document.getElementById('cfgStat').innerHTML =
+      '<span style="color:var(--green)">已清除，將改用檔案內的預設值。關閉後重新整理生效。</span>';
+  };
 }
 
 /* ---------- 載入 ---------- */
@@ -387,159 +514,129 @@ function fatal(title, lines){
 }
 
 function load(){
-  // 靜態主機模式下，API_URL 沒設好就先講清楚
-  if(!inAppsScript() && (!API_URL || API_URL.indexOf('script.google.com') < 0)){
+  document.getElementById('buildLabel').textContent = BUILD;
+  document.getElementById('modeLabel').textContent = inAppsScript() ? '內嵌模式' : '連線模式';
+  document.getElementById('cfgBtn').style.display = inAppsScript() ? 'none' : '';
+  document.getElementById('main').innerHTML = '<div class="empty">連線中…（'+BUILD+'）</div>';
+
+  if(!inAppsScript() && (!apiUrl() || apiUrl().indexOf('script.google.com')<0)){
     fatal('尚未設定連線網址', [
+      '這個頁面不是由 Apps Script 輸出的，需要填入 Apps Script 的部署網址才能讀取資料。',
       '目前網址：<code>'+esc(location.href)+'</code>',
-      '這份檔案不是在 Apps Script 裡執行，需要靠檔案開頭的 <code>API_URL</code> 連回試算表。',
-      '請把 Apps Script 的部署網址（<code>https://script.google.com/macros/s/.../exec</code>）'+
-      '填進檔案開頭的 API_URL，並確認 API_TOKEN 與 Code.gs 一致。'
+      '<button class="act" onclick="openConfig()">開啟連線設定</button>'
     ]);
     return;
   }
 
-  var done = false;
-  var timer = setTimeout(function(){
+  var done=false;
+  var timer=setTimeout(function(){
     if(done) return;
-    fatal('伺服器沒有回應（已等待 25 秒）', [
-      '常見原因：',
-      '1. 試算表分頁還沒建立 —— 回到試算表，選單「專案履約管理 → 初始化分頁」執行一次。'+
-      '若選單沒出現，把試算表關掉重開。',
-      '2. 授權尚未完成 —— 在 Apps Script 編輯器手動執行一次 <code>setupAllSheets</code>，完成授權流程後再回來。',
-      '3. 資料量過大或分頁被改名 —— 分頁名稱必須與程式一致（01_專案主檔、02_契約工項…）。',
-      '4. 若這頁是放在 GitHub Pages 或公司網站，請確認 Apps Script 部署的「存取權」設為「任何人」，'+
-      '且改完程式後有用「新版本」重新部署。',
+    fatal('伺服器沒有回應（已等待 15 秒）', [
+      '1. 分頁還沒建立 —— 回試算表執行選單「專案履約管理 → 初始化分頁」。',
+      '2. 授權未完成 —— 在 Apps Script 手動執行一次 <code>setupAllSheets</code>。',
+      '3. 分頁被改名 —— 名稱必須是「契約履約」與「議題追蹤」。',
+      '4. 放在靜態主機時，Apps Script 部署存取權須為「任何人」，且已用新版本重新部署。',
       '<button class="act" onclick="load()">重新載入</button>'
     ]);
-  }, 25000);
+  }, 15000);
 
   rpc('getDashboard', {}, function(data){
-    done = true; clearTimeout(timer);
+    done=true; clearTimeout(timer);
     DB = data;
-    var h = new Date().getHours();
-    var hi = h<6 ? '夜深了' : h<11 ? '早安' : h<13 ? '午安' : h<18 ? '下午好' : '晚安';
-    document.getElementById('greet').textContent = hi + '，今天有 ' +
-      DB.projects.filter(function(p){return p.status==='履約中';}).length + ' 案在履約';
-    document.getElementById('greetSub').textContent = '契約工項、交辦事項與缺失分析';
+    var h=new Date().getHours();
+    var hi = h<6?'夜深了':h<11?'早安':h<13?'午安':h<18?'下午好':'晚安';
+    document.getElementById('greet').textContent = hi+'，今天有 '+
+      DB.projects.filter(function(p){return p.status==='履約中';}).length+' 案在履約';
     document.getElementById('todayLabel').textContent = roc(DB.today);
-    document.getElementById('modeLabel').textContent =
-      inAppsScript() ? '內嵌模式' : '連線模式';
     if(!PROJ && DB.projects.length) PROJ = DB.projects[0].code;
     render();
   }, function(e){
-    done = true; clearTimeout(timer);
-    var msg = (e && e.message) ? e.message : String(e);
-    var hint = '';
-    if(msg.indexOf('getSheetByName') >= 0 || msg.indexOf('null') >= 0){
-      hint = '看起來是分頁不存在。請在試算表執行選單「專案履約管理 → 初始化分頁」。';
-    } else if(msg.indexOf('HEADERS') >= 0 || msg.indexOf('SHEETS') >= 0){
-      hint = '看起來是 Setup.gs 的內容沒有貼進專案。請確認左側有 Setup.gs 且內容完整。';
-    } else if(msg.indexOf('permission') >= 0 || msg.indexOf('授權') >= 0){
-      hint = '權限不足。請在 Apps Script 手動執行一次 setupAllSheets 完成授權。';
-    }
-    fatal('讀取資料失敗', [
-      '<code>'+esc(msg)+'</code>',
-      hint || '請確認試算表分頁已建立，且 Setup.gs 與 Code.gs 內容都已貼入專案。',
-      '<button class="act" onclick="load()">重新載入</button>'
-    ]);
+    done=true; clearTimeout(timer);
+    var msg=(e&&e.message)?e.message:String(e);
+    fatal('讀取資料失敗', ['<code>'+esc(msg)+'</code>',
+      '請確認兩張分頁已建立，且 Setup.gs 與 Code.gs 內容都已貼入專案。',
+      '<button class="act" onclick="load()">重新載入</button>'+
+      (inAppsScript()?'':' <button class="act ghost" onclick="openConfig()">連線設定</button>')]);
   });
 }
 
 document.getElementById('nav').addEventListener('click', function(e){
   var b = e.target.closest('button[data-v]'); if(!b) return;
   VIEW = b.dataset.v;
-  [].forEach.call(this.querySelectorAll('button'), function(x){
-    x.setAttribute('aria-selected', x===b ? 'true':'false'); });
+  [].forEach.call(this.querySelectorAll('button[data-v]'), function(x){
+    x.setAttribute('aria-selected', x===b?'true':'false'); });
   render();
 });
 
 function render(){
-  var m = document.getElementById('main');
-  if(!DB){ m.innerHTML = '<div class="empty">載入中…</div>'; return; }
-  if(!DB.projects.length && VIEW!=='import' && VIEW!=='defect'){
-    m.innerHTML='<div class="card"><div class="body">尚未建立任何專案。請在試算表的「01_專案主檔」新增一列，或到「匯入」頁貼上資料。</div></div>';
+  var m=document.getElementById('main');
+  if(!DB){ m.innerHTML='<div class="empty">連線中…</div>'; return; }
+  if(!DB.projects.length && VIEW!=='import'){
+    m.innerHTML='<div class="card"><div class="body">尚未建立任何專案。請在「契約履約」分頁新增一列（記錄類型＝專案），或到「匯入匯出」頁貼上資料。</div></div>';
     return;
   }
-  ({summary:viewSummary, gantt:viewGantt, owner:viewOwner, internal:viewInternal,
-    defect:viewDefect, load:viewLoad, stats:viewStats, import:viewImport})[VIEW](m);
+  ({summary:viewSummary, gantt:viewGantt, checks:viewChecks, issues:viewIssues,
+    category:viewCategory, assign:viewAssign, import:viewImport})[VIEW](m);
 }
 
 /* ---------- 總表 ---------- */
 function viewSummary(m){
+  var issues = DB.issues, openAll = issues.filter(openIssue);
+  var active = DB.projects.filter(function(p){return p.status==='履約中';}).length;
+  var avgA = DB.projects.length ? Math.round(DB.projects.reduce(function(a,p){return a+p.actual;},0)/DB.projects.length*10)/10 : 0;
+  var avgP = DB.projects.length ? Math.round(DB.projects.reduce(function(a,p){return a+p.planned;},0)/DB.projects.length*10)/10 : 0;
+  var gap = Math.round((avgA-avgP)*10)/10;
+  var overdue = DB.projects.reduce(function(a,p){return a+p.overdue;},0);
+  var waiting = DB.projects.reduce(function(a,p){return a+p.waiting;},0);
+  var nearest = DB.projects.filter(function(p){return p.remain!=='' && p.remain>=0;})
+    .sort(function(a,b){return a.remain-b.remain;})[0];
+
   var rows = DB.projects.map(function(p){
     return '<tr data-proj="'+esc(p.code)+'">'+
-      '<td>'+lightDot(p.light)+'<b>'+esc(p.code||'—')+'</b></td>'+
+      '<td class="num">'+lightDot(p.light)+'<b>'+esc(p.code)+'</b></td>'+
       '<td>'+esc(p.name)+'<div class="muted">'+esc(p.client||'')+'</div></td>'+
       '<td class="num">'+roc(p.finish)+'</td>'+
       '<td class="num r">'+(p.remain===''?'—':p.remain)+'</td>'+
       '<td>'+progBar(p.planned,p.actual)+'<div class="muted" style="font-size:11px;margin-top:4px">預計 '+pct(p.planned)+'</div></td>'+
       '<td class="num r" style="font-weight:700;color:'+(p.diff<0?'var(--red)':'var(--green)')+'">'+(p.diff>0?'+':'')+p.diff+'%</td>'+
-      '<td class="num r">'+p.openOwner+'</td>'+
+      '<td class="num r">'+p.openIssues+'</td>'+
       '<td class="num r">'+(p.overdue?'<b style="color:var(--red)">'+p.overdue+'</b>':'0')+'</td>'+
+      '<td class="num r">'+p.problems+'</td>'+
       '<td class="num r">'+p.waiting+'</td>'+
-      '<td class="num r">'+p.openInternal+'</td>'+
+      '<td class="num r">'+checkChip(p)+'</td>'+
       '<td><span class="tag">'+esc(p.status||'')+'</span></td></tr>';
   }).join('');
 
-  var totalOpen = DB.owner.concat(DB.internal).filter(openTask).length;
-  var overdue = DB.projects.reduce(function(a,p){return a+p.overdue;},0);
-  var active = DB.projects.filter(function(p){return p.status==='履約中';}).length;
-  var avgActual = DB.projects.length ?
-    Math.round(DB.projects.reduce(function(a,p){return a+p.actual;},0)/DB.projects.length*10)/10 : 0;
-
-  var avgPlanned = DB.projects.length ?
-    Math.round(DB.projects.reduce(function(a,p){return a+p.planned;},0)/DB.projects.length*10)/10 : 0;
-  var gap = Math.round((avgActual-avgPlanned)*10)/10;
-  var nearest = DB.projects.filter(function(p){return p.remain!=='' && p.remain>=0;})
-    .sort(function(a,b){return a.remain-b.remain;})[0];
-
   m.innerHTML =
    '<div class="hero">'+
-     '<div class="cap">全案加權實際進度</div>'+
-     '<div class="big">'+pct(avgActual)+'</div>'+
-     '<div class="meta">預計 '+pct(avgPlanned)+'　'+
-       (gap<0 ? '落後 '+Math.abs(gap)+' 個百分點' : '超前 '+gap+' 個百分點')+'</div>'+
-     '<div class="track"><i style="width:'+Math.min(avgActual,100)+'%"></i>'+
-       '<u style="left:'+Math.min(avgPlanned,100)+'%"></u></div>'+
-     (nearest ? '<div class="side"><b>'+nearest.remain+' 天</b><span>'+esc(nearest.code||nearest.name)+' 距契約完工</span></div>' : '')+
+     '<div class="cap">全案加權實際進度</div><div class="big">'+pct(avgA)+'</div>'+
+     '<div class="meta">預計 '+pct(avgP)+'　'+(gap<0?'落後 '+Math.abs(gap)+' 個百分點':'超前 '+gap+' 個百分點')+'</div>'+
+     '<div class="track"><i style="width:'+Math.min(avgA,100)+'%"></i><u style="left:'+Math.min(avgP,100)+'%"></u></div>'+
+     (nearest?'<div class="side"><b>'+nearest.remain+' 天</b><span>'+esc(nearest.code)+' 距契約完工</span></div>':'')+
    '</div>'+
    '<div class="kpis">'+
-     kpi('在履約案件', active, '共 '+DB.projects.length+' 案', 'folder', 'lilac') +
-     kpi('未結案事項', totalOpen, '業主 '+DB.owner.filter(openTask).length+'　內部 '+DB.internal.filter(openTask).length, 'inbox', 'sky') +
-     kpi('逾期事項', overdue, overdue? '需優先處理':'目前無逾期', 'alert', overdue? 'rose':'mint') +
-     kpi('待業主回覆', DB.projects.reduce(function(a,p){return a+p.waiting;},0), '平均等待見統計頁', 'clock', 'peach') +
+     kpi('在履約案件', active, '共 '+DB.projects.length+' 案', 'folder','lilac')+
+     kpi('未結議題', openAll.length, '問題缺失 '+openAll.filter(function(t){return t.type==='問題缺失';}).length+' 件', 'inbox','sky')+
+     kpi('逾期議題', overdue, overdue?'需優先處理':'目前無逾期', 'alert', overdue?'rose':'mint')+
+     kpi('檢核逾期', DB.projects.reduce(function(a,p){return a+p.checkOverdue;},0),
+         '待對方回覆 '+waiting+' 件', 'check',
+         DB.projects.reduce(function(a,p){return a+p.checkOverdue;},0)?'rose':'peach')+
    '</div>'+
    '<div class="card"><h2>專案總表</h2><div class="scroll"><table>'+
-   '<thead><tr><th>代號</th><th>專案／業主</th><th>契約完工日</th><th class="r">剩餘天</th>'+
-   '<th>進度（實際／預計）</th><th class="r">差異</th><th class="r">業主未結</th>'+
-   '<th class="r">逾期</th><th class="r">待回覆</th><th class="r">內部未結</th><th>狀態</th></tr></thead>'+
-   '<tbody>'+rows+'</tbody></table></div>'+
-   '<div class="legend"><span>燈號｜差異 &lt; −10% 或有逾期事項 → 紅；差異 −5%～−10% → 黃；其餘 → 綠</span></div></div>';
+   '<thead><tr><th>代號</th><th>專案／業主</th><th>契約完工</th><th class="r">剩餘天</th>'+
+   '<th>進度（實際／預計）</th><th class="r">差異</th><th class="r">未結</th><th class="r">逾期</th>'+
+   '<th class="r">問題</th><th class="r">待回覆</th><th class="r">檢核</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+   '<div class="legend"><span>燈號｜差異 &lt; −10% 或有逾期議題 → 紅；差異 −5%～−10% → 黃；其餘 → 綠</span></div></div>';
 
   [].forEach.call(m.querySelectorAll('tr[data-proj]'), function(tr){
-    tr.onclick = function(){ PROJ = tr.dataset.proj; VIEW='gantt';
-      [].forEach.call(document.querySelectorAll('#nav button'),function(x){
+    tr.onclick = function(){
+      PROJ = tr.dataset.proj; VIEW='gantt';
+      [].forEach.call(document.querySelectorAll('#nav button[data-v]'), function(x){
         x.setAttribute('aria-selected', x.dataset.v==='gantt'?'true':'false'); });
-      render(); };
+      render();
+    };
   });
 }
-var ICON = {
-  folder:'<path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.5h9A1.5 1.5 0 0 1 21 10v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18z"/>',
-  trend:'<path d="m3 16 5.5-5.5 3.5 3.5L21 5"/><path d="M15 5h6v6"/>',
-  inbox:'<path d="M4 13h4l1.5 3h5L16 13h4"/><path d="M5.5 5h13l2.5 8v6H3v-6z"/>',
-  alert:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v4.5"/><circle cx="12" cy="16" r=".7" fill="currentColor"/>',
-  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5.2l3 1.8"/>',
-  check:'<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.4 2.4 4.6-4.8"/>',
-  swap:'<path d="M4 8h13"/><path d="m14 5 3 3-3 3"/><path d="M20 16H7"/><path d="m10 13-3 3 3 3"/>',
-  layers:'<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>'
-};
-function kpi(label,value,sub,icon,tint){
-  return '<div class="kpi">'+
-    (icon ? '<div class="ktile t-'+(tint||'lilac')+'"><svg viewBox="0 0 24 24">'+ICON[icon]+'</svg></div>' : '')+
-    '<div class="kbody"><div class="label">'+label+'</div><div class="value">'+value+
-    '</div><div class="sub">'+esc(sub)+'</div></div></div>';
-}
-function openTask(t){ return ['已完成','已結案','已取消'].indexOf(t.status)<0; }
 
 /* ---------- 甘特圖 ---------- */
 function viewGantt(m){
@@ -551,107 +648,131 @@ function viewGantt(m){
   var head = '<div class="card"><div class="body"><div class="toolbar">'+
     '<select id="projSel">'+DB.projects.map(function(x){
       return '<option value="'+esc(x.code)+'"'+(x.code===p.code?' selected':'')+'>'+esc(x.code)+'　'+esc(x.name)+'</option>';}).join('')+'</select>'+
-    '<select id="zoom"><option value="3">縮放：季</option><option value="6" selected>縮放：月</option><option value="14">縮放：週</option></select>'+
+    '<select id="zoom"><option value="3">縮放：季</option><option value="6">縮放：月</option><option value="14">縮放：週</option></select>'+
     '<span class="muted num">履約起始 '+roc(p.start)+'　契約完工 '+roc(p.finish)+'　工期 '+p.duration+' '+esc(p.mode)+
-    (p.extend? '（展延 '+p.extend+'）':'')+'　權重合計 '+p.weightSum+'%</span>'+
+    (p.extend?'（展延 '+p.extend+'）':'')+'　權重合計 '+p.weightSum+'%</span>'+
     '</div></div></div>';
 
   if(!dated.length){
-    m.innerHTML = head + '<div class="card"><div class="empty">此專案尚無可排程的工項。請在「02_契約工項」填入工項編號與工期天數。</div></div>';
+    m.innerHTML = head+'<div class="card"><div class="empty">此專案尚無可排程的工項。請在「契約履約」分頁補上工項編號與工期天數。</div></div>';
     bindProjSel(); return;
   }
 
-  var min = dated.reduce(function(a,i){var s=d(i.start);return (!a||s<a)?s:a;},null);
-  var max = dated.reduce(function(a,i){var e=d(i.end);return (!a||e>a)?e:a;},null);
-  var fin = d(p.finish); if(fin && fin>max) max = fin;
-  min = new Date(min.getFullYear(), min.getMonth(), 1);
-  max = new Date(max.getFullYear(), max.getMonth()+1, 0);
+  var min = dated.reduce(function(a,i){var s=d(i.start);return(!a||s<a)?s:a;},null);
+  var max = dated.reduce(function(a,i){var e=d(i.end);return(!a||e>a)?e:a;},null);
+  var fin = d(p.finish); if(fin&&fin>max) max=fin;
+  min = new Date(min.getFullYear(),min.getMonth(),1);
+  max = new Date(max.getFullYear(),max.getMonth()+1,0);
   var span = days(min,max)+1;
-  var dw = Number(localStorage_get('zoom') || 6);
-  var width = span*dw;
+  var dw = Number(lsGet('zoom')||6), width = span*dw;
 
-  // 月刻度
-  var axis = '', cur = new Date(min.getFullYear(), min.getMonth(), 1);
-  while(cur <= max){
-    var x = days(min,cur)*dw;
-    axis += '<div class="m" style="left:'+x+'px">'+(cur.getFullYear()-1911)+'.'+
+  var axis='', cur=new Date(min.getFullYear(),min.getMonth(),1);
+  while(cur<=max){
+    axis += '<div class="m" style="left:'+(days(min,cur)*dw)+'px">'+(cur.getFullYear()-1911)+'.'+
             ('0'+(cur.getMonth()+1)).slice(-2)+'</div>';
-    cur = new Date(cur.getFullYear(), cur.getMonth()+1, 1);
+    cur = new Date(cur.getFullYear(),cur.getMonth()+1,1);
   }
-  var todayX = days(min, d(DB.today))*dw;
+  var todayX = days(min,d(DB.today))*dw;
 
-  // 交辦事項圖釘（掛在關聯工項那一列）
-  var pins = {};
-  DB.owner.filter(function(o){return o.project===p.code && o.link && openTask(o);}).forEach(function(o){
-    (pins[o.link] = pins[o.link] || []).push(o);
-  });
+  var pins={};
+  DB.issues.filter(function(t){return t.project===p.code && t.link && t.open;})
+    .forEach(function(t){ (pins[t.link]=pins[t.link]||[]).push(t); });
 
-  var names = '', cells = '';
+  var cks={};
+  (DB.checks[p.code]||[]).filter(function(c){return c.link && c.due && !c.na;})
+    .forEach(function(c){ (cks[c.link]=cks[c.link]||[]).push(c); });
+
+  var names='', cells='';
   items.forEach(function(i){
-    var lvl = 'lvl'+Math.min(i.level||1,3);
+    var lvl='lvl'+Math.min(i.level||1,3);
     names += '<div class="grow '+lvl+'" title="'+esc(i.code+' '+i.name)+'">'+
              '<span class="num muted">'+esc(i.code)+'</span>　'+esc(i.name)+'</div>';
-    var inner = '';
+    var inner='';
     if(i.start && i.end){
-      var x = days(min,d(i.start))*dw;
-      var w = Math.max((days(d(i.start),d(i.end))+1)*dw, 3);
+      var x=days(min,d(i.start))*dw, w=Math.max((days(d(i.start),d(i.end))+1)*dw,3);
       if(i.milestone){
         inner += '<div class="ms'+(i.pct>=100?' filled':'')+'" style="left:'+(x-5)+'px" title="里程碑 '+roc(i.end)+'"></div>';
       } else {
         inner += '<div class="bar-plan" style="left:'+x+'px;width:'+w+'px" title="預計 '+roc(i.start)+' – '+roc(i.end)+'"></div>';
         if(i.pct>0){
-          var late = i.pct < i.plannedPct - 5;
+          var late = i.pct < i.plannedPct-5;
           inner += '<div class="bar-act'+(late?' late':'')+'" style="left:'+x+'px;width:'+Math.max(w*i.pct/100,4)+'px" title="實際 '+i.pct+'%（預計 '+i.plannedPct+'%）"></div>';
         }
       }
     }
-    (pins[i.code]||[]).forEach(function(o){
-      if(!o.due) return;
-      var px = days(min,d(o.due))*dw;
-      inner += '<div class="pin'+(o.light==='red'?' red':'')+'" style="left:'+px+'px" title="'+esc(o.id+'　'+o.content)+'"></div>';
+    (pins[i.code]||[]).forEach(function(t){
+      if(!t.due) return;
+      inner += '<div class="pin'+(t.light==='red'?' red':'')+'" style="left:'+(days(min,d(t.due))*dw)+'px" title="'+esc(t.id+'　'+t.title)+'"></div>';
+    });
+    (cks[i.code]||[]).forEach(function(c){
+      var cls = c.finished ? 'ok' : (c.overdue ? 'bad' : '');
+      inner += '<div class="ckmark '+cls+'" style="left:'+(days(min,d(c.due))*dw-4)+'px" title="'+
+        esc(c.code+'　'+c.name+(c.finished?'（已完成）':'（應完成 '+roc(c.due)+'）'))+'"></div>';
     });
     cells += '<div class="gcell '+lvl+'">'+inner+'</div>';
   });
 
-  m.innerHTML = head +
+  m.innerHTML = head+
     '<div class="card"><h2>履約甘特圖</h2>'+
     '<div class="gantt" style="--dw:'+dw+'px">'+
       '<div class="names"><div class="axis"></div>'+names+'</div>'+
       '<div class="chart"><div style="width:'+width+'px;position:relative">'+
         '<div class="axis">'+axis+'</div>'+
-        '<div style="position:relative">'+cells+
-          '<div class="today-line" style="left:'+todayX+'px"></div></div>'+
-      '</div></div>'+
-    '</div>'+
+        '<div style="position:relative">'+cells+'<div class="today-line" style="left:'+todayX+'px"></div></div>'+
+      '</div></div></div>'+
     '<div class="legend">'+
       '<span><i style="background:#D6CEFF"></i>預計工期</span>'+
       '<span><i style="background:var(--accent)"></i>實際完成</span>'+
       '<span><i style="background:var(--red)"></i>落後預計 5% 以上</span>'+
-      '<span><i style="background:var(--amber);width:3px;height:13px;border-radius:2px;margin-right:7px"></i>未結交辦事項到期日</span>'+
-      '<span>◇ 里程碑　┊ 今日</span>'+
-    '</div></div>'+
+      '<span><i style="background:var(--amber);width:3px;height:13px;border-radius:2px;margin-right:7px"></i>未結議題到期日</span>'+
+      '<span><i style="background:var(--green);width:8px;height:8px;border-radius:2px;transform:rotate(45deg);margin-right:8px"></i>檢核已完成</span>'+
+      '<span><i style="background:var(--ink-3);width:8px;height:8px;border-radius:2px;transform:rotate(45deg);margin-right:8px"></i>檢核未完成</span>'+
+      '<span>◇ 里程碑　┊ 今日</span></div></div>'+
+    checkSummaryCard(p)+
     workItemTable(items);
 
   bindProjSel();
   document.getElementById('zoom').value = String(dw);
-  document.getElementById('zoom').onchange = function(){ localStorage_set('zoom', this.value); render(); };
+  document.getElementById('zoom').onchange = function(){ lsSet('zoom', this.value); render(); };
   [].forEach.call(m.querySelectorAll('tr[data-wrow]'), function(tr){
     tr.onclick = function(){ openWorkItem(Number(tr.dataset.wrow)); };
   });
 }
-
-function bindProjSel(){
-  var s = document.getElementById('projSel');
-  if(s) s.onchange = function(){ PROJ = this.value; render(); };
+function checkSummaryCard(p){
+  var list = (DB.checks[p.code]||[]).filter(function(c){return !c.na;});
+  if(!list.length) return '';
+  var pending = list.filter(function(c){return !c.finished && (c.overdue || c.dueSoon);})
+    .sort(function(a,b){return (a.due||'').localeCompare(b.due||'');});
+  var done = list.filter(function(c){return c.finished;}).length;
+  var bar = '<div class="prog" style="min-width:200px;max-width:340px"><span>'+
+    Math.round(done/list.length*100)+'%</span><b style="width:'+(done/list.length*100)+'%"></b></div>';
+  if(!pending.length){
+    return '<div class="card"><h2>專案檢核</h2><div class="body">'+bar+
+      '<div class="muted" style="margin-top:10px">已完成 '+done+'/'+list.length+' 項，目前沒有逾期或近期到期的項目。</div></div></div>';
+  }
+  return '<div class="card"><h2>專案檢核　<span class="muted" style="font-weight:400">'+done+'/'+list.length+'</span></h2>'+
+    '<div class="body">'+bar+'<div style="margin-top:12px">'+
+    pending.map(function(c){
+      return '<div style="display:flex;gap:10px;align-items:baseline;padding:6px 0;border-top:1px solid var(--line-2)">'+
+        '<span class="num muted" style="width:52px">'+esc(c.code)+'</span>'+
+        '<span style="flex:1">'+esc(c.name)+'</span>'+
+        '<span class="num" style="color:'+(c.overdue?'var(--red)':'var(--amber)')+';font-weight:600">'+
+        roc(c.due)+(c.overdue?'　逾期':'　即將到期')+'</span></div>';
+    }).join('')+'</div></div></div>';
 }
 
+function bindProjSel(){
+  var s=document.getElementById('projSel');
+  if(s) s.onchange=function(){ PROJ=this.value; render(); };
+}
 function workItemTable(items){
   var rows = items.map(function(i){
     var lag = i.parent ? '' : (i.pct - i.plannedPct);
     return '<tr data-wrow="'+i.row+'">'+
       '<td class="num">'+esc(i.code)+'</td>'+
-      '<td style="padding-left:'+(8+(i.level-1)*14)+'px">'+(i.level===1?'<b>':'')+esc(i.name)+(i.level===1?'</b>':'')+
-        (i.milestone?' <span class="tag">里程碑</span>':'')+'</td>'+
+      '<td style="padding-left:'+(12+(i.level-1)*14)+'px">'+(i.level===1?'<b>':'')+esc(i.name)+(i.level===1?'</b>':'')+
+        (i.milestone?' <span class="tag">里程碑</span>':'')+
+        (i.deliverable?'<div class="muted" style="font-size:11px">'+esc(i.deliverable)+'</div>':'')+'</td>'+
       '<td class="num r">'+(i.duration||'—')+'</td>'+
       '<td class="num">'+roc(i.start)+'</td>'+
       '<td class="num">'+roc(i.end)+'</td>'+
@@ -663,242 +784,310 @@ function workItemTable(items){
       '<td>'+(i.status?'<span class="tag">'+esc(i.status)+'</span>':'<span class="muted">—</span>')+'</td></tr>';
   }).join('');
   return '<div class="card"><h2>契約工項</h2><div class="scroll"><table>'+
-    '<thead><tr><th>工項</th><th>名稱</th><th class="r">工期</th><th>預計開始</th><th>預計完成</th>'+
+    '<thead><tr><th>工項</th><th>名稱／交付成果</th><th class="r">工期</th><th>預計開始</th><th>預計完成</th>'+
     '<th class="r">權重</th><th>負責人</th><th class="r">預計%</th><th class="r">實際%</th>'+
     '<th class="r">差異</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
     '<div class="legend"><span>點任一列可更新實際起訖日與完成百分比</span></div></div>';
 }
 
-/* ---------- 交辦表 ---------- */
-function taskFilterBar(showProject){
-  return '<div class="toolbar">'+
-    (showProject? '<select id="fProj"><option value="">全部專案</option>'+
-      DB.projects.map(function(x){return '<option value="'+esc(x.code)+'">'+esc(x.code)+'</option>';}).join('')+
-      '<option value="內部">內部</option></select>':'')+
-    '<select id="fOwner"><option value="">全部承辦人</option>'+
-      DB.people.map(function(x){return '<option value="'+esc(x.name)+'">'+esc(x.name)+'</option>';}).join('')+'</select>'+
-    '<select id="fStatus"><option value="open">僅未結案</option><option value="">全部狀態</option>'+
-      ['未開始','進行中','待業主回覆','已完成','已結案'].map(function(s){
-        return '<option value="'+s+'">'+s+'</option>';}).join('')+'</select>'+
-    '<button class="act" id="btnAdd">新增事項</button></div>';
-}
-function applyFilter(list){
-  var fp = document.getElementById('fProj'), fo = document.getElementById('fOwner'), fs = document.getElementById('fStatus');
-  var vp = fp?fp.value:'', vo = fo?fo.value:'', vs = fs?fs.value:'open';
-  return list.filter(function(t){
-    if(vp && t.project!==vp) return false;
-    if(vo && t.owner!==vo) return false;
-    if(vs==='open') return openTask(t);
-    if(vs) return t.status===vs;
-    return true;
-  });
-}
-function bindFilters(){
-  ['fProj','fOwner','fStatus'].forEach(function(id){
-    var el = document.getElementById(id); if(el) el.onchange = redrawTaskBody;
-  });
+
+/* ---------- 專案檢核 ---------- */
+function checkChip(p){
+  if(!p.checkTotal) return '<span class="muted">—</span>';
+  var color = p.checkOverdue ? 'var(--red)' : (p.checkDone===p.checkTotal ? 'var(--green)' : 'inherit');
+  return '<span style="color:'+color+';font-weight:600">'+p.checkDone+'/'+p.checkTotal+'</span>'+
+    (p.checkOverdue?'<div style="font-size:11px;color:var(--red)">逾期 '+p.checkOverdue+'</div>':'');
 }
 
-function viewOwner(m){
-  m.innerHTML = '<div class="card"><div class="body">'+taskFilterBar(true)+'</div></div>'+
-    '<div class="card"><h2>業主交辦事項</h2><div class="scroll" id="taskWrap"></div>'+
-    '<div class="legend"><span>灰＝待業主回覆（不計我方逾期）　黃＝7 日內到期或逾兩週未更新　紅＝已逾期</span></div></div>';
-  bindFilters();
-  document.getElementById('btnAdd').onclick = function(){ openNew('owner'); };
-  redrawTaskBody();
-}
-function viewInternal(m){
-  m.innerHTML = '<div class="card"><div class="body">'+taskFilterBar(true)+'</div></div>'+
-    '<div class="card"><h2>內部作業交辦</h2><div class="scroll" id="taskWrap"></div></div>';
-  bindFilters();
-  document.getElementById('btnAdd').onclick = function(){ openNew('internal'); };
-  redrawTaskBody();
-}
-function redrawTaskBody(){
-  var wrap = document.getElementById('taskWrap'); if(!wrap) return;
-  var isOwner = VIEW==='owner';
-  var list = applyFilter(isOwner ? DB.owner : DB.internal);
-  if(!list.length){ wrap.innerHTML = '<div class="empty">目前沒有符合條件的事項。</div>'; return; }
-  var rows = list.map(function(t){
-    var over = t.due && d(t.due) < d(DB.today) && openTask(t);
-    var dueCell = '<td class="num'+(over?'" style="color:var(--red)':'"')+'">'+roc(t.due)+'</td>';
-    if(isOwner){
-      return '<tr data-tr="'+t.row+'">'+
-        '<td class="num">'+lightDot(t.light)+esc(t.id)+'</td>'+
-        '<td class="num">'+esc(t.project)+'</td>'+
-        '<td><span class="tag">'+esc(t.source)+'</span></td>'+
-        '<td>'+esc(t.content)+(t.blocker?'<div style="color:var(--red)">卡點：'+esc(t.blocker)+'</div>':'')+
-          (t.note?'<div class="muted">'+esc(t.note)+'</div>':'')+'</td>'+
-        '<td class="num">'+esc(t.link||'—')+'</td>'+
-        '<td>'+esc(t.owner)+'</td>'+ dueCell +
-        '<td class="num">'+esc(t.week||'')+'</td>'+
-        '<td class="num r">'+(t.effort||'')+'</td>'+
-        '<td>'+(t.affectSchedule==='是'?'<span class="tag" style="color:var(--red)">影響工期</span>':'')+
-             (t.changeOrder==='是'?' <span class="tag" style="color:var(--red)">契變</span>':'')+'</td>'+
-        '<td><span class="tag">'+esc(t.status)+'</span></td></tr>';
-    }
-    return '<tr data-tr="'+t.row+'">'+
-      '<td class="num">'+lightDot(t.light)+esc(t.id)+'</td>'+
-      '<td class="num">'+esc(t.project)+'</td>'+
-      '<td><span class="tag">'+esc(t.type)+'</span></td>'+
-      '<td>'+esc(t.content)+(t.blocker?'<div style="color:var(--red)">卡點：'+esc(t.blocker)+'</div>':'')+'</td>'+
-      '<td>'+esc(t.owner)+'</td>'+ dueCell +
-      '<td class="num">'+esc(t.week||'')+'</td>'+
-      '<td class="num r">'+(t.effort||'')+'</td>'+
-      '<td><span class="tag">'+esc(t.status)+'</span></td></tr>';
+function viewChecks(m){
+  var p = DB.projects.filter(function(x){return x.code===PROJ;})[0] || DB.projects[0];
+  PROJ = p.code;
+  var list = DB.checks[p.code] || [];
+  var live = list.filter(function(c){return !c.na;});
+  var done = live.filter(function(c){return c.finished;});
+  var overdue = live.filter(function(c){return c.overdue;});
+  var soon = live.filter(function(c){return c.dueSoon;});
+  var rate = live.length ? Math.round(done.length/live.length*100) : 0;
+
+  var head = '<div class="card"><div class="body"><div class="toolbar">'+
+    '<select id="projSel">'+DB.projects.map(function(x){
+      return '<option value="'+esc(x.code)+'"'+(x.code===p.code?' selected':'')+'>'+esc(x.code)+'　'+esc(x.name)+'</option>';}).join('')+'</select>'+
+    '<button class="act ghost" onclick="applyChecklist()">套用標準檢核清單</button>'+
+    '<span class="muted">履約起始 '+roc(p.start)+'　應完成日由「距起始日天數」自動推算</span>'+
+    '</div></div></div>';
+
+  if(!list.length){
+    m.innerHTML = head+'<div class="card"><div class="empty">此專案尚未建立檢核項目。<br><br>'+
+      '按上方「套用標準檢核清單」可一次帶入 '+((DB.checklist||[]).length)+' 個標準項目（專案資料夾、經費預算表、各期報告、請款、結案移交等）。</div></div>';
+    bindProjSel(); return;
+  }
+
+  var groups = {}, order = [];
+  list.forEach(function(c){
+    if(!groups[c.group]){ groups[c.group]=[]; order.push(c.group); }
+    groups[c.group].push(c);
+  });
+
+  var body = order.map(function(g){
+    var rows = groups[g].map(function(c){
+      var mark = c.na ? 'na' : (c.finished ? 'ok' : (c.overdue ? 'bad' : (c.dueSoon ? 'warn' : '')));
+      var state = c.na ? '不適用' : (c.finished ? '已完成'
+        : (c.overdue ? '逾期 '+Math.abs(days(d(c.due), d(DB.today)))+' 天'
+        : (c.dueSoon ? '剩 '+days(d(DB.today), d(c.due))+' 天' : '')));
+      return '<tr data-crow="'+c.row+'" class="ck '+mark+'">'+
+        '<td style="width:34px"><span class="box'+(c.finished?' on':'')+(c.na?' off':'')+'" data-toggle="'+c.row+'">'+
+          (c.finished?'✓':(c.na?'–':''))+'</span></td>'+
+        '<td class="num" style="width:56px">'+esc(c.code)+'</td>'+
+        '<td>'+esc(c.name)+(c.must?'':' <span class="tag">選填</span>')+
+          (c.deliverable?'<div class="muted" style="font-size:11.5px">應產出：'+esc(c.deliverable)+'</div>':'')+'</td>'+
+        '<td style="width:110px">'+(c.link
+          ? '<a class="link" data-jump="'+esc(c.link)+'">工項 '+esc(c.link)+'</a>'
+          : '<span class="muted">—</span>')+'</td>'+
+        '<td class="num" style="width:100px">'+roc(c.due)+'</td>'+
+        '<td class="num" style="width:100px">'+roc(c.done)+'</td>'+
+        '<td style="width:110px;white-space:nowrap">'+esc(c.owner||'')+'</td>'+
+        '<td style="width:100px;white-space:nowrap;font-weight:600;color:'+
+          (c.overdue?'var(--red)':(c.dueSoon?'var(--amber)':(c.finished?'var(--green)':'var(--ink-3)')))+
+          '">'+state+'</td></tr>';
+    }).join('');
+    var gd = groups[g].filter(function(c){return !c.na && c.finished;}).length;
+    var gt = groups[g].filter(function(c){return !c.na;}).length;
+    return '<div class="card"><h2>'+esc(g)+'　<span class="muted" style="font-weight:400">'+gd+'/'+gt+'</span></h2>'+
+      '<div class="scroll"><table class="checks">'+rows+'</table></div></div>';
   }).join('');
 
-  var head = isOwner
-    ? '<tr><th>編號</th><th>專案</th><th>來源</th><th>事項內容／現況</th><th>關聯工項</th><th>主辦</th>'+
-      '<th>承諾完成</th><th>排定週</th><th class="r">人天</th><th>契約影響</th><th>狀態</th></tr>'
-    : '<tr><th>編號</th><th>專案</th><th>類別</th><th>事項內容</th><th>主辦</th><th>要求完成</th>'+
-      '<th>排定週</th><th class="r">人天</th><th>狀態</th></tr>';
-  wrap.innerHTML = '<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>';
-  [].forEach.call(wrap.querySelectorAll('tr[data-tr]'), function(tr){
-    tr.onclick = function(){ openTaskEdit(isOwner?'owner':'internal', Number(tr.dataset.tr)); };
+  m.innerHTML = head+
+    '<div class="kpis">'+
+      kpi('檢核完成率', rate+'%', done.length+'/'+live.length+' 項', 'check', rate===100?'mint':'lilac')+
+      kpi('逾期未完成', overdue.length, overdue.length?'需立即補辦':'目前無逾期', 'alert', overdue.length?'rose':'mint')+
+      kpi('14 日內到期', soon.length, '提前準備', 'clock','peach')+
+      kpi('不適用', list.filter(function(c){return c.na;}).length, '不計入完成率', 'layers','sky')+
+    '</div>'+ body;
+
+  bindProjSel();
+  [].forEach.call(m.querySelectorAll('[data-toggle]'), function(el){
+    el.onclick = function(e){ e.stopPropagation(); toggleCheck(Number(el.dataset.toggle)); };
+  });
+  [].forEach.call(m.querySelectorAll('[data-jump]'), function(el){
+    el.onclick = function(e){
+      e.stopPropagation();
+      VIEW='gantt';
+      [].forEach.call(document.querySelectorAll('#nav button[data-v]'), function(x){
+        x.setAttribute('aria-selected', x.dataset.v==='gantt'?'true':'false'); });
+      render();
+    };
+  });
+  [].forEach.call(m.querySelectorAll('tr[data-crow]'), function(tr){
+    tr.onclick = function(){ openCheckEdit(Number(tr.dataset.crow)); };
   });
 }
 
+function toggleCheck(row){
+  var list = DB.checks[PROJ]||[];
+  var c = list.filter(function(x){return x.row===row;})[0];
+  if(!c) return;
+  var patch = c.finished
+    ? {'狀態':'未開始','實際完成日':''}
+    : {'狀態':'已完成','實際完成日':DB.today};
+  var el = document.querySelector('[data-toggle="'+row+'"]');
+  if(el){ el.classList.add('busy'); }
+  rpc('updateRecord', {table:'contract', row:row, patch:patch},
+    function(){ load(); },
+    function(e){ if(el) el.classList.remove('busy'); alert('更新失敗：'+e.message); });
+}
 
-/* ---------- 缺失分析 ---------- */
-var DEF_DIM = 'minor';   // 統計維度
-var DEF_FILTER = {proj:'', stage:'', trade:'', sev:'', open:'all'};
+function applyChecklist(){
+  if(!confirm('將為「'+PROJ+'」補上標準檢核清單中尚未建立的項目，已存在的不會重複。要繼續嗎？')) return;
+  rpc('applyChecklist', {project:PROJ}, function(msg){ alert(msg); load(); },
+      function(e){ alert('套用失敗：'+e.message); });
+}
 
-function defList(){
-  return (DB.defects||[]).filter(function(x){
-    if(DEF_FILTER.proj && x.project!==DEF_FILTER.proj) return false;
-    if(DEF_FILTER.stage && x.stage!==DEF_FILTER.stage) return false;
-    if(DEF_FILTER.trade && x.trade!==DEF_FILTER.trade) return false;
-    if(DEF_FILTER.sev && x.severity!==DEF_FILTER.sev) return false;
-    if(DEF_FILTER.open==='open' && !x.open) return false;
-    if(DEF_FILTER.open==='closed' && x.open) return false;
+function openCheckEdit(row){
+  var c = (DB.checks[PROJ]||[]).filter(function(x){return x.row===row;})[0];
+  if(!c) return;
+  var items = (DB.workItems[PROJ]||[]).map(function(w){return w.code;});
+  var html = '<div class="readonly"><b class="num">'+esc(c.code)+'</b>　'+esc(c.group)+
+    '<div style="margin-top:6px;font-weight:600">'+esc(c.name)+'</div>'+
+    (c.deliverable?'<div class="muted" style="margin-top:4px">應產出：'+esc(c.deliverable)+'</div>':'')+
+    '<div class="muted num" style="margin-top:4px">應完成日 '+roc(c.due)+'</div></div>'+
+    field('狀態','狀態',c.status,'select',['未開始','進行中','已完成','不適用'])+
+    field('實際完成日','實際完成日',c.done,'date')+
+    field('負責人','負責人',c.owner,'select',DB.people.map(function(x){return x.name;}))+
+    field('對應工項（顯示於甘特圖）','前置工項',c.link,'select',[''].concat(items))+
+    field('距履約起始日天數（用來推算應完成日）','工期天數',c.offset,'number')+
+    field('應完成日（填了就以此為準）','預計完成日',c.due,'date')+
+    field('應產出文件','交付成果',c.deliverable)+
+    field('是否必要','里程碑',c.must?'是':'否','select',['是','否'])+
+    field('備註','備註','','textarea');
+  openDrawer('編輯檢核項目　'+c.code, html, function(data, ok, fail){
+    rpc('updateRecord', {table:'contract', row:row, patch:data}, ok, fail);
+  });
+}
+
+/* ---------- 議題追蹤 ---------- */
+var IF = {proj:'', type:'', owner:'', status:'open', major:''};
+
+function issueList(){
+  return DB.issues.filter(function(t){
+    if(IF.proj && t.project!==IF.proj) return false;
+    if(IF.type && t.type!==IF.type) return false;
+    if(IF.owner && t.owner!==IF.owner) return false;
+    if(IF.major && t.major!==IF.major) return false;
+    if(IF.status==='open') return t.open;
+    if(IF.status==='overdue') return t.overdue;
+    if(IF.status==='closed') return !t.open;
     return true;
   });
 }
-function uniq(list, key){
-  var seen = {}, out = [];
-  list.forEach(function(x){ var v=x[key]; if(v && !seen[v]){seen[v]=1;out.push(v);} });
-  return out.sort();
-}
-function tally(list, key){
-  var m = {};
-  list.forEach(function(x){ var v = x[key] || '（未分類）'; m[v] = (m[v]||0)+1; });
-  return Object.keys(m).map(function(k){return {k:k, n:m[k]};})
-    .sort(function(a,b){return b.n-a.n;});
-}
 
-function viewDefect(m){
-  var all = DB.defects || [];
-  if(!all.length){
-    m.innerHTML = '<div class="card"><div class="empty">尚無缺失紀錄。請在「07_缺失紀錄」填入，或用「匯入」頁整批貼上。<br><br>'+
-      '<button class="act" onclick="openNewDefect()">新增第一筆缺失</button></div></div>';
-    return;
-  }
-  var list = defList();
-  var open = list.filter(function(x){return x.open;});
-  var overdue = list.filter(function(x){return x.overdue;});
-  var failed = list.filter(function(x){return x.result==='未通過';});
-  var rechecked = list.filter(function(x){return x.result==='通過'||x.result==='未通過';});
-  var failRate = rechecked.length ? Math.round(failed.length/rechecked.length*1000)/10 : 0;
-  var fixDays = list.filter(function(x){return x.fixDays!==null;}).map(function(x){return x.fixDays;});
-  var avgFix = fixDays.length ? Math.round(fixDays.reduce(function(a,b){return a+b;},0)/fixDays.length) : 0;
-  var sev = list.filter(function(x){return x.severity==='重大'||x.severity==='影響驗收';});
-
-  var DIMS = [['minor','中類'],['major','大類'],['trade','專業別'],['cause','根本原因'],
-              ['duty','責任歸屬'],['zone','樓層區域'],['stage','查驗階段']];
+function viewIssues(m){
+  var all = DB.issues;
+  var list = issueList();
+  var open = all.filter(openIssue);
 
   m.innerHTML =
    '<div class="kpis">'+
-     kpi('缺失總筆數', list.length, '未結案 '+open.length+' 筆', 'layers', 'lilac') +
-     kpi('逾期未改善', overdue.length, overdue.length? '需優先催辦':'目前無逾期', 'alert', overdue.length? 'rose':'mint') +
-     kpi('複驗未通過率', failRate+'%', '已複驗 '+rechecked.length+' 筆', 'swap', 'peach') +
-     kpi('平均改善天數', avgFix, '重大以上 '+sev.length+' 筆', 'clock', 'sky') +
+     kpi('未結議題', open.length, '全部 '+all.length+' 件', 'inbox','lilac')+
+     kpi('逾期', all.filter(function(t){return t.overdue;}).length, '已超過要求完成日', 'alert',
+         all.filter(function(t){return t.overdue;}).length?'rose':'mint')+
+     kpi('待對方回覆', open.filter(function(t){return t.status==='待對方回覆';}).length, '不計入我方逾期', 'clock','sky')+
+     kpi('涉及契約變更', all.filter(function(t){return t.change==='是';}).length,
+         '影響時程 '+all.filter(function(t){return t.affect==='是';}).length+' 件', 'swap','peach')+
    '</div>'+
-
    '<div class="card"><div class="body"><div class="toolbar">'+
-     selFilter('dfProj','全部專案', uniq(all,'project'), DEF_FILTER.proj)+
-     selFilter('dfStage','全部階段', uniq(all,'stage'), DEF_FILTER.stage)+
-     selFilter('dfTrade','全部專業', uniq(all,'trade'), DEF_FILTER.trade)+
-     selFilter('dfSev','全部嚴重度', uniq(all,'severity'), DEF_FILTER.sev)+
-     '<select id="dfOpen">'+
-       [['all','未結案＋已結案'],['open','僅未結案'],['closed','僅已結案']].map(function(o){
-         return '<option value="'+o[0]+'"'+(DEF_FILTER.open===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+
-     '</select>'+
-     '<button class="act" onclick="openNewDefect()">新增缺失</button>'+
+     sel('ifProj','全部專案', uniq(all,'project'), IF.proj)+
+     sel('ifType','全部類型', uniq(all,'type'), IF.type)+
+     sel('ifMajor','全部大類', uniq(all,'major'), IF.major)+
+     sel('ifOwner','全部主辦人', DB.people.map(function(p){return p.name;}), IF.owner)+
+     '<select id="ifStatus">'+[['open','僅未結'],['overdue','僅逾期'],['closed','僅已結案'],['','全部']]
+       .map(function(o){return '<option value="'+o[0]+'"'+(IF.status===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+
+     '<button class="act" onclick="openNewIssue()">新增議題</button>'+
    '</div></div></div>'+
+   '<div class="card"><h2>議題追蹤（'+list.length+' 件）</h2><div class="scroll">'+issueTable(list)+'</div>'+
+   '<div class="legend"><span>灰＝待對方回覆（不計我方逾期）　黃＝7 日內到期或逾兩週未更新　紅＝已逾期</span></div></div>';
 
-   '<div class="card"><h2>常見問題分布（柏拉圖）</h2><div class="body">'+
-     '<div class="chips">'+DIMS.map(function(d){
-       return '<button class="chip" data-dim="'+d[0]+'" aria-pressed="'+(DEF_DIM===d[0])+'">'+d[1]+'</button>';
-     }).join('')+'</div>'+
-     paretoTable(list, DEF_DIM)+
-   '</div></div>'+
-
-   '<div class="card"><h2>中類 × 專業別交叉</h2><div class="scroll">'+crossTable(list)+'</div></div>'+
-   '<div class="card"><h2>重複發生排行（同專案同細項 ≥ 2 次）</h2><div class="scroll">'+repeatTable(list)+'</div></div>'+
-   '<div class="card"><h2>缺失明細</h2><div class="scroll">'+defectTable(list)+'</div>'+
-     '<div class="legend"><span>紅＝逾期或複驗未通過　黃＝7 日內到期　點任一列可更新改善與複驗狀態</span></div></div>';
-
-  [].forEach.call(m.querySelectorAll('.chip[data-dim]'), function(b){
-    b.onclick = function(){ DEF_DIM = b.dataset.dim; render(); };
+  ['ifProj|proj','ifType|type','ifMajor|major','ifOwner|owner','ifStatus|status'].forEach(function(pair){
+    var a=pair.split('|'), el=document.getElementById(a[0]);
+    if(el) el.onchange=function(){ IF[a[1]]=this.value; render(); };
   });
-  bindDefFilter('dfProj','proj'); bindDefFilter('dfStage','stage');
-  bindDefFilter('dfTrade','trade'); bindDefFilter('dfSev','sev');
-  document.getElementById('dfOpen').onchange = function(){ DEF_FILTER.open = this.value; render(); };
-  [].forEach.call(m.querySelectorAll('tr[data-drow]'), function(tr){
-    tr.onclick = function(){ openDefectEdit(Number(tr.dataset.drow)); };
+  [].forEach.call(m.querySelectorAll('tr[data-irow]'), function(tr){
+    tr.onclick=function(){ openIssueEdit(Number(tr.dataset.irow)); };
   });
 }
-function selFilter(id, allLabel, options, cur){
+function sel(id, allLabel, options, cur){
   return '<select id="'+id+'"><option value="">'+allLabel+'</option>'+
     options.map(function(o){return '<option'+(o===cur?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
 }
-function bindDefFilter(id, key){
-  var el = document.getElementById(id); if(!el) return;
-  el.onchange = function(){ DEF_FILTER[key] = this.value; render(); };
-}
-
-function paretoTable(list, dim){
-  var data = tally(list, dim);
-  if(!data.length) return '<div class="empty">沒有符合條件的缺失。</div>';
-  var total = data.reduce(function(a,b){return a+b.n;},0);
-  var max = data[0].n, cum = 0;
-  var rows = data.map(function(d, i){
-    cum += d.n;
-    var cp = Math.round(cum/total*1000)/10;
-    var hot = cp <= 80.5 ? ' hot' : '';
-    return '<tr><td class="num muted" style="width:26px">'+(i+1)+'</td>'+
-      '<td style="width:200px">'+esc(d.k)+'</td>'+
-      '<td class="bar-cell"><div class="bar"><i class="'+hot.trim()+'" style="width:'+(d.n/max*100)+'%"></i></div></td>'+
-      '<td class="num r" style="width:50px">'+d.n+'</td>'+
-      '<td class="num r" style="width:60px">'+Math.round(d.n/total*1000)/10+'%</td>'+
-      '<td class="cum r" style="width:70px">累計 '+cp+'%</td></tr>';
+function issueTable(list){
+  if(!list.length) return '<div class="empty">沒有符合條件的議題。</div>';
+  var rows = list.slice().sort(function(a,b){
+    if(a.open!==b.open) return a.open?-1:1;
+    return (a.due||'9999').localeCompare(b.due||'9999');
+  }).map(function(t){
+    return '<tr data-irow="'+t.row+'">'+
+      '<td class="num">'+lightDot(t.light)+esc(t.id)+'</td>'+
+      '<td class="num">'+esc(t.project)+'</td>'+
+      '<td><span class="tag">'+esc(t.type)+'</span></td>'+
+      '<td>'+esc(t.title)+
+        (t.blocker?'<div style="color:var(--red);font-size:11.5px">卡點：'+esc(t.blocker)+'</div>':'')+
+        (t.note?'<div class="muted" style="font-size:11.5px">'+esc(t.note)+'</div>':'')+'</td>'+
+      '<td><span class="tag">'+esc(t.minor||'')+'</span><div class="muted" style="font-size:11px">'+esc(t.major||'')+'</div></td>'+
+      '<td class="num">'+esc(t.link||'—')+'</td>'+
+      '<td style="white-space:nowrap">'+esc(t.owner||'')+'</td>'+
+      '<td class="num"'+(t.overdue?' style="color:var(--red)"':'')+'>'+roc(t.due)+'</td>'+
+      '<td class="num">'+esc(t.week||'')+'</td>'+
+      '<td class="num r">'+(t.effort||'')+'</td>'+
+      '<td style="white-space:nowrap">'+esc(t.priority||'')+'</td>'+
+      '<td>'+(t.affect==='是'?'<span class="tag" style="color:var(--red)">影響時程</span>':'')+
+           (t.change==='是'?' <span class="tag" style="color:var(--red)">契變</span>':'')+'</td>'+
+      '<td><span class="tag">'+esc(t.status)+'</span></td></tr>';
   }).join('');
-  var c=0, k=0;
-  for(var i=0;i<data.length;i++){ c+=data[i].n; k++; if(c/total>=0.8) break; }
-  return '<table class="pareto"><tbody>'+rows+'</tbody></table>'+
-    '<div class="legend"><span>深色為累計 80% 以內的關鍵少數——'+
-    '前 '+k+' 類即佔全部缺失的 '+Math.round(c/total*1000)/10+'%，改善資源應集中於此。</span></div>';
+  return '<table><thead><tr><th>編號</th><th>專案</th><th>類型</th><th>標題／現況</th><th>分類</th>'+
+    '<th>關聯工項</th><th>主辦</th><th>要求完成</th><th>排定週</th><th class="r">人天</th>'+
+    '<th>優先</th><th>契約影響</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table>';
 }
 
-function crossTable(list){
-  var minors = tally(list,'minor').slice(0,12).map(function(d){return d.k;});
-  var trades = uniq(list,'trade');
-  if(!minors.length || !trades.length) return '<div class="empty">資料不足。</div>';
-  var grid = {};
-  list.forEach(function(x){
-    var mi = x.minor||'（未分類）', tr = x.trade||'（未填）';
-    grid[mi+'|'+tr] = (grid[mi+'|'+tr]||0)+1;
+/* ---------- 分類統計 ---------- */
+var CAT_DIM = 'minor';
+function viewCategory(m){
+  var all = DB.issues;
+  var list = issueList();
+  if(!all.length){ m.innerHTML='<div class="card"><div class="empty">尚無議題資料。</div></div>'; return; }
+
+  var closed = list.filter(function(t){return t.leadDays!==null;});
+  var avgLead = closed.length ? Math.round(closed.reduce(function(a,t){return a+t.leadDays;},0)/closed.length) : 0;
+  var open = list.filter(openIssue);
+  var aging = open.filter(function(t){return t.ageDays!==null && t.ageDays>30;});
+
+  var DIMS=[['minor','中類'],['major','大類'],['cause','根本原因'],['type','議題類型'],
+            ['duty','責任歸屬'],['priority','優先級'],['project','專案']];
+
+  m.innerHTML =
+   '<div class="kpis">'+
+     kpi('統計範圍', list.length, '依下方篩選條件', 'layers','lilac')+
+     kpi('平均結案天數', avgLead, '已結案 '+closed.length+' 件', 'clock','sky')+
+     kpi('超過 30 日未結', aging.length, aging.length?'建議重新評估期限':'控制良好', 'alert', aging.length?'rose':'mint')+
+     kpi('問題缺失', list.filter(function(t){return t.type==='問題缺失';}).length, '佔比 '+
+         (list.length?Math.round(list.filter(function(t){return t.type==='問題缺失';}).length/list.length*100):0)+'%', 'swap','peach')+
+   '</div>'+
+   '<div class="card"><div class="body"><div class="toolbar">'+
+     sel('ifProj','全部專案', uniq(all,'project'), IF.proj)+
+     sel('ifType','全部類型', uniq(all,'type'), IF.type)+
+     '<select id="ifStatus">'+[['open','僅未結'],['','全部'],['closed','僅已結案']]
+       .map(function(o){return '<option value="'+o[0]+'"'+(IF.status===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+
+   '</div></div></div>'+
+   '<div class="card"><h2>常見問題分布（柏拉圖）</h2><div class="body">'+
+     '<div class="chips">'+DIMS.map(function(x){
+       return '<button class="chip" data-dim="'+x[0]+'" aria-pressed="'+(CAT_DIM===x[0])+'">'+x[1]+'</button>';}).join('')+'</div>'+
+     pareto(list, CAT_DIM)+'</div></div>'+
+   '<div class="card"><h2>中類 × 專案交叉</h2><div class="scroll">'+cross(list)+'</div></div>'+
+   '<div class="card"><h2>重複發生排行（同專案同中類 ≥ 2 件）</h2><div class="scroll">'+repeats(list)+'</div></div>';
+
+  [].forEach.call(m.querySelectorAll('.chip[data-dim]'), function(b){
+    b.onclick=function(){ CAT_DIM=b.dataset.dim; render(); };
   });
-  var maxv = 1;
-  minors.forEach(function(mi){ trades.forEach(function(tr){ maxv = Math.max(maxv, grid[mi+'|'+tr]||0); }); });
-  var head = '<tr><th>中類 ＼ 專業</th>'+trades.map(function(t){return '<th class="r">'+esc(t)+'</th>';}).join('')+'<th class="r">小計</th></tr>';
+  ['ifProj|proj','ifType|type','ifStatus|status'].forEach(function(pair){
+    var a=pair.split('|'), el=document.getElementById(a[0]);
+    if(el) el.onchange=function(){ IF[a[1]]=this.value; render(); };
+  });
+}
+function pareto(list, dim){
+  var data = tally(list, dim);
+  if(!data.length) return '<div class="empty">沒有符合條件的資料。</div>';
+  var total = data.reduce(function(a,b){return a+b.n;},0), max=data[0].n, cum=0;
+  var c=0,k=0;
+  for(var i=0;i<data.length;i++){ c+=data[i].n; k++; if(c/total>=0.8) break; }
+  var rows = data.map(function(x,i){
+    cum += x.n;
+    var cp = Math.round(cum/total*1000)/10;
+    return '<tr><td class="num muted" style="width:26px">'+(i+1)+'</td>'+
+      '<td style="width:190px">'+esc(x.k)+'</td>'+
+      '<td><div class="bar"><i class="'+(cp<=80.5?'hot':'')+'" style="width:'+(x.n/max*100)+'%"></i></div></td>'+
+      '<td class="num r" style="width:46px">'+x.n+'</td>'+
+      '<td class="num r" style="width:58px">'+Math.round(x.n/total*1000)/10+'%</td>'+
+      '<td class="cum r" style="width:74px">累計 '+cp+'%</td></tr>';
+  }).join('');
+  return '<table class="pareto"><tbody>'+rows+'</tbody></table>'+
+    '<div class="legend"><span>深色為累計 80% 以內的關鍵少數——前 '+k+' 類即佔全部的 '+
+    Math.round(c/total*1000)/10+'%，改善資源應集中於此。</span></div>';
+}
+function cross(list){
+  var minors = tally(list,'minor').slice(0,12).map(function(x){return x.k;});
+  var projs = uniq(list,'project');
+  if(!minors.length||!projs.length) return '<div class="empty">資料不足。</div>';
+  var grid={}, maxv=1;
+  list.forEach(function(t){
+    var key=(t.minor||'（未填）')+'|'+(t.project||'—');
+    grid[key]=(grid[key]||0)+1;
+  });
+  minors.forEach(function(mi){ projs.forEach(function(pj){ maxv=Math.max(maxv,grid[mi+'|'+pj]||0); }); });
+  var head='<tr><th>中類 ＼ 專案</th>'+projs.map(function(p){return '<th class="r">'+esc(p)+'</th>';}).join('')+'<th class="r">小計</th></tr>';
   var rows = minors.map(function(mi){
-    var sum = 0;
-    var tds = trades.map(function(tr){
-      var v = grid[mi+'|'+tr]||0; sum += v;
+    var sum=0;
+    var tds = projs.map(function(pj){
+      var v=grid[mi+'|'+pj]||0; sum+=v;
       if(!v) return '<td class="c"></td>';
-      var a = 0.16 + 0.74*v/maxv;
+      var a=0.16+0.74*v/maxv;
       return '<td class="c"><span class="hcell" style="background:rgba(91,61,245,'+a.toFixed(2)+');'+
         (a>0.5?'color:#fff':'color:var(--accent)')+'">'+v+'</span></td>';
     }).join('');
@@ -906,355 +1095,522 @@ function crossTable(list){
   }).join('');
   return '<table class="heat"><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>';
 }
-
-function repeatTable(list){
-  var m = {};
-  list.forEach(function(x){
-    var key = (x.project||'—')+'|'+(x.detail||x.minor||'（未分類）');
-    if(!m[key]) m[key] = {project:x.project, detail:x.detail||x.minor, n:0, open:0, zones:{}};
-    m[key].n++;
-    if(x.open) m[key].open++;
-    if(x.zone) m[key].zones[x.zone] = 1;
+function repeats(list){
+  var m={};
+  list.forEach(function(t){
+    var key=(t.project||'—')+'|'+(t.minor||'（未填）');
+    if(!m[key]) m[key]={project:t.project, minor:t.minor, n:0, open:0, causes:{}};
+    m[key].n++; if(t.open) m[key].open++;
+    if(t.cause) m[key].causes[t.cause]=1;
   });
-  var rows = Object.keys(m).map(function(k){return m[k];})
-    .filter(function(r){return r.n>=2;})
-    .sort(function(a,b){return b.n-a.n;}).slice(0,15);
-  if(!rows.length) return '<div class="empty">目前沒有重複發生 2 次以上的缺失細項。</div>';
-  return '<table><thead><tr><th>專案</th><th>缺失細項</th><th class="r">次數</th>'+
-    '<th class="r">未結</th><th>發生區域</th></tr></thead><tbody>'+
+  var rows=Object.keys(m).map(function(k){return m[k];})
+    .filter(function(r){return r.n>=2;}).sort(function(a,b){return b.n-a.n;}).slice(0,15);
+  if(!rows.length) return '<div class="empty">目前沒有重複發生 2 件以上的中類。</div>';
+  return '<table><thead><tr><th>專案</th><th>中類</th><th class="r">件數</th><th class="r">未結</th><th>根本原因</th></tr></thead><tbody>'+
     rows.map(function(r){
-      return '<tr><td class="num">'+esc(r.project)+'</td><td>'+esc(r.detail)+'</td>'+
+      return '<tr><td class="num">'+esc(r.project)+'</td><td>'+esc(r.minor)+'</td>'+
         '<td class="num r"><b>'+r.n+'</b></td><td class="num r">'+r.open+'</td>'+
-        '<td class="muted">'+esc(Object.keys(r.zones).join('、'))+'</td></tr>';
+        '<td class="muted">'+esc(Object.keys(r.causes).join('、'))+'</td></tr>';
     }).join('')+'</tbody></table>'+
-    '<div class="legend"><span>重複 3 次以上通常不是個案，應回頭檢討工序、教育訓練或圖說。</span></div>';
+    '<div class="legend"><span>同一中類重複 3 件以上通常不是個案，應回頭檢討流程或規格。</span></div>';
 }
 
-function defectTable(list){
-  var rows = list.slice().sort(function(a,b){
-    if(a.open!==b.open) return a.open?-1:1;
-    return (b.raised||'').localeCompare(a.raised||'');
-  }).map(function(x){
-    return '<tr data-drow="'+x.row+'">'+
-      '<td class="num">'+lightDot(x.light)+esc(x.id)+'</td>'+
-      '<td class="num">'+esc(x.project)+'</td>'+
-      '<td class="num">'+roc(x.raised)+'</td>'+
-      '<td>'+esc(x.zone||'')+'<div class="muted">'+esc(x.trade||'')+'</div></td>'+
-      '<td><span class="tag">'+esc(x.minor||'')+'</span><div class="muted">'+esc(x.detail||'')+'</div></td>'+
-      '<td>'+esc(x.desc||'')+'</td>'+
-      '<td>'+esc(x.severity||'')+'</td>'+
-      '<td>'+esc(x.cause||'')+'</td>'+
-      '<td class="num"'+(x.overdue?' style="color:var(--red)"':'')+'>'+roc(x.due)+'</td>'+
-      '<td class="num r">'+(x.fixDays!==null?x.fixDays:(x.ageDays!==null?'已 '+x.ageDays:'—'))+'</td>'+
-      '<td>'+esc(x.result||'')+'</td>'+
-      '<td><span class="tag">'+esc(x.status||'')+'</span></td></tr>';
-  }).join('');
-  return '<table><thead><tr><th>編號</th><th>專案</th><th>開立日</th><th>區域／專業</th>'+
-    '<th>分類</th><th>缺失描述</th><th>嚴重度</th><th>根本原因</th><th>要求改善</th>'+
-    '<th class="r">改善天</th><th>複驗</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table>';
-}
+/* ---------- 工作分派 ---------- */
+var AF = {week:'', kind:'all', proj:''};
+var DRAG = null;
 
-function defectCatOptions(){
-  var cats = DB.defectCats || [];
-  return {
-    majors: uniq(cats.map(function(c){return {v:c.major};}),'v'),
-    minors: uniq(cats.map(function(c){return {v:c.minor};}),'v'),
-    details: uniq(cats.map(function(c){return {v:c.detail};}),'v')
-  };
-}
-
-function openDefectEdit(row){
-  var x = (DB.defects||[]).filter(function(d){return d.row===row;})[0];
-  if(!x) return;
-  var o = defectCatOptions();
-  var html = '<div class="readonly"><b class="num">'+esc(x.id)+'</b>　'+esc(x.project)+
-    '　'+esc(x.zone||'')+'<div style="margin-top:4px">'+esc(x.desc||'')+'</div>'+
-    '<div class="muted num" style="margin-top:4px">開立 '+roc(x.raised)+
-    (x.ageDays!==null?'（已 '+x.ageDays+' 日）':'')+'</div></div>'+
-    field('狀態','狀態',x.status,'select',['已開立','改善中','待複驗','已結案','不列計'])+
-    field('大類','大類',x.major,'select',o.majors)+
-    field('中類','中類',x.minor,'select',o.minors)+
-    field('細項','細項',x.detail,'select',o.details)+
-    field('嚴重度','嚴重度',x.severity,'select',['輕微','一般','重大','影響驗收'])+
-    field('根本原因','根本原因',x.cause,'select',
-      ['人員疏忽','教育訓練不足','圖說不清或矛盾','界面協調不足','材料設備問題',
-       '工序安排不當','自主檢查機制不足','設計變更未落實','其他'])+
-    field('責任歸屬','責任歸屬',x.duty,'select',['承包商','分包廠商','設計單位','監造單位','業主','待釐清'])+
-    field('改善負責人','改善負責人',x.fixer)+
-    field('要求改善日','要求改善日',x.due,'date')+
-    field('實際改善日','實際改善日',x.fixed,'date')+
-    field('複驗日','複驗日',x.recheck,'date')+
-    field('複驗結果','複驗結果',x.result,'select',['未複驗','通過','未通過'])+
-    field('佐證','佐證',x.evidence)+
-    field('備註','備註',x.note,'textarea');
-  openDrawer('更新缺失　'+x.id, html, function(data, ok, fail){
-    rpc('updateRecord', {table: 'defect', row: row, patch: data}, ok, fail);
-  });
-}
-
-function openNewDefect(){
-  var o = defectCatOptions();
-  var pOpts = DB.projects.map(function(p){return p.code;});
-  var people = DB.people.map(function(p){return p.name;});
-  var next = 'D-' + ('000' + ((DB.defects||[]).length + 1)).slice(-4);
-  var html = field('缺失編號','缺失編號',next)+
-    field('專案代號','專案代號',DEF_FILTER.proj||pOpts[0],'select',pOpts)+
-    field('開立日','開立日',DB.today,'date')+
-    field('查驗階段','查驗階段','初驗','select',['設計審查','施工中查驗','初驗','複驗','驗收後保固'])+
-    field('樓層區域','樓層區域','')+
-    field('專業別','專業別','建築','select',
-      ['建築','結構','給排水','電氣','消防','空調','弱電','景觀','整合介面','其他'])+
-    field('大類','大類',o.majors[0],'select',o.majors)+
-    field('中類','中類',o.minors[0],'select',o.minors)+
-    field('細項','細項',o.details[0],'select',o.details)+
-    field('缺失描述','缺失描述','','textarea')+
-    field('嚴重度','嚴重度','一般','select',['輕微','一般','重大','影響驗收'])+
-    field('責任歸屬','責任歸屬','承包商','select',['承包商','分包廠商','設計單位','監造單位','業主','待釐清'])+
-    field('根本原因','根本原因','人員疏忽','select',
-      ['人員疏忽','教育訓練不足','圖說不清或矛盾','界面協調不足','材料設備問題',
-       '工序安排不當','自主檢查機制不足','設計變更未落實','其他'])+
-    field('關聯工項編號','關聯工項編號','')+
-    field('開立人','開立人',people[0],'select',people)+
-    field('改善負責人','改善負責人','')+
-    field('要求改善日','要求改善日','','date')+
-    field('狀態','狀態','已開立','select',['已開立','改善中','待複驗'])+
-    field('佐證','佐證','');
-  openDrawer('新增缺失', html, function(data, ok, fail){
-    rpc('addRecord', {table: 'defect', data: data}, ok, fail);
-  });
-}
-
-/* ---------- 人員負荷 ---------- */
-function viewLoad(m){
-  var weeks = [];
-  var base = d(DB.today);
-  for(var i=0;i<4;i++){
-    var dt = new Date(base.getTime()); dt.setDate(dt.getDate()+i*7);
-    weeks.push(rocWeek(dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2)));
+/** 回傳近期週次，含各週的起訖日，供工項以日期區間比對 */
+function weekOptions(){
+  var out=[], base=d(DB.today);
+  for(var i=-1;i<5;i++){
+    var dt=new Date(base.getTime()); dt.setDate(dt.getDate()+i*7);
+    var mon=new Date(dt.getTime());
+    mon.setDate(mon.getDate() - ((mon.getDay()+6)%7));      // 該週週一
+    var sun=new Date(mon.getTime()); sun.setDate(sun.getDate()+6);
+    out.push({label: rocWeek(mon.getFullYear()+'-'+('0'+(mon.getMonth()+1)).slice(-2)+'-'+('0'+mon.getDate()).slice(-2)),
+              mon:mon, sun:sun});
   }
-  var all = DB.owner.concat(DB.internal);
-  var rows = DB.people.map(function(pe){
-    var mine = all.filter(function(t){ return t.owner===pe.name; });
-    var open = mine.filter(openTask);
-    var overdue = open.filter(function(t){return t.light==='red';}).length;
-    var waiting = open.filter(function(t){return t.status==='待業主回覆';}).length;
-    var cells = weeks.map(function(w){
-      var e = open.filter(function(t){return t.week===w;})
-                  .reduce(function(a,t){return a+(t.effort||0);},0);
-      var color = e > pe.capacity+1 ? 'var(--red)' : (e > pe.capacity ? 'var(--amber)' : 'inherit');
+  return out;
+}
+function weekLabels(){ return weekOptions().map(function(w){return w.label;}); }
+function weekRange(label){
+  var f = weekOptions().filter(function(w){return w.label===label;})[0];
+  return f || null;
+}
+
+/** 把議題與工項統一成可分派的卡片 */
+function assignCards(){
+  var cards=[];
+  if(AF.kind!=='item'){
+    DB.issues.filter(function(t){return t.open;}).forEach(function(t){
+      cards.push({kind:'issue', table:'issue', row:t.row, ownerField:'主辦人',
+        id:t.id, title:t.title, project:t.project, owner:t.owner||'',
+        due:t.due, week:t.week||'', effort:t.effort||0,
+        badge:t.type, priority:t.priority, light:t.light,
+        overdue:t.overdue, blocker:t.blocker});
+    });
+  }
+  if(AF.kind!=='issue'){
+    Object.keys(DB.workItems).forEach(function(code){
+      DB.workItems[code].forEach(function(w){
+        if(w.parent || w.status==='已完成') return;
+        var late = w.pct < w.plannedPct-5;
+        cards.push({kind:'item', table:'contract', row:w.row, ownerField:'負責人',
+          id:w.code, title:w.name, project:code, owner:w.owner||'',
+          due:w.end, start:w.start, week:'', effort:0,
+          badge:'工項', priority:'', light: late?'red':(w.pct>0?'green':'grey'),
+          overdue:false, pct:w.pct, plannedPct:w.plannedPct});
+      });
+    });
+  }
+  var wr = (AF.week && AF.week!=='none') ? weekRange(AF.week) : null;
+  return cards.filter(function(c){
+    if(AF.proj && c.project!==AF.proj) return false;
+    if(AF.week==='none') return c.kind==='issue' && !c.week;
+    if(wr){
+      if(c.kind==='issue') return c.week===AF.week;
+      // 工項沒有週次欄位，改判斷預計期間是否與該週重疊
+      if(!c.start || !c.due) return false;
+      return !(d(c.due) < wr.mon || d(c.start) > wr.sun);
+    }
+    return true;
+  });
+}
+
+function viewAssign(m){
+  var cards = assignCards();
+  var people = DB.people.map(function(p){return p.name;});
+  var cols = [''].concat(people);   // '' 代表未指派
+  var weeks = weekLabels();
+
+  var byOwner = {};
+  cols.forEach(function(n){ byOwner[n]=[]; });
+  cards.forEach(function(c){
+    if(byOwner[c.owner]===undefined) byOwner[c.owner]=[];
+    byOwner[c.owner].push(c);
+  });
+
+  // 負荷摘要（依排定週次，只計議題人天）
+  var loadRows = people.map(function(name){
+    var mine = DB.issues.filter(function(t){return t.owner===name && t.open;});
+    var cells = weeks.slice(1,5).map(function(w){
+      var e = mine.filter(function(t){return t.week===w;}).reduce(function(a,t){return a+(t.effort||0);},0);
+      var color = e>4+1 ? 'var(--red)' : (e>4 ? 'var(--amber)' : 'inherit');
       return '<td class="num r" style="color:'+color+'">'+(e||'—')+'</td>';
     }).join('');
-    return '<tr data-person="'+esc(pe.name)+'"><td><b>'+esc(pe.name)+'</b><div class="muted">'+esc(pe.dept||'')+'</div></td>'+
-      '<td class="num r">'+open.length+'</td>'+
-      '<td class="num r">'+(overdue?'<b style="color:var(--red)">'+overdue+'</b>':'0')+'</td>'+
-      '<td class="num r">'+waiting+'</td>'+cells+
-      '<td class="num r">'+pe.capacity+'</td></tr>';
+    var items=0;
+    Object.keys(DB.workItems).forEach(function(k){
+      DB.workItems[k].forEach(function(w){ if(w.owner===name && !w.parent && w.status!=='已完成') items++; });
+    });
+    return '<tr data-person="'+esc(name)+'"><td><b>'+esc(name)+'</b></td>'+
+      '<td class="num r">'+items+'</td><td class="num r">'+mine.length+'</td>'+
+      '<td class="num r">'+(mine.filter(function(t){return t.light==='red';}).length||0)+'</td>'+
+      '<td class="num r">'+mine.filter(function(t){return t.status==='待對方回覆';}).length+'</td>'+
+      cells+'</tr>';
   }).join('');
 
-  m.innerHTML = '<div class="card"><h2>人員負荷（未結案事項，依排定週次）</h2><div class="scroll"><table>'+
-    '<thead><tr><th>承辦人</th><th class="r">未結</th><th class="r">逾期</th><th class="r">待回覆</th>'+
-    weeks.map(function(w){return '<th class="r num">'+w+'</th>';}).join('')+
-    '<th class="r">週可用</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
-    '<div class="legend"><span>單週人天超過可用量亮黃、超過 1 天以上亮紅。點承辦人可看個人週報。</span></div></div>'+
-    '<div id="weekly"></div>';
+  var unassigned = (byOwner['']||[]).length;
 
+  m.innerHTML =
+   '<div class="kpis">'+
+     kpi('待分派', unassigned, unassigned?'尚未指定負責人':'全部都有負責人', 'inbox', unassigned?'rose':'mint')+
+     kpi('本週工作量', cards.filter(function(c){return c.week===weeks[1];}).reduce(function(a,c){return a+c.effort;},0)+' 人天',
+         weeks[1], 'clock','lilac')+
+     kpi('可分派人數', people.length, '週可用 4 人天／人', 'layers','sky')+
+     kpi('顯示中', cards.length, '依下方篩選條件', 'check','peach')+
+   '</div>'+
+
+   '<div class="card"><div class="body"><div class="toolbar">'+
+     '<select id="afWeek"><option value="">全部週次</option>'+
+       '<option value="none"'+(AF.week==='none'?' selected':'')+'>未排定週次（僅議題）</option>'+
+       weeks.map(function(w,i){
+         var tag = i===0?'（上週）':i===1?'（本週）':i===2?'（下週）':'';
+         return '<option value="'+w+'"'+(AF.week===w?' selected':'')+'>'+w+tag+'</option>';}).join('')+
+     '</select>'+
+     '<select id="afKind">'+[['all','議題＋工項'],['issue','僅議題'],['item','僅工項']]
+       .map(function(o){return '<option value="'+o[0]+'"'+(AF.kind===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+
+     sel('afProj','全部專案', DB.projects.map(function(p){return p.code;}).concat(['內部']), AF.proj)+
+     '<span class="muted">把卡片拖到別人欄位即可改派；點卡片可調整週次與人天。'+
+     '選定週次時，議題依「排定週次」、工項依預計期間是否落在該週。</span>'+
+   '</div></div></div>'+
+
+   '<div class="board">'+ cols.map(function(name){
+      var list = byOwner[name]||[];
+      var effort = list.reduce(function(a,c){return a+c.effort;},0);
+      var over = effort>4;
+      return '<div class="bcol" data-owner="'+esc(name)+'">'+
+        '<div class="bhead">'+
+          '<b>'+(name?esc(name):'未指派')+'</b>'+
+          '<span class="bcount">'+list.length+'</span>'+
+          (name?'<div class="bload'+(over?' over':'')+'">'+effort+' 人天</div>':'')+
+        '</div>'+
+        '<div class="bbody">'+ (list.length ? list.map(cardHTML).join('')
+          : '<div class="bempty">'+(name?'目前沒有工作':'全部已分派')+'</div>') +'</div>'+
+      '</div>';
+   }).join('') + '</div>'+
+
+   '<div class="card"><h2>人員負荷（未結議題，依排定週次）</h2><div class="scroll"><table>'+
+     '<thead><tr><th>承辦人</th><th class="r">在辦工項</th><th class="r">未結議題</th><th class="r">逾期</th>'+
+     '<th class="r">待回覆</th>'+weeks.slice(1,5).map(function(w){return '<th class="r num">'+w+'</th>';}).join('')+
+     '</tr></thead><tbody>'+loadRows+'</tbody></table></div>'+
+     '<div class="legend"><span>單週超過 4 人天亮黃、超過 5 人天亮紅。點承辦人可看個人週報。</span></div></div>'+
+   '<div id="weekly"></div>';
+
+  ['afWeek|week','afKind|kind','afProj|proj'].forEach(function(pair){
+    var a=pair.split('|'), el=document.getElementById(a[0]);
+    if(el) el.onchange=function(){ AF[a[1]]=this.value; render(); };
+  });
   [].forEach.call(m.querySelectorAll('tr[data-person]'), function(tr){
-    tr.onclick = function(){ renderWeekly(tr.dataset.person, weeks[0], weeks[1]); };
+    tr.onclick=function(){ weekly(tr.dataset.person, weeks[1], weeks[2]); };
+  });
+  bindBoard(m);
+}
+
+function cardHTML(c){
+  return '<div class="bcard" draggable="true" data-kind="'+c.kind+'" data-row="'+c.row+'" data-table="'+c.table+'">'+
+    '<div class="btop">'+lightDot(c.light)+'<span class="num">'+esc(c.id)+'</span>'+
+      '<span class="tag" style="margin-left:auto">'+esc(c.badge)+'</span></div>'+
+    '<div class="btitle">'+esc(c.title)+'</div>'+
+    '<div class="bmeta">'+
+      '<span class="num">'+esc(c.project)+'</span>'+
+      (c.due?'<span class="num"'+(c.overdue?' style="color:var(--red);font-weight:600"':'')+'>'+roc(c.due)+'</span>':'')+
+      (c.week?'<span class="num">'+esc(c.week)+'</span>':'')+
+      (c.effort?'<span class="num">'+c.effort+' 人天</span>':'')+
+      (c.kind==='item'?'<span class="num">'+c.pct+'% / 預計 '+c.plannedPct+'%</span>':'')+
+    '</div>'+
+    (c.blocker?'<div class="bblock">卡點：'+esc(c.blocker)+'</div>':'')+
+  '</div>';
+}
+
+function bindBoard(m){
+  [].forEach.call(m.querySelectorAll('.bcard'), function(el){
+    el.addEventListener('dragstart', function(e){
+      DRAG = {row:Number(el.dataset.row), table:el.dataset.table, kind:el.dataset.kind};
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+      try{ e.dataTransfer.setData('text/plain', el.dataset.row); }catch(err){}
+    });
+    el.addEventListener('dragend', function(){ el.classList.remove('dragging'); DRAG=null; });
+    el.addEventListener('click', function(){ openAssignEdit(el.dataset.table, Number(el.dataset.row), el.dataset.kind); });
+  });
+  [].forEach.call(m.querySelectorAll('.bcol'), function(col){
+    col.addEventListener('dragover', function(e){ e.preventDefault(); col.classList.add('over'); });
+    col.addEventListener('dragleave', function(){ col.classList.remove('over'); });
+    col.addEventListener('drop', function(e){
+      e.preventDefault(); col.classList.remove('over');
+      if(!DRAG) return;
+      var to = col.dataset.owner;
+      var patch = {};
+      patch[DRAG.table==='issue' ? '主辦人' : '負責人'] = to;
+      var d0 = DRAG; DRAG = null;
+      rpc('updateRecord', {table:d0.table, row:d0.row, patch:patch},
+        function(){ load(); },
+        function(err){ alert('改派失敗：'+err.message); });
+    });
   });
 }
 
-function renderWeekly(name, thisWeek, nextWeek){
-  var all = DB.owner.concat(DB.internal).filter(function(t){return t.owner===name;});
-  function li(list, fmt){ return list.length
-    ? '<ul style="margin:6px 0 0;padding-left:20px">'+list.map(fmt).join('')+'</ul>'
+function openAssignEdit(table, row, kind){
+  var people = DB.people.map(function(p){return p.name;});
+  var weeks = weekLabels();
+  if(kind==='issue'){
+    var t = DB.issues.filter(function(x){return x.row===row;})[0];
+    if(!t) return;
+    var html='<div class="readonly"><b class="num">'+esc(t.id)+'</b>　'+esc(t.project)+
+      '　<span class="tag">'+esc(t.type)+'</span>'+
+      '<div style="margin-top:6px;font-weight:600">'+esc(t.title)+'</div></div>'+
+      field('主辦人','主辦人',t.owner,'select',[''].concat(people))+
+      field('排定週次','排定週次',t.week,'select',[''].concat(weeks))+
+      field('預估人天','預估人天',t.effort,'number')+
+      field('要求完成日','要求完成日',t.due,'date')+
+      field('優先級','優先級',t.priority,'select',['低','中','高','緊急'])+
+      field('狀態','狀態',t.status,'select',STATUSES)+
+      field('現況說明','現況說明',t.note,'textarea');
+    openDrawer('分派　'+t.id, html, function(data, ok, fail){
+      rpc('updateRecord', {table:'issue', row:row, patch:data}, ok, fail);
+    });
+  } else {
+    var w=null;
+    Object.keys(DB.workItems).forEach(function(k){
+      DB.workItems[k].forEach(function(x){ if(x.row===row) w=x; });
+    });
+    if(!w) return;
+    var html2='<div class="readonly"><b class="num">'+esc(w.code)+'</b>　'+esc(w.name)+
+      '<div class="muted num" style="margin-top:4px">預計 '+roc(w.start)+' – '+roc(w.end)+
+      '　實際 '+w.pct+'%（預計 '+w.plannedPct+'%）</div></div>'+
+      field('負責人','負責人',w.owner,'select',[''].concat(people))+
+      field('完成百分比(%)','完成百分比(%)',w.pct,'number')+
+      field('狀態','狀態',w.status,'select',['未開始','進行中','已完成','暫停'])+
+      field('實際開始日','實際開始日',w.actualStart,'date')+
+      field('實際完成日','實際完成日',w.actualEnd,'date');
+    openDrawer('分派工項　'+w.code, html2, function(data, ok, fail){
+      rpc('updateRecord', {table:'contract', row:row, patch:data}, ok, fail);
+    });
+  }
+}
+
+function weekly(name, thisWeek, nextWeek){
+  var mine = DB.issues.filter(function(t){return t.owner===name;});
+  function li(list, f){ return list.length ? '<ul style="margin:6px 0 0;padding-left:20px">'+list.map(f).join('')+'</ul>'
     : '<div class="muted" style="margin-top:6px">無</div>'; }
-  var doneThis = all.filter(function(t){return !openTask(t) && t.done && rocWeek(t.done)===thisWeek;});
-  var doing = all.filter(function(t){return t.status==='進行中';});
-  var blocked = all.filter(function(t){return openTask(t) && t.blocker;});
-  var next = all.filter(function(t){return openTask(t) && t.week===nextWeek;});
-  var waiting = all.filter(function(t){return t.status==='待業主回覆';});
+  var doneThis = mine.filter(function(t){return !t.open && t.done && rocWeek(t.done)===thisWeek;});
+  var doing = mine.filter(function(t){return t.status==='進行中';});
+  var blocked = mine.filter(function(t){return t.open && t.blocker;});
+  var next = mine.filter(function(t){return t.open && t.week===nextWeek;});
+  var waiting = mine.filter(function(t){return t.status==='待對方回覆';});
 
   document.getElementById('weekly').innerHTML =
     '<div class="card"><h2>'+esc(name)+'　'+thisWeek+' 工作週報</h2><div class="body">'+
-    '<b>本週完成</b>'+ li(doneThis, function(t){return '<li>'+esc(t.id)+'　'+esc(t.content)+'</li>';}) +
-    '<b style="display:block;margin-top:12px">本週進行中</b>'+ li(doing, function(t){
-        return '<li>'+esc(t.id)+'　'+esc(t.content)+(t.note?'<div class="muted">'+esc(t.note)+'</div>':'')+'</li>';}) +
-    '<b style="display:block;margin-top:12px">卡點與需協助</b>'+ li(blocked, function(t){
-        return '<li>'+esc(t.id)+'　'+esc(t.blocker)+'</li>';}) +
-    '<b style="display:block;margin-top:12px">下週預計（'+nextWeek+'）</b>'+ li(next, function(t){
-        return '<li>'+esc(t.id)+'　'+esc(t.content)+'（'+(t.effort||0)+' 人天）</li>';}) +
-    '<b style="display:block;margin-top:12px">待他人回覆</b>'+ li(waiting, function(t){
-        var w = t.updated ? days(d(t.updated), d(DB.today)) : '—';
-        return '<li>'+esc(t.id)+'　'+esc(t.content)+'（已等 '+w+' 日）</li>';}) +
+    '<b>本週完成</b>'+li(doneThis,function(t){return '<li>'+esc(t.id)+'　'+esc(t.title)+'</li>';})+
+    '<b style="display:block;margin-top:12px">本週進行中</b>'+li(doing,function(t){
+      return '<li>'+esc(t.id)+'　'+esc(t.title)+(t.note?'<div class="muted">'+esc(t.note)+'</div>':'')+'</li>';})+
+    '<b style="display:block;margin-top:12px">卡點與需協助</b>'+li(blocked,function(t){
+      return '<li>'+esc(t.id)+'　'+esc(t.blocker)+'</li>';})+
+    '<b style="display:block;margin-top:12px">下週預計（'+nextWeek+'）</b>'+li(next,function(t){
+      return '<li>'+esc(t.id)+'　'+esc(t.title)+'（'+(t.effort||0)+' 人天）</li>';})+
+    '<b style="display:block;margin-top:12px">待他人回覆</b>'+li(waiting,function(t){
+      var w=t.updated?days(d(t.updated),d(DB.today)):'—';
+      return '<li>'+esc(t.id)+'　'+esc(t.title)+'（已等 '+w+' 日）</li>';})+
     '<div style="margin-top:14px"><button class="act ghost" onclick="copyWeekly()">複製週報文字</button></div>'+
     '</div></div>';
   document.getElementById('weekly').scrollIntoView({behavior:'smooth'});
 }
 function copyWeekly(){
-  var t = document.getElementById('weekly').innerText;
-  navigator.clipboard.writeText(t).then(function(){ alert('週報已複製，可直接貼到郵件或會議紀錄。'); });
+  navigator.clipboard.writeText(document.getElementById('weekly').innerText)
+    .then(function(){ alert('週報已複製，可貼到郵件或會議紀錄。'); });
 }
 
-/* ---------- 統計 ---------- */
-function viewStats(m){
-  var all = DB.owner.concat(DB.internal);
-  var open = all.filter(openTask);
-  var waits = DB.owner.filter(function(t){return t.status==='待業主回覆' && t.updated;})
-    .map(function(t){ return days(d(t.updated), d(DB.today)); });
-  var avgWait = waits.length ? Math.round(waits.reduce(function(a,b){return a+b;},0)/waits.length) : 0;
-  var d30 = new Date(d(DB.today).getTime()); d30.setDate(d30.getDate()-30);
-  var added = all.filter(function(t){ return t.raised && d(t.raised) >= d30; }).length;
-  var closed = all.filter(function(t){ return t.done && d(t.done) >= d30; }).length;
-  var change = DB.owner.filter(function(t){return t.changeOrder==='是';});
-  var affect = DB.owner.filter(function(t){return t.affectSchedule==='是';});
+/* ---------- 匯入匯出 ---------- */
+var TABLE_LABEL = {contract:'契約履約', issue:'議題追蹤'};
 
-  var bySource = {};
-  DB.owner.forEach(function(t){ bySource[t.source] = (bySource[t.source]||0)+1; });
-  var byType = {};
-  DB.internal.forEach(function(t){ byType[t.type] = (byType[t.type]||0)+1; });
-
-  function barList(obj){
-    var max = Math.max.apply(null, Object.keys(obj).map(function(k){return obj[k];}).concat([1]));
-    return Object.keys(obj).map(function(k){
-      return '<tr><td>'+esc(k)+'</td><td style="width:60%"><div style="height:9px;border-radius:99px;'+
-        'background:var(--accent);width:'+(obj[k]/max*100)+'%"></div></td>'+
-        '<td class="num r">'+obj[k]+'</td></tr>';
-    }).join('') || '<tr><td colspan="3" class="muted">無資料</td></tr>';
-  }
-
-  m.innerHTML =
-    '<div class="kpis">'+
-      kpi('未結事項', open.length, '近 30 日新增 '+added+'、結案 '+closed, 'inbox', 'lilac') +
-      kpi('待業主回覆', DB.owner.filter(function(t){return t.status==='待業主回覆';}).length, '平均已等 '+avgWait+' 日', 'clock', 'sky') +
-      kpi('涉及契約變更', change.length, '需併入變更程序', 'swap', 'peach') +
-      kpi('可能影響工期', affect.length, '展延主張之依據', 'alert', affect.length? 'rose':'mint') +
-    '</div>'+
-    '<div class="card"><h2>業主交辦來源分布</h2><div class="body"><table>'+barList(bySource)+'</table></div></div>'+
-    '<div class="card"><h2>內部交辦類別分布</h2><div class="body"><table>'+barList(byType)+'</table></div></div>'+
-    '<div class="card"><h2>各案進度差異</h2><div class="scroll"><table>'+
-      '<thead><tr><th>專案</th><th>預計</th><th>實際</th><th class="r">差異</th><th>權重合計</th></tr></thead><tbody>'+
-      DB.projects.map(function(p){
-        return '<tr><td>'+lightDot(p.light)+esc(p.name)+'</td><td class="num">'+pct(p.planned)+
-          '</td><td class="num">'+pct(p.actual)+'</td><td class="num r" style="color:'+
-          (p.diff<0?'var(--red)':'var(--green)')+'">'+(p.diff>0?'+':'')+p.diff+'%</td>'+
-          '<td class="num">'+p.weightSum+'%'+(Math.abs(p.weightSum-100)>0.5?' <span style="color:var(--amber)">（未達 100）</span>':'')+'</td></tr>';
-      }).join('')+'</tbody></table></div></div>';
-}
-
-/* ---------- 匯入 ---------- */
-var TABLE_LABEL = {project:'01_專案主檔', workitem:'02_契約工項', owner:'03_業主交辦',
-  internal:'04_內部交辦', defect:'07_缺失紀錄', defectcat:'08_缺失類別'};
 function viewImport(m){
-  m.innerHTML = '<div class="card"><h2>批次匯入</h2><div class="body">'+
-    '<div class="toolbar">'+
-      '<select id="impTable">'+Object.keys(TABLE_LABEL).map(function(k){
-        return '<option value="'+k+'">'+TABLE_LABEL[k]+'</option>';}).join('')+'</select>'+
-      '<button class="act ghost" id="btnHeaders">取得欄位標題</button>'+
-      '<button class="act" id="btnImport">匯入</button>'+
-    '</div>'+
-    '<p class="muted">從 Excel 直接複製整塊資料（含標題列）貼到下方，欄位順序不限，系統依標題比對。日期可用 2026-08-06 或 115.08.06。</p>'+
-    '<textarea id="impText" rows="12" style="width:100%" placeholder="貼上資料…"></textarea>'+
-    '<div id="impMsg" style="margin-top:10px"></div>'+
-    '</div></div>';
+  m.innerHTML =
+   '<div class="card"><h2>匯出：交給 AI 彙整</h2><div class="body">'+
+     '<p class="muted">先按下方按鈕把現況複製走，貼給 AI 並附上你的更新說明（例如會議紀錄、業主來函）。'+
+     'AI 回覆同樣格式的表格後，再用下半部的匯入貼回來。</p>'+
+     '<div class="toolbar">'+
+       '<button class="act ghost" onclick="copyTable(\'contract\')">複製「契約履約」現況</button>'+
+       '<button class="act ghost" onclick="copyTable(\'issue\')">複製「議題追蹤」現況</button>'+
+       '<button class="act ghost" onclick="copyPrompt()">複製 AI 指令範本</button>'+
+     '</div>'+
+     '<div id="expMsg" class="muted"></div>'+
+   '</div></div>'+
 
-  document.getElementById('btnHeaders').onclick = function(){
-    var t = document.getElementById('impTable').value;
-    rpc('getTemplateHeaders', {table: t}, function(headers){
-      document.getElementById('impText').value = headers.join('\t') + '\n';
-    });
-  };
-  document.getElementById('btnImport').onclick = doImport;
+   '<div class="card"><h2>匯入：貼回更新結果</h2><div class="body">'+
+     '<div class="toolbar">'+
+       '<select id="impTable">'+Object.keys(TABLE_LABEL).map(function(k){
+         return '<option value="'+k+'">'+TABLE_LABEL[k]+'</option>';}).join('')+'</select>'+
+       '<button class="act ghost" onclick="fillHeaders()">取得欄位標題</button>'+
+       '<button class="act" onclick="doImport()">匯入</button>'+
+     '</div>'+
+     '<p class="muted">貼上含標題列的表格（Tab 或逗號分隔皆可）。'+
+     '「議題追蹤」會以<b>議題編號</b>比對：編號已存在就更新該列，不存在才新增，'+
+     '所以同一批資料重複貼不會產生重複列。日期可用 2026-08-16 或 115.08.16。</p>'+
+     '<textarea id="impText" rows="12" style="width:100%" placeholder="貼上資料…"></textarea>'+
+     '<div id="impMsg" style="margin-top:10px"></div>'+
+   '</div></div>';
 }
+
+function tableToTSV(table){
+  var rows=[], head;
+  if(table==='issue'){
+    head=['議題編號','專案代號','議題類型','大類','中類','標題','說明','來源依據','關聯工項編號',
+          '主辦人','協辦人','提出日','要求完成日','排定週次','預估人天','優先級','責任歸屬',
+          '根本原因','影響時程','涉及契約變更','狀態','現況說明','卡點與需決策','佐證','實際完成日','最後更新日'];
+    rows = DB.issues.map(function(t){
+      return [t.id,t.project,t.type,t.major,t.minor,t.title,t.desc,t.basis,t.link,t.owner,t.co,
+              t.raised,t.due,t.week,t.effort,t.priority,t.duty,t.cause,t.affect,t.change,
+              t.status,t.note,t.blocker,t.evidence,t.done,t.updated];
+    });
+  } else {
+    head=['記錄類型','專案代號','名稱','業主','契約編號','契約金額','履約起始日','契約工期(天)',
+          '工期計算方式','展延天數','工項編號','階層','前置工項','工期天數','權重(%)','里程碑',
+          '負責人','預計開始日','預計完成日','實際開始日','實際完成日','完成百分比(%)','狀態','交付成果','計價期別','備註'];
+    DB.projects.forEach(function(p){
+      rows.push(['專案',p.code,p.name,p.client,p.contractNo,p.amount,p.start,p.duration,p.mode,
+                 p.extend,'','','','','','',p.manager,'','','','','',p.status,'','','']);
+      (DB.workItems[p.code]||[]).forEach(function(w){
+        rows.push(['工項',p.code,w.name,'','','','','','','',w.code,w.level,w.pre,w.duration,
+                   w.weight,(w.milestone?'是':'否'),w.owner,w.start,w.end,w.actualStart,w.actualEnd,
+                   w.pct,w.status,w.deliverable,w.stage,'']);
+      });
+    });
+  }
+  return [head].concat(rows).map(function(r){
+    return r.map(function(c){ return String(c==null?'':c).replace(/[\t\r\n]/g,' '); }).join('\t');
+  }).join('\n');
+}
+
+function copyTable(table){
+  var txt = tableToTSV(table);
+  navigator.clipboard.writeText(txt).then(function(){
+    document.getElementById('expMsg').innerHTML =
+      '<span style="color:var(--green)">已複製「'+TABLE_LABEL[table]+'」'+
+      (txt.split('\n').length-1)+' 列，可直接貼到 Excel 或對話框。</span>';
+  }, function(){
+    document.getElementById('expMsg').innerHTML =
+      '<span style="color:var(--red)">瀏覽器拒絕存取剪貼簿，請改用試算表直接複製。</span>';
+  });
+}
+
+function copyPrompt(){
+  var p =
+'我會貼上兩段資料：\n'+
+'（一）目前的「議題追蹤」表格，含標題列，Tab 分隔。\n'+
+'（二）本週的更新來源（會議紀錄／業主來函／我的口述）。\n\n'+
+'請依更新來源修改表格，並遵守下列規則：\n'+
+'1. 欄位順序與標題必須與我給的完全一致，不可增刪欄位。\n'+
+'2. 既有議題有更新時，沿用原本的「議題編號」，只改動有變的欄位。\n'+
+'3. 新議題的編號規則：業主交辦 O-、會議決議 M-、內部工作 I-、問題缺失 Q-、風險 R-，後接三位流水號，不可與既有編號重複。\n'+
+'4. 「大類／中類」必須從我提供的分類清單中挑選，不可自創。\n'+
+'5. 日期一律寫成 YYYY-MM-DD。\n'+
+'6. 「現況說明」只寫本週的變化，不要累積舊內容。\n'+
+'7. 沒有變動的列也要原樣輸出，保持完整表格。\n'+
+'8. 只輸出表格本身，前後不要加說明文字或程式碼框。\n\n'+
+'分類清單：\n' + (DB.catalog||[]).map(function(c){return c[0]+' / '+c[1];}).join('\n');
+  navigator.clipboard.writeText(p).then(function(){
+    document.getElementById('expMsg').innerHTML =
+      '<span style="color:var(--green)">AI 指令範本已複製（含分類清單）。</span>';
+  });
+}
+
+function fillHeaders(){
+  var t=document.getElementById('impTable').value;
+  rpc('getTemplateHeaders', {table:t}, function(h){
+    document.getElementById('impText').value = h.join('\t')+'\n';
+  });
+}
+
 function doImport(){
-  var t = document.getElementById('impTable').value;
-  var text = document.getElementById('impText').value.trim();
-  var msg = document.getElementById('impMsg');
-  if(!text){ msg.innerHTML = '<span style="color:var(--red)">請先貼上資料。</span>'; return; }
-  var lines = text.split(/\r?\n/).filter(function(l){return l.trim();});
+  var t=document.getElementById('impTable').value;
+  var text=document.getElementById('impText').value.trim();
+  var msg=document.getElementById('impMsg');
+  if(!text){ msg.innerHTML='<span style="color:var(--red)">請先貼上資料。</span>'; return; }
+  var lines=text.split(/\r?\n/).filter(function(l){return l.trim();});
   var sep = lines[0].indexOf('\t')>=0 ? '\t' : ',';
-  var head = lines[0].split(sep).map(function(s){return s.trim().replace(/^"|"$/g,'');});
+  var head = lines[0].split(sep).map(function(x){return x.trim().replace(/^"|"$/g,'');});
   var rows = lines.slice(1).map(function(l){
-    var cells = l.split(sep), o = {};
-    head.forEach(function(h,i){ o[h] = (cells[i]||'').trim().replace(/^"|"$/g,''); });
+    var cells=l.split(sep), o={};
+    head.forEach(function(h,i){ o[h]=(cells[i]||'').trim().replace(/^"|"$/g,''); });
     return o;
   });
-  if(!rows.length){ msg.innerHTML = '<span style="color:var(--red)">只有標題列，沒有資料。</span>'; return; }
-  msg.textContent = '匯入中…';
-  rpc('importRows', {table: t, rows: rows}, function(r){
-    msg.innerHTML = '<span style="color:var(--green)">'+esc(r)+'</span>';
-    document.getElementById('impText').value = '';
+  if(!rows.length){ msg.innerHTML='<span style="color:var(--red)">只有標題列，沒有資料。</span>'; return; }
+  msg.textContent='匯入中…';
+  rpc('importRows', {table:t, rows:rows}, function(r){
+    msg.innerHTML='<span style="color:var(--green)">'+esc(r)+'</span>';
+    document.getElementById('impText').value='';
     load();
   }, function(e){
-    msg.innerHTML = '<span style="color:var(--red)">匯入失敗：'+esc(e.message)+'</span>';
+    msg.innerHTML='<span style="color:var(--red)">匯入失敗：'+esc(e.message)+'</span>';
   });
 }
 
-/* ---------- 編輯抽屜 ---------- */
-function field(label, name, value, type, options){
+/* ---------- 編輯面板 ---------- */
+function field(label,name,value,type,options){
   var input;
   if(type==='select'){
-    input = '<select name="'+name+'">'+options.map(function(o){
+    input='<select name="'+name+'">'+options.map(function(o){
       return '<option'+(o===value?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
   } else if(type==='textarea'){
-    input = '<textarea name="'+name+'" rows="3">'+esc(value||'')+'</textarea>';
+    input='<textarea name="'+name+'" rows="3">'+esc(value||'')+'</textarea>';
   } else {
-    input = '<input type="'+(type||'text')+'" name="'+name+'" value="'+esc(value||'')+'">';
+    input='<input type="'+(type||'text')+'" name="'+name+'" value="'+esc(value||'')+'">';
   }
   return '<label>'+label+input+'</label>';
 }
 function openDrawer(title, html, onSave){
-  document.getElementById('drawerTitle').textContent = title;
-  document.getElementById('drawerForm').innerHTML = html;
+  document.getElementById('drawerTitle').textContent=title;
+  document.getElementById('drawerForm').innerHTML=html;
   document.getElementById('drawer').classList.add('open');
   document.getElementById('backdrop').classList.add('open');
-  EDIT = onSave;
+  EDIT=onSave;
 }
 function closeDrawer(){
   document.getElementById('drawer').classList.remove('open');
   document.getElementById('backdrop').classList.remove('open');
-  EDIT = null;
+  EDIT=null;
 }
-document.getElementById('drawerClose').onclick = closeDrawer;
-document.getElementById('drawerCancel').onclick = closeDrawer;
-document.getElementById('backdrop').onclick = closeDrawer;
-document.getElementById('drawerSave').onclick = function(){
+document.getElementById('drawerClose').onclick=closeDrawer;
+document.getElementById('drawerCancel').onclick=closeDrawer;
+document.getElementById('backdrop').onclick=closeDrawer;
+document.getElementById('cfgBtn').onclick=openConfig;
+document.getElementById('drawerSave').onclick=function(){
   if(!EDIT) return;
-  var data = {};
-  [].forEach.call(document.querySelectorAll('#drawerForm [name]'), function(el){
-    data[el.name] = el.value;
-  });
-  this.disabled = true; this.textContent = '儲存中…';
-  var btn = this;
-  EDIT(data, function(){
-    btn.disabled = false; btn.textContent = '儲存';
-    closeDrawer(); load();
-  }, function(e){
-    btn.disabled = false; btn.textContent = '儲存';
-    alert('儲存失敗：'+e.message);
-  });
+  var data={};
+  [].forEach.call(document.querySelectorAll('#drawerForm [name]'), function(el){ data[el.name]=el.value; });
+  var btn=this; btn.disabled=true; btn.textContent='儲存中…';
+  EDIT(data, function(){ btn.disabled=false; btn.textContent='儲存'; closeDrawer(); load(); },
+             function(e){ btn.disabled=false; btn.textContent='儲存'; alert('儲存失敗：'+e.message); });
 };
 
-function openTaskEdit(table, row){
-  var t = (table==='owner'?DB.owner:DB.internal).filter(function(x){return x.row===row;})[0];
+function majors(){ var s={},o=[]; (DB.catalog||[]).forEach(function(c){ if(!s[c[0]]){s[c[0]]=1;o.push(c[0]);} }); return o; }
+function minors(){ return (DB.catalog||[]).map(function(c){return c[1];}); }
+var CAUSES=['需求認知落差','資料來源不足','規格未明確','介接規格變更','人力不足','時程壓縮',
+            '標準或法規更新','溝通協調不足','技術限制','其他'];
+var DUTIES=['本院','委外廠商','業主','第三方查證單位','待釐清'];
+var STATUSES=['未開始','進行中','待對方回覆','已完成','已結案','不列計'];
+
+function openIssueEdit(row){
+  var t = DB.issues.filter(function(x){return x.row===row;})[0];
   if(!t) return;
-  var statuses = ['未開始','進行中','待業主回覆','已完成','已結案','已取消'];
-  var html = '<div class="readonly"><b class="num">'+esc(t.id)+'</b>　'+esc(t.project)+
-    '<div style="margin-top:4px">'+esc(t.content)+'</div>'+
-    (t.basis?'<div class="muted num" style="margin-top:4px">依據：'+esc(t.basis)+'</div>':'')+'</div>'+
-    field('狀態','狀態',t.status,'select',statuses)+
+  var html='<div class="readonly"><b class="num">'+esc(t.id)+'</b>　'+esc(t.project)+
+    '　<span class="tag">'+esc(t.type)+'</span>'+
+    '<div style="margin-top:6px;font-weight:600">'+esc(t.title)+'</div>'+
+    (t.desc?'<div class="muted" style="margin-top:4px">'+esc(t.desc)+'</div>':'')+
+    (t.basis?'<div class="muted num" style="margin-top:4px">依據：'+esc(t.basis)+'</div>':'')+
+    (t.ageDays!==null?'<div class="muted num" style="margin-top:4px">已開立 '+t.ageDays+' 日</div>':'')+'</div>'+
+    field('狀態','狀態',t.status,'select',STATUSES)+
     field('現況說明（只寫本週變化）','現況說明',t.note,'textarea')+
-    field(table==='owner'?'卡點與需決策事項':'卡點', table==='owner'?'卡點與需決策事項':'卡點', t.blocker,'textarea')+
+    field('卡點與需決策','卡點與需決策',t.blocker,'textarea')+
+    field('大類','大類',t.major,'select',majors())+
+    field('中類','中類',t.minor,'select',minors())+
+    field('根本原因','根本原因',t.cause,'select',[''].concat(CAUSES))+
+    field('責任歸屬','責任歸屬',t.duty,'select',[''].concat(DUTIES))+
     field('主辦人','主辦人',t.owner,'select',DB.people.map(function(p){return p.name;}))+
-    field(table==='owner'?'我方承諾完成日':'要求完成日', table==='owner'?'我方承諾完成日':'要求完成日', t.due,'date')+
+    field('要求完成日','要求完成日',t.due,'date')+
     field('排定週次','排定週次',t.week)+
     field('預估人天','預估人天',t.effort,'number')+
-    (table==='owner' ? field('是否影響工期','是否影響工期',t.affectSchedule,'select',['否','是','待評估'])+
-                       field('是否涉及契約變更','是否涉及契約變更',t.changeOrder,'select',['否','是','待評估'])+
-                       field('佐證（文號／附件）','佐證',t.evidence) : '')+
+    field('優先級','優先級',t.priority,'select',['低','中','高','緊急'])+
+    field('影響時程','影響時程',t.affect,'select',['否','是','待評估'])+
+    field('涉及契約變更','涉及契約變更',t.change,'select',['否','是','待評估'])+
+    field('佐證','佐證',t.evidence)+
     field('實際完成日','實際完成日',t.done,'date');
+  openDrawer('更新議題　'+t.id, html, function(data, ok, fail){
+    rpc('updateRecord', {table:'issue', row:row, patch:data}, ok, fail);
+  });
+}
 
-  openDrawer('更新事項　'+t.id, html, function(data, ok, fail){
-    rpc('updateRecord', {table: table, row: row, patch: data}, ok, fail);
+function openNewIssue(){
+  var pOpts = DB.projects.map(function(p){return p.code;}).concat(['內部']);
+  var people = DB.people.map(function(p){return p.name;});
+  var prefix = {'業主交辦':'O','會議決議':'M','內部工作':'I','問題缺失':'Q','風險':'R'};
+  var next = 'Q-' + ('00'+(DB.issues.length+1)).slice(-3);
+  var html = field('議題編號','議題編號',next)+
+    field('專案代號','專案代號',IF.proj||pOpts[0],'select',pOpts)+
+    field('議題類型','議題類型','問題缺失','select',['業主交辦','會議決議','內部工作','問題缺失','風險'])+
+    field('標題','標題','')+
+    field('說明','說明','','textarea')+
+    field('大類','大類',majors()[0],'select',majors())+
+    field('中類','中類',minors()[0],'select',minors())+
+    field('來源依據（文號／會議日期）','來源依據','')+
+    field('關聯工項編號','關聯工項編號','')+
+    field('主辦人','主辦人',people[0],'select',people)+
+    field('提出日','提出日',DB.today,'date')+
+    field('要求完成日','要求完成日','','date')+
+    field('排定週次','排定週次',rocWeek(DB.today))+
+    field('預估人天','預估人天',1,'number')+
+    field('優先級','優先級','中','select',['低','中','高','緊急'])+
+    field('責任歸屬','責任歸屬','本院','select',DUTIES)+
+    field('根本原因','根本原因','','select',[''].concat(CAUSES))+
+    field('影響時程','影響時程','否','select',['否','是','待評估'])+
+    field('涉及契約變更','涉及契約變更','否','select',['否','是','待評估'])+
+    field('狀態','狀態','未開始','select',['未開始','進行中','待對方回覆']);
+  openDrawer('新增議題', html, function(data, ok, fail){
+    var t = data['議題類型'];
+    if(prefix[t] && data['議題編號'].indexOf(prefix[t]+'-') !== 0){
+      data['議題編號'] = prefix[t] + '-' + ('00'+(DB.issues.length+1)).slice(-3);
+    }
+    rpc('addRecord', {table:'issue', data:data}, ok, fail);
   });
 }
 
@@ -1262,7 +1618,7 @@ function openWorkItem(row){
   var items = DB.workItems[PROJ]||[];
   var i = items.filter(function(x){return x.row===row;})[0];
   if(!i) return;
-  var html = '<div class="readonly"><b class="num">'+esc(i.code)+'</b>　'+esc(i.name)+
+  var html='<div class="readonly"><b class="num">'+esc(i.code)+'</b>　'+esc(i.name)+
     '<div class="muted num" style="margin-top:4px">預計 '+roc(i.start)+' – '+roc(i.end)+
     '（'+(i.duration||0)+' 天）　預計進度 '+i.plannedPct+'%</div></div>'+
     field('狀態','狀態',i.status,'select',['未開始','進行中','已完成','暫停'])+
@@ -1272,54 +1628,12 @@ function openWorkItem(row){
     field('工期天數','工期天數',i.duration,'number')+
     field('權重(%)','權重(%)',i.weight,'number')+
     field('負責人','負責人',i.owner,'select',DB.people.map(function(p){return p.name;}))+
+    field('交付成果','交付成果',i.deliverable)+
     field('備註','備註','','textarea');
   openDrawer('更新工項　'+i.code, html, function(data, ok, fail){
-    rpc('updateRecord', {table: 'workitem', row: row, patch: data}, ok, fail);
+    rpc('updateRecord', {table:'contract', row:row, patch:data}, ok, fail);
   });
 }
-
-function openNew(table){
-  var pOpts = DB.projects.map(function(p){return p.code;}).concat(['內部']);
-  var people = DB.people.map(function(p){return p.name;});
-  var thisWeek = rocWeek(DB.today);
-  var html;
-  if(table==='owner'){
-    html = field('事項編號','事項編號','O-')+
-      field('專案代號','專案代號',PROJ,'select',pOpts)+
-      field('來源','來源','業主交辦','select',['業主交辦','會議決議','查驗缺失','公文'])+
-      field('來源依據（文號／會議日期）','來源依據','')+
-      field('事項內容','事項內容','','textarea')+
-      field('關聯工項編號','關聯工項編號','')+
-      field('主辦人','主辦人',people[0],'select',people)+
-      field('提出日','提出日',DB.today,'date')+
-      field('業主要求完成日','業主要求完成日','','date')+
-      field('我方承諾完成日','我方承諾完成日','','date')+
-      field('排定週次','排定週次',thisWeek)+
-      field('預估人天','預估人天',1,'number')+
-      field('是否影響工期','是否影響工期','否','select',['否','是','待評估'])+
-      field('是否涉及契約變更','是否涉及契約變更','否','select',['否','是','待評估'])+
-      field('狀態','狀態','未開始','select',['未開始','進行中','待業主回覆']);
-  } else {
-    html = field('事項編號','事項編號','I-')+
-      field('專案代號','專案代號','內部','select',pOpts)+
-      field('事項類別','事項類別','行政作業','select',['行政作業','投標研提','教育訓練','院內交辦','研發'])+
-      field('交辦者','交辦者','')+
-      field('事項內容','事項內容','','textarea')+
-      field('主辦人','主辦人',people[0],'select',people)+
-      field('交辦日','交辦日',DB.today,'date')+
-      field('要求完成日','要求完成日','','date')+
-      field('排定週次','排定週次',thisWeek)+
-      field('預估人天','預估人天',0.5,'number')+
-      field('狀態','狀態','未開始','select',['未開始','進行中']);
-  }
-  openDrawer(table==='owner'?'新增業主交辦':'新增內部交辦', html, function(data, ok, fail){
-    rpc('addRecord', {table: table, data: data}, ok, fail);
-  });
-}
-
-/* localStorage 在 Apps Script 沙箱可用，但包一層避免例外中斷畫面 */
-function localStorage_get(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
-function localStorage_set(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
 
 load();
 </script>
