@@ -55,11 +55,6 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:
 .pill{margin-left:auto;display:flex;gap:8px;align-items:center}
 .pill span{background:var(--surface);border-radius:999px;padding:7px 14px;font-size:12px;
   color:var(--ink-2);box-shadow:var(--shadow);white-space:nowrap}
-.pill span.cfgbtn{cursor:pointer;background:var(--accent-soft);color:var(--accent);font-weight:600}
-.pill span.cfgbtn:hover{background:var(--accent);color:#fff}
-.cfgnote{background:var(--surface-2);border-radius:var(--r-md);padding:12px 14px;
-  font-size:12px;color:var(--ink-2);margin-bottom:16px;line-height:1.6}
-.cfgstat{margin-top:10px;font-size:12.5px}
 main{padding:0 0 24px}
 
 /* ---------- 卡片 ---------- */
@@ -299,7 +294,6 @@ tr.ck.na td{opacity:.5}
         <span class="num" id="buildLabel"></span>
         <span class="num" id="todayLabel"></span>
         <span class="num" id="modeLabel"></span>
-        <span class="num cfgbtn" id="cfgBtn" title="設定連線網址與權杖">連線設定</span>
       </div>
     </div>
     <main id="main"><div class="empty">連線中…</div></main>
@@ -322,19 +316,9 @@ tr.ck.na td{opacity:.5}
    B) 放在 GitHub Pages 等靜態主機 → 用下面的 API_URL 連回 Apps Script
       此時 Apps Script 部署的「存取權」必須設為「任何人」
    ============================================================ */
-var BUILD = 'v2026.08.17-a';
-
-/* 預設連線設定。也可以不改這裡，改用畫面右上角的「連線設定」直接填，
-   填過的值會存在這台電腦的瀏覽器裡，換電腦要再填一次。 */
-var DEFAULT_API_URL   = 'https://script.google.com/macros/s/AKfycbwk0TfBQJivKNCgkBcjnZBte8rkin97mZNxlgBdJSkzUc5G02lwqqHdXtrb1c4fuwP9/exec';
-var DEFAULT_API_TOKEN = 'tcri-pm-2026';
-
-function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
-function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
-function lsDel(k){ try{ window.localStorage.removeItem(k); }catch(e){} }
-
-function apiUrl(){ return (lsGet('pm.apiUrl') || DEFAULT_API_URL || '').trim(); }
-function apiToken(){ var v = lsGet('pm.apiToken'); return (v===null ? DEFAULT_API_TOKEN : v).trim(); }
+var BUILD     = 'v2026.08.16-c';
+var API_URL   = 'https://script.google.com/macros/s/AKfycby2cDiVqYnY5Suqv7IHsuSIiEEhk588AKTnBWh3pXPVrHhgiATp2eVCRJi1uoD3SrEe/exec';
+var API_TOKEN = 'tcri-pm-2026';
 
 var DB = null, VIEW = 'summary', PROJ = '', EDIT = null;
 
@@ -361,20 +345,19 @@ function rpc(name, params, ok, fail){
     runner[name].apply(runner, (RPC_ARGS[name]||[]).map(function(k){ return params[k]; }));
     return;
   }
-  var url = apiUrl();
-  if(!url || url.indexOf('script.google.com') < 0){
-    fail(new Error('尚未設定連線網址。請按右上角的「連線設定」填入 Apps Script 的 /exec 網址。'));
+  if(!API_URL || API_URL.indexOf('script.google.com') < 0){
+    fail(new Error('尚未設定 API_URL。請把 Apps Script 的 /exec 網址填進檔案開頭的 API_URL。'));
     return;
   }
 
-  var body = Object.assign({ api:name, token:apiToken() }, params), req;
+  var body = Object.assign({ api:name, token:API_TOKEN }, params), req;
   if(RPC_WRITE.indexOf(name) >= 0){
-    req = fetch(url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    req = fetch(API_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify(body), redirect:'follow' });
   } else {
     var qs = Object.keys(body).map(function(k){
       return encodeURIComponent(k)+'='+encodeURIComponent(body[k]); }).join('&');
-    req = fetch(url+'?'+qs, { method:'GET', redirect:'follow' });
+    req = fetch(API_URL+'?'+qs, { method:'GET', redirect:'follow' });
   }
 
   req.then(function(r){ return r.text(); })
@@ -437,75 +420,6 @@ function kpi(label,value,sub,icon,tint){
     '</div><div class="sub">'+esc(sub)+'</div></div></div>';
 }
 
-/* ---------- 連線設定 ---------- */
-function openConfig(){
-  var embedded = inAppsScript();
-  var html =
-    '<div class="cfgnote">'+
-      (embedded
-        ? '目前是<b>內嵌模式</b>——這個頁面由 Apps Script 直接輸出，資料走內部通道，'+
-          '<b>不需要填任何網址</b>。下面的設定只有在把 index.html 放到 GitHub Pages 或本機開啟時才會用到。'
-        : '目前是<b>連線模式</b>——這個頁面靠下面的網址連回 Apps Script。'+
-          '填好按儲存即可，設定存在這台電腦的瀏覽器，換電腦要再填一次。')+
-    '</div>'+
-    field('Apps Script 網址（/exec 結尾）','apiUrl', lsGet('pm.apiUrl')||'')+
-    field('存取權杖（須與 Code.gs 的 API_TOKEN 相同）','apiToken', lsGet('pm.apiToken')||'')+
-    '<div class="cfgnote" style="margin-top:4px">'+
-      '目前實際使用中：<br><code style="word-break:break-all">'+esc(apiUrl()||'（未設定）')+'</code><br>'+
-      '權杖 <code>'+esc(apiToken()||'（空白）')+'</code>'+
-      (lsGet('pm.apiUrl')?'<br><br>（來自本機設定，優先於檔案內的預設值）':'<br><br>（來自檔案內的預設值）')+
-    '</div>'+
-    '<div class="toolbar" style="margin:0">'+
-      '<button class="act ghost" id="cfgTest">測試連線</button>'+
-      '<button class="act ghost" id="cfgClear">清除本機設定</button>'+
-    '</div>'+
-    '<div class="cfgstat" id="cfgStat"></div>';
-
-  openDrawer('連線設定', html, function(data, ok, fail){
-    var u = String(data.apiUrl||'').trim(), t = String(data.apiToken||'').trim();
-    if(u) lsSet('pm.apiUrl', u); else lsDel('pm.apiUrl');
-    if(t) lsSet('pm.apiToken', t); else lsDel('pm.apiToken');
-    ok();
-  });
-
-  document.getElementById('cfgTest').onclick = function(){
-    var st = document.getElementById('cfgStat');
-    var u = document.querySelector('[name=apiUrl]').value.trim() || apiUrl();
-    var t = document.querySelector('[name=apiToken]').value.trim() || apiToken();
-    if(!u || u.indexOf('script.google.com')<0){
-      st.innerHTML = '<span style="color:var(--red)">網址格式不對，應以 script.google.com 開頭、/exec 結尾。</span>';
-      return;
-    }
-    st.textContent = '測試中…';
-    fetch(u+'?api=ping&token='+encodeURIComponent(t), {redirect:'follow'})
-      .then(function(r){ return r.text(); })
-      .then(function(txt){
-        var res;
-        try { res = JSON.parse(txt); }
-        catch(e){
-          st.innerHTML = '<span style="color:var(--red)">回傳的不是 JSON，多半是部署存取權沒設成「任何人」，'+
-            '收到的是 Google 登入頁。</span>';
-          return;
-        }
-        st.innerHTML = res.ok
-          ? '<span style="color:var(--green)">連線正常，可以按儲存。</span>'
-          : '<span style="color:var(--red)">'+esc(res.error||'後端回報失敗')+'</span>';
-      })
-      .catch(function(e){
-        st.innerHTML = '<span style="color:var(--red)">連不上：'+esc(e.message)+
-          '　（檢查網址是否正確、部署存取權是否為「任何人」、是否已用新版本重新部署）</span>';
-      });
-  };
-
-  document.getElementById('cfgClear').onclick = function(){
-    lsDel('pm.apiUrl'); lsDel('pm.apiToken');
-    document.querySelector('[name=apiUrl]').value = '';
-    document.querySelector('[name=apiToken]').value = '';
-    document.getElementById('cfgStat').innerHTML =
-      '<span style="color:var(--green)">已清除，將改用檔案內的預設值。關閉後重新整理生效。</span>';
-  };
-}
-
 /* ---------- 載入 ---------- */
 function fatal(title, lines){
   document.getElementById('main').innerHTML =
@@ -516,14 +430,12 @@ function fatal(title, lines){
 function load(){
   document.getElementById('buildLabel').textContent = BUILD;
   document.getElementById('modeLabel').textContent = inAppsScript() ? '內嵌模式' : '連線模式';
-  document.getElementById('cfgBtn').style.display = inAppsScript() ? 'none' : '';
   document.getElementById('main').innerHTML = '<div class="empty">連線中…（'+BUILD+'）</div>';
 
-  if(!inAppsScript() && (!apiUrl() || apiUrl().indexOf('script.google.com')<0)){
+  if(!inAppsScript() && (!API_URL || API_URL.indexOf('script.google.com')<0)){
     fatal('尚未設定連線網址', [
-      '這個頁面不是由 Apps Script 輸出的，需要填入 Apps Script 的部署網址才能讀取資料。',
       '目前網址：<code>'+esc(location.href)+'</code>',
-      '<button class="act" onclick="openConfig()">開啟連線設定</button>'
+      '請把 Apps Script 的部署網址填進檔案開頭的 <code>API_URL</code>，並確認 API_TOKEN 與 Code.gs 一致。'
     ]);
     return;
   }
@@ -555,8 +467,7 @@ function load(){
     var msg=(e&&e.message)?e.message:String(e);
     fatal('讀取資料失敗', ['<code>'+esc(msg)+'</code>',
       '請確認兩張分頁已建立，且 Setup.gs 與 Code.gs 內容都已貼入專案。',
-      '<button class="act" onclick="load()">重新載入</button>'+
-      (inAppsScript()?'':' <button class="act ghost" onclick="openConfig()">連線設定</button>')]);
+      '<button class="act" onclick="load()">重新載入</button>']);
   });
 }
 
@@ -1533,7 +1444,6 @@ function closeDrawer(){
 document.getElementById('drawerClose').onclick=closeDrawer;
 document.getElementById('drawerCancel').onclick=closeDrawer;
 document.getElementById('backdrop').onclick=closeDrawer;
-document.getElementById('cfgBtn').onclick=openConfig;
 document.getElementById('drawerSave').onclick=function(){
   if(!EDIT) return;
   var data={};
@@ -1634,6 +1544,9 @@ function openWorkItem(row){
     rpc('updateRecord', {table:'contract', row:row, patch:data}, ok, fail);
   });
 }
+
+function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
 
 load();
 </script>
