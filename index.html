@@ -55,6 +55,11 @@ code{font-family:var(--mono);font-size:.9em;background:var(--surface-2);padding:
 .pill{margin-left:auto;display:flex;gap:8px;align-items:center}
 .pill span{background:var(--surface);border-radius:999px;padding:7px 14px;font-size:12px;
   color:var(--ink-2);box-shadow:var(--shadow);white-space:nowrap}
+.pill span.cfgbtn{cursor:pointer;background:var(--accent-soft);color:var(--accent);font-weight:600}
+.pill span.cfgbtn:hover{background:var(--accent);color:#fff}
+.cfgnote{background:var(--surface-2);border-radius:var(--r-md);padding:12px 14px;
+  font-size:12px;color:var(--ink-2);margin-bottom:16px;line-height:1.6}
+.cfgstat{margin-top:10px;font-size:12.5px}
 main{padding:0 0 24px}
 
 /* ---------- 卡片 ---------- */
@@ -247,11 +252,45 @@ tr.ck.na td{opacity:.5}
 .bcard:hover{border-color:var(--accent);background:var(--surface);
   box-shadow:0 4px 14px rgba(91,61,245,.10);transform:translateY(-1px)}
 .bcard.dragging{opacity:.4;cursor:grabbing}
+.bcard.stale{border-left:3px solid var(--red)}
+.rep{font-size:10.5px;font-weight:700;border-radius:999px;padding:1px 7px;margin-left:6px}
+.rep.red{background:var(--red-soft);color:var(--red)}
+.rep.green{background:var(--green-soft);color:var(--green)}
 .btop{display:flex;align-items:center;gap:2px;font-size:11.5px;margin-bottom:5px}
 .btitle{font-size:12.5px;font-weight:600;line-height:1.45;margin-bottom:6px}
 .bmeta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;color:var(--ink-3)}
 .bblock{margin-top:7px;padding-top:7px;border-top:1px solid var(--line);
   font-size:11px;color:var(--red)}
+.login{display:grid;place-items:center;min-height:82vh;padding:20px}
+.loginbox{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--shadow);
+  padding:34px 32px;width:min(380px,100%)}
+.loginbox h2{margin:0 0 4px;font-size:19px;font-weight:800;text-align:center}
+.loginbox p{text-align:center}
+.loginbox label{display:block;margin-bottom:14px;font-size:11.5px;color:var(--ink-2);font-weight:600}
+.loginbox label input{display:block;width:100%;margin-top:6px;font-size:14px}
+.authmail{margin-top:18px;padding:12px;border-radius:var(--r-md);background:var(--accent-soft);
+  color:var(--accent);font-family:var(--mono);font-size:12.5px;word-break:break-all;text-align:center;font-weight:600}
+.chart{width:100%;overflow-x:auto}
+.chart svg{width:100%;height:auto;display:block;min-width:520px}
+.ctitle{font-size:11.5px;color:var(--ink-3);margin-bottom:8px}
+.chart .grid{stroke:var(--line-2);stroke-width:1}
+.chart .lbl{fill:var(--ink-2);font-size:11px;font-family:var(--sans)}
+.chart .lbl2{fill:var(--ink);font-size:12px;font-weight:700;font-family:var(--sans)}
+.chart .sub{fill:var(--ink-3);font-size:10px;font-family:var(--mono)}
+.chart .axis{fill:var(--ink-3);font-size:10px;font-family:var(--mono)}
+.chart .onbar{fill:#fff;font-size:11px;font-weight:700;font-family:var(--mono)}
+.chart .barplan{fill:#D6CEFF}
+.chart .scurve{fill:none;stroke:var(--accent);stroke-width:2.5;stroke-linejoin:round}
+.chart .sarea{fill:var(--accent);opacity:.08}
+.chart .todayline{stroke:var(--red);stroke-width:2;stroke-dasharray:4 4}
+.chart .dotplan{fill:#fff;stroke:#A99BFF;stroke-width:2.5}
+.chart .dotact{fill:var(--accent);stroke:#fff;stroke-width:2}
+.tasklist{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;margin-bottom:18px}
+.tlhead{padding:9px 12px;background:var(--surface-2);font-size:11.5px;font-weight:700;color:var(--ink-2)}
+.tlrow{display:flex;align-items:center;gap:8px;padding:9px 12px;border-top:1px solid var(--line-2);
+  font-size:11.5px;cursor:pointer}
+.tlrow:hover{background:var(--surface-2)}
+.tlname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
 .muted{color:var(--ink-3)}
 .empty{padding:44px 20px;text-align:center;color:var(--ink-3)}
 .hide{display:none}
@@ -281,6 +320,7 @@ tr.ck.na td{opacity:.5}
     <button data-v="issues" title="議題追蹤"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M4 10h16"/><path d="M9 14h6"/></svg><span>議題追蹤</span></button>
     <button data-v="category" title="分類統計"><svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M21 20H3"/></svg><span>分類統計</span></button>
     <button data-v="assign" title="工作分派"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M17 11.5a3 3 0 1 0-1.5-5.6"/><path d="M18 20c0-2.4-.9-4.2-2.4-5.3"/></svg><span>工作分派</span></button>
+    <button data-v="charts" title="進度圖表" id="navCharts"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 14 3.5-4 3 3L20 6"/><circle cx="20" cy="6" r="1.4"/></svg><span>進度圖表</span></button>
     <button data-v="import" title="匯入匯出"><svg viewBox="0 0 24 24"><path d="M12 15V4"/><path d="m8 8 4-4 4 4"/><path d="M4 15v4h16v-4"/></svg><span>匯入匯出</span></button>
   </aside>
 
@@ -294,6 +334,8 @@ tr.ck.na td{opacity:.5}
         <span class="num" id="buildLabel"></span>
         <span class="num" id="todayLabel"></span>
         <span class="num" id="modeLabel"></span>
+        <span class="num" id="userLabel"></span>
+        <span class="num cfgbtn" id="menuBtn" title="帳號與設定">選單</span>
       </div>
     </div>
     <main id="main"><div class="empty">連線中…</div></main>
@@ -316,9 +358,20 @@ tr.ck.na td{opacity:.5}
    B) 放在 GitHub Pages 等靜態主機 → 用下面的 API_URL 連回 Apps Script
       此時 Apps Script 部署的「存取權」必須設為「任何人」
    ============================================================ */
-var BUILD     = 'v2026.08.16-c';
-var API_URL   = 'https://script.google.com/macros/s/AKfycby2cDiVqYnY5Suqv7IHsuSIiEEhk588AKTnBWh3pXPVrHhgiATp2eVCRJi1uoD3SrEe/exec';
-var API_TOKEN = 'tcri-pm-2026';
+var BUILD = 'v2026.08.23-a';
+
+/* 預設連線設定。也可以不改這裡，改用畫面右上角的「連線設定」直接填，
+   填過的值會存在這台電腦的瀏覽器裡，換電腦要再填一次。 */
+var DEFAULT_API_URL   = 'https://script.google.com/macros/s/AKfycbwk0TfBQJivKNCgkBcjnZBte8rkin97mZNxlgBdJSkzUc5G02lwqqHdXtrb1c4fuwP9/exec';
+
+function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+function lsDel(k){ try{ window.localStorage.removeItem(k); }catch(e){} }
+
+function apiUrl(){ return (lsGet('pm.apiUrl') || DEFAULT_API_URL || '').trim(); }
+function apiToken(){ return (lsGet('pm.session') || '').trim(); }
+function isAdmin(){ return !DB || !DB.me || DB.me.role === '管理員'; }
+function meName(){ return (DB && DB.me) ? DB.me.name : ''; }
 
 var DB = null, VIEW = 'summary', PROJ = '', EDIT = null;
 
@@ -338,26 +391,36 @@ function rpc(name, params, ok, fail){
   params = params || {};
   fail = fail || function(e){ console.error(name, e); };
 
+  // 內嵌與連線模式都走同一個 API 介面，權限才會一致
   if(inAppsScript()){
-    var runner = google.script.run
-      .withSuccessHandler(function(res){ ok(RPC_JSON.indexOf(name)>=0 ? JSON.parse(res) : res); })
-      .withFailureHandler(fail);
-    runner[name].apply(runner, (RPC_ARGS[name]||[]).map(function(k){ return params[k]; }));
+    var body0 = Object.assign({ api:name, token:apiToken() }, params);
+    google.script.run
+      .withSuccessHandler(function(res){
+        var r; try{ r = JSON.parse(res); }catch(e){ fail(new Error('回傳格式錯誤')); return; }
+        if(!r.ok){
+          if(r.needLogin){ showLogin(); return; }
+          fail(new Error(r.error||'後端回報失敗')); return;
+        }
+        ok(r.data);
+      })
+      .withFailureHandler(fail)
+      .apiCall(JSON.stringify(body0));
     return;
   }
-  if(!API_URL || API_URL.indexOf('script.google.com') < 0){
-    fail(new Error('尚未設定 API_URL。請把 Apps Script 的 /exec 網址填進檔案開頭的 API_URL。'));
+  var url = apiUrl();
+  if(!url || url.indexOf('script.google.com') < 0){
+    fail(new Error('尚未設定連線網址。請按右上角的「連線設定」填入 Apps Script 的 /exec 網址。'));
     return;
   }
 
-  var body = Object.assign({ api:name, token:API_TOKEN }, params), req;
+  var body = Object.assign({ api:name, token:apiToken() }, params), req;
   if(RPC_WRITE.indexOf(name) >= 0){
-    req = fetch(API_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+    req = fetch(url, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify(body), redirect:'follow' });
   } else {
     var qs = Object.keys(body).map(function(k){
       return encodeURIComponent(k)+'='+encodeURIComponent(body[k]); }).join('&');
-    req = fetch(API_URL+'?'+qs, { method:'GET', redirect:'follow' });
+    req = fetch(url+'?'+qs, { method:'GET', redirect:'follow' });
   }
 
   req.then(function(r){ return r.text(); })
@@ -366,7 +429,10 @@ function rpc(name, params, ok, fail){
        try { res = JSON.parse(txt); }
        catch(e){ throw new Error('後端回傳的不是 JSON。多半是部署存取權沒設成「任何人」，'
          + '導致收到 Google 登入頁。開頭內容：'+txt.slice(0,120)); }
-       if(!res.ok) throw new Error(res.error || '後端回報失敗');
+       if(!res.ok){
+         if(res.needLogin){ showLogin(); return; }
+         throw new Error(res.error || '後端回報失敗');
+       }
        ok(res.data);
      })
      .catch(function(e){
@@ -420,6 +486,187 @@ function kpi(label,value,sub,icon,tint){
     '</div><div class="sub">'+esc(sub)+'</div></div></div>';
 }
 
+/* ---------- 登入 ---------- */
+function showLogin(msg){
+  var rail=document.querySelector('.rail'), top=document.querySelector('.topbar');
+  if(rail) rail.style.display='none';
+  if(top) top.style.display='none';
+
+  document.getElementById('main').innerHTML =
+    '<div class="login"><div class="loginbox">'+
+      '<div class="brand" style="margin:0 auto 18px">履</div>'+
+      '<h2>專案履約管理</h2>'+
+      '<p class="muted" style="margin:0 0 20px">請輸入帳號密碼登入</p>'+
+      '<label>帳號<input type="text" id="lgAcc" autocomplete="username"></label>'+
+      '<label>密碼<input type="password" id="lgPw" autocomplete="current-password"></label>'+
+      '<button class="act" id="lgBtn" style="width:100%;margin-top:6px">登入</button>'+
+      '<div id="lgMsg" style="margin-top:12px;font-size:12.5px;min-height:18px;text-align:center">'+
+        (msg?'<span style="color:var(--red)">'+esc(msg)+'</span>':'')+'</div>'+
+      (inAppsScript()?'':'<div style="margin-top:8px;text-align:center">'+
+        '<span class="link" onclick="openConfig()">連線設定</span></div>')+
+    '</div></div>';
+
+  var go = function(){
+    var a=document.getElementById('lgAcc').value.trim();
+    var w=document.getElementById('lgPw').value;
+    var st=document.getElementById('lgMsg');
+    if(!a||!w){ st.innerHTML='<span style="color:var(--red)">請輸入帳號與密碼。</span>'; return; }
+    st.textContent='登入中…';
+    var btn=document.getElementById('lgBtn'); btn.disabled=true;
+    rpc('login', {account:a, password:w}, function(r){
+      lsSet('pm.session', r.token);
+      if(rail) rail.style.display='';
+      if(top) top.style.display='';
+      load();
+    }, function(e){
+      btn.disabled=false;
+      st.innerHTML='<span style="color:var(--red)">'+esc(e.message)+'</span>';
+    });
+  };
+  document.getElementById('lgBtn').onclick=go;
+  ['lgAcc','lgPw'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown', function(e){ if(e.key==='Enter') go(); });
+  });
+  document.getElementById('lgAcc').focus();
+}
+
+function doLogout(){
+  var t=apiToken();
+  lsDel('pm.session');
+  if(t) rpc('logout', {token:t}, function(){}, function(){});
+  DB=null;
+  showLogin('已登出。');
+}
+
+function openMyPassword(){
+  var html='<div class="cfgnote">修改自己的密碼。新密碼至少 6 個字元。</div>'+
+    field('目前密碼','oldPassword','','password')+
+    field('新密碼','password','','password')+
+    field('再輸入一次新密碼','password2','','password');
+  openDrawer('修改密碼', html, function(data, ok, fail){
+    if(data.password !== data.password2){ alert('兩次輸入的新密碼不一致。'); fail(); return; }
+    if(String(data.password||'').length < 6){ alert('新密碼至少 6 個字元。'); fail(); return; }
+    rpc('changeMyPassword', {oldPassword:data.oldPassword, password:data.password},
+      function(msg){ alert(msg); ok(msg); }, fail);
+  });
+}
+
+/* ---------- 使用者管理（管理員） ---------- */
+function openUsers(){
+  rpc('listUsers', {}, function(users){
+    var rows = users.map(function(u){
+      return '<tr data-acc="'+esc(u.account)+'">'+
+        '<td class="num">'+esc(u.account)+'</td>'+
+        '<td style="white-space:nowrap">'+esc(u.name)+'</td>'+
+        '<td><span class="tag">'+esc(u.role)+'</span></td>'+
+        '<td>'+(u.status==='停用'?'<span style="color:var(--red)">停用</span>':'啟用')+'</td></tr>';
+    }).join('');
+    var html='<div class="cfgnote">管理員可新增帳號、調整角色、停用與重設密碼。<br><br>'+
+      '<b>員工</b>只能回報自己負責工作的狀態、現況說明與完成百分比，'+
+      '不能新增或修改契約內容。</div>'+
+      '<div class="scroll" style="padding:0;margin-bottom:16px"><table style="min-width:0">'+
+      '<thead><tr><th>帳號</th><th>名稱</th><th>角色</th><th>狀態</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table></div>'+
+      '<button class="act" onclick="openUserEdit()">新增帳號</button>';
+    openDrawer('使用者管理', html, null);
+    [].forEach.call(document.querySelectorAll('#drawerForm tr[data-acc]'), function(tr){
+      tr.onclick=function(){
+        openUserEdit(users.filter(function(x){return x.account===tr.dataset.acc;})[0]);
+      };
+    });
+  }, function(e){ alert('讀取失敗：'+e.message); });
+}
+
+function openUserEdit(u){
+  u = u || null;
+  var html='<div class="cfgnote">'+(u?'修改帳號 <b>'+esc(u.account)+'</b>。密碼留空表示不變更。'
+    :'新增帳號。')+
+    '<br><br><b>顯示名稱必須與工項「負責人」、議題「主辦人」欄的寫法完全一致</b>，'+
+    '否則登入後看不到自己的工作。</div>'+
+    field('帳號（登入用，不可重複）','account', u?u.account:'')+
+    field('顯示名稱（須與負責人欄一致）','name', u?u.name:'')+
+    field('角色','role', u?u.role:'員工','select',['員工','管理員'])+
+    field('狀態','status', u?u.status:'啟用','select',['啟用','停用'])+
+    field(u?'重設密碼（留空不變更）':'密碼（至少 6 字元）','password','','password')+
+    field('備註','note', u?u.note:'')+
+    (u?'<button class="act ghost" style="color:var(--red);width:100%" '+
+       'onclick="removeUser(\''+esc(u.account)+'\')">移除這個帳號</button>':'');
+  openDrawer(u?'編輯帳號':'新增帳號', html, function(data, ok, fail){
+    if(!String(data.account||'').trim()){ alert('請填帳號。'); fail(); return; }
+    if(!String(data.name||'').trim()){ alert('請填顯示名稱。'); fail(); return; }
+    if(!u && String(data.password||'').length < 6){ alert('新帳號的密碼至少 6 個字元。'); fail(); return; }
+    if(data.password && String(data.password).length < 6){ alert('密碼至少 6 個字元。'); fail(); return; }
+    rpc('saveUser', {user:data}, function(msg){ alert(msg); ok(msg); }, fail);
+  });
+}
+
+function removeUser(acc){
+  if(!confirm('確定要移除帳號 '+acc+' 嗎？')) return;
+  rpc('deleteUser', {account:acc}, function(msg){ alert(msg); closeDrawer(); },
+      function(e){ alert('移除失敗：'+e.message); });
+}
+
+/* ---------- 連線設定 ---------- */
+function openConfig(){
+  var embedded = inAppsScript();
+  var html =
+    '<div class="cfgnote">'+
+      (embedded
+        ? '目前是<b>內嵌模式</b>——由 Apps Script 直接輸出，身分以 Google 帳號辨識，不需要填網址。'
+        : '目前是<b>連線模式</b>——這個頁面靠下面的網址連回 Apps Script。'+
+          '登入身分由帳號密碼決定，與這裡的網址設定無關。')+
+    '</div>'+
+    field('Apps Script 網址（/exec 結尾）','apiUrl', lsGet('pm.apiUrl')||'')+
+    '<div class="cfgnote" style="margin-top:4px">目前實際使用中：<br>'+
+      '<code style="word-break:break-all">'+esc(apiUrl()||'（未設定）')+'</code>'+
+      (lsGet('pm.apiUrl')?'<br><br>（來自本機設定）':'<br><br>（來自檔案內的預設值）')+'</div>'+
+    '<div class="toolbar" style="margin:0">'+
+      '<button class="act ghost" id="cfgTest">測試連線</button>'+
+      '<button class="act ghost" id="cfgClear">清除本機設定</button>'+
+    '</div>'+
+    '<div class="cfgstat" id="cfgStat"></div>';
+
+  openDrawer('連線設定', html, function(data, ok, fail){
+    var u = String(data.apiUrl||'').trim();
+    if(u) lsSet('pm.apiUrl', u); else lsDel('pm.apiUrl');
+    ok();
+  });
+
+  document.getElementById('cfgTest').onclick = function(){
+    var st = document.getElementById('cfgStat');
+    var u = document.querySelector('[name=apiUrl]').value.trim() || apiUrl();
+    if(!u || u.indexOf('script.google.com')<0){
+      st.innerHTML = '<span style="color:var(--red)">網址格式不對，應以 script.google.com 開頭、/exec 結尾。</span>';
+      return;
+    }
+    st.textContent = '測試中…';
+    fetch(u+'?api=ping', {redirect:'follow'})
+      .then(function(r){ return r.text(); })
+      .then(function(txt){
+        var res;
+        try { res = JSON.parse(txt); }
+        catch(e){
+          st.innerHTML = '<span style="color:var(--red)">回傳的不是 JSON，'+
+            '多半是部署存取權沒設成「任何人」，收到的是 Google 登入頁。</span>';
+          return;
+        }
+        st.innerHTML = res.ok
+          ? '<span style="color:var(--green)">連線正常，可以按儲存。</span>'
+          : '<span style="color:var(--red)">'+esc(res.error||'後端回報失敗')+'</span>';
+      })
+      .catch(function(e){
+        st.innerHTML = '<span style="color:var(--red)">連不上：'+esc(e.message)+'</span>';
+      });
+  };
+
+  document.getElementById('cfgClear').onclick = function(){
+    lsDel('pm.apiUrl'); lsDel('pm.apiToken'); lsDel('pm.session');
+    document.querySelector('[name=apiUrl]').value = '';
+    document.getElementById('cfgStat').innerHTML =
+      '<span style="color:var(--green)">已清除，將改用檔案內的預設值。</span>';
+  };
+}
+
 /* ---------- 載入 ---------- */
 function fatal(title, lines){
   document.getElementById('main').innerHTML =
@@ -430,12 +677,16 @@ function fatal(title, lines){
 function load(){
   document.getElementById('buildLabel').textContent = BUILD;
   document.getElementById('modeLabel').textContent = inAppsScript() ? '內嵌模式' : '連線模式';
+  document.getElementById('menuBtn').style.display = '';
   document.getElementById('main').innerHTML = '<div class="empty">連線中…（'+BUILD+'）</div>';
 
-  if(!inAppsScript() && (!API_URL || API_URL.indexOf('script.google.com')<0)){
+  if(!apiToken()){ showLogin(); return; }
+
+  if(!inAppsScript() && (!apiUrl() || apiUrl().indexOf('script.google.com')<0)){
     fatal('尚未設定連線網址', [
+      '這個頁面不是由 Apps Script 輸出的，需要填入 Apps Script 的部署網址才能讀取資料。',
       '目前網址：<code>'+esc(location.href)+'</code>',
-      '請把 Apps Script 的部署網址填進檔案開頭的 <code>API_URL</code>，並確認 API_TOKEN 與 Code.gs 一致。'
+      '<button class="act" onclick="openConfig()">開啟連線設定</button>'
     ]);
     return;
   }
@@ -460,6 +711,11 @@ function load(){
     document.getElementById('greet').textContent = hi+'，今天有 '+
       DB.projects.filter(function(p){return p.status==='履約中';}).length+' 案在履約';
     document.getElementById('todayLabel').textContent = roc(DB.today);
+    document.getElementById('userLabel').textContent =
+      (DB.me && DB.me.name ? DB.me.name : '') + (isAdmin() ? '　管理員' : '　員工');
+    var nc = document.getElementById('navCharts');
+    if(nc) nc.style.display = isAdmin() ? '' : 'none';
+    if(!isAdmin() && VIEW==='charts') VIEW='summary';
     if(!PROJ && DB.projects.length) PROJ = DB.projects[0].code;
     render();
   }, function(e){
@@ -467,7 +723,8 @@ function load(){
     var msg=(e&&e.message)?e.message:String(e);
     fatal('讀取資料失敗', ['<code>'+esc(msg)+'</code>',
       '請確認兩張分頁已建立，且 Setup.gs 與 Code.gs 內容都已貼入專案。',
-      '<button class="act" onclick="load()">重新載入</button>']);
+      '<button class="act" onclick="load()">重新載入</button>'+
+      (inAppsScript()?'':' <button class="act ghost" onclick="openConfig()">連線設定</button>')]);
   });
 }
 
@@ -487,7 +744,7 @@ function render(){
     return;
   }
   ({summary:viewSummary, gantt:viewGantt, checks:viewChecks, issues:viewIssues,
-    category:viewCategory, assign:viewAssign, import:viewImport})[VIEW](m);
+    category:viewCategory, assign:viewAssign, charts:viewCharts, import:viewImport})[VIEW](m);
 }
 
 /* ---------- 總表 ---------- */
@@ -515,6 +772,7 @@ function viewSummary(m){
       '<td class="num r">'+p.problems+'</td>'+
       '<td class="num r">'+p.waiting+'</td>'+
       '<td class="num r">'+checkChip(p)+'</td>'+
+      '<td class="num r">'+(p.reportRed?'<b style="color:var(--red)">'+p.reportRed+'</b>':'<span style="color:var(--green)">0</span>')+'</td>'+
       '<td><span class="tag">'+esc(p.status||'')+'</span></td></tr>';
   }).join('');
 
@@ -529,11 +787,11 @@ function viewSummary(m){
      kpi('在履約案件', active, '共 '+DB.projects.length+' 案', 'folder','lilac')+
      kpi('未結議題', openAll.length, '問題缺失 '+openAll.filter(function(t){return t.type==='問題缺失';}).length+' 件', 'inbox','sky')+
      kpi('逾期議題', overdue, overdue?'需優先處理':'目前無逾期', 'alert', overdue?'rose':'mint')+
-     kpi('檢核逾期', DB.projects.reduce(function(a,p){return a+p.checkOverdue;},0),
-         '待對方回覆 '+waiting+' 件', 'check',
-         DB.projects.reduce(function(a,p){return a+p.checkOverdue;},0)?'rose':'peach')+
+     kpi('逾期未回報', DB.projects.reduce(function(a,p){return a+(p.reportRed||0);},0),
+         '超過 '+DB.reportDays+' 天沒更新', 'clock',
+         DB.projects.reduce(function(a,p){return a+(p.reportRed||0);},0)?'rose':'mint')+
    '</div>'+
-   '<div class="card"><h2>專案總表</h2><div class="scroll"><table>'+
+   '<div class="card"><h2>專案總表'+(isAdmin()?'　<button class="act ghost" style="float:right;margin-top:-4px" onclick="openNewProject()">新增專案</button>':'')+'</h2><div class="scroll"><table>'+
    '<thead><tr><th>代號</th><th>專案／業主</th><th>契約完工</th><th class="r">剩餘天</th>'+
    '<th>進度（實際／預計）</th><th class="r">差異</th><th class="r">未結</th><th class="r">逾期</th>'+
    '<th class="r">問題</th><th class="r">待回覆</th><th class="r">檢核</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
@@ -560,12 +818,14 @@ function viewGantt(m){
     '<select id="projSel">'+DB.projects.map(function(x){
       return '<option value="'+esc(x.code)+'"'+(x.code===p.code?' selected':'')+'>'+esc(x.code)+'　'+esc(x.name)+'</option>';}).join('')+'</select>'+
     '<select id="zoom"><option value="3">縮放：季</option><option value="6">縮放：月</option><option value="14">縮放：週</option></select>'+
+    (isAdmin()?'<button class="act" onclick="openNewItem()">新增工項</button>':'')+
     '<span class="muted num">履約起始 '+roc(p.start)+'　契約完工 '+roc(p.finish)+'　工期 '+p.duration+' '+esc(p.mode)+
     (p.extend?'（展延 '+p.extend+'）':'')+'　權重合計 '+p.weightSum+'%</span>'+
     '</div></div></div>';
 
   if(!dated.length){
-    m.innerHTML = head+'<div class="card"><div class="empty">此專案尚無可排程的工項。請在「契約履約」分頁補上工項編號與工期天數。</div></div>';
+    m.innerHTML = head+'<div class="card"><div class="empty">此專案尚無可排程的工項。<br><br>'+
+      '<button class="act" onclick="openNewItem()">新增第一個工項</button></div></div>';
     bindProjSel(); return;
   }
 
@@ -676,6 +936,14 @@ function bindProjSel(){
   var s=document.getElementById('projSel');
   if(s) s.onchange=function(){ PROJ=this.value; render(); };
 }
+function taskChip(i){
+  var t = i.tasks || {total:0};
+  if(!t.total) return '<span class="muted">—</span>';
+  var color = t.overdue ? 'var(--red)' : (t.done===t.total ? 'var(--green)' : 'inherit');
+  return '<span style="color:'+color+';font-weight:600">'+t.done+'/'+t.total+'</span>'+
+    (t.overdue?'<div style="font-size:10.5px;color:var(--red)">逾期 '+t.overdue+'</div>':'');
+}
+
 function workItemTable(items){
   var rows = items.map(function(i){
     var lag = i.parent ? '' : (i.pct - i.plannedPct);
@@ -692,13 +960,14 @@ function workItemTable(items){
       '<td class="num r">'+(i.parent?'—':i.plannedPct+'%')+'</td>'+
       '<td class="num r">'+(i.parent?'—':i.pct+'%')+'</td>'+
       '<td class="num r" style="font-weight:600;color:'+(lag<0?'var(--red)':'var(--green)')+'">'+(i.parent?'':(lag>0?'+':'')+lag+'%')+'</td>'+
+      '<td class="num r">'+taskChip(i)+'</td>'+
       '<td>'+(i.status?'<span class="tag">'+esc(i.status)+'</span>':'<span class="muted">—</span>')+'</td></tr>';
   }).join('');
   return '<div class="card"><h2>契約工項</h2><div class="scroll"><table>'+
     '<thead><tr><th>工項</th><th>名稱／交付成果</th><th class="r">工期</th><th>預計開始</th><th>預計完成</th>'+
     '<th class="r">權重</th><th>負責人</th><th class="r">預計%</th><th class="r">實際%</th>'+
-    '<th class="r">差異</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
-    '<div class="legend"><span>點任一列可更新實際起訖日與完成百分比</span></div></div>';
+    '<th class="r">差異</th><th class="r">交辦</th><th>狀態</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div class="legend"><span>「交辦」欄為掛在該工項下的同仁交辦事項（已結案／總數），點任一列可查看與更新</span></div></div>';
 }
 
 
@@ -723,7 +992,7 @@ function viewChecks(m){
   var head = '<div class="card"><div class="body"><div class="toolbar">'+
     '<select id="projSel">'+DB.projects.map(function(x){
       return '<option value="'+esc(x.code)+'"'+(x.code===p.code?' selected':'')+'>'+esc(x.code)+'　'+esc(x.name)+'</option>';}).join('')+'</select>'+
-    '<button class="act ghost" onclick="applyChecklist()">套用標準檢核清單</button>'+
+    (isAdmin()?'<button class="act ghost" onclick="applyChecklist()">套用標準檢核清單</button>':'')+
     '<span class="muted">履約起始 '+roc(p.start)+'　應完成日由「距起始日天數」自動推算</span>'+
     '</div></div></div>';
 
@@ -872,7 +1141,7 @@ function viewIssues(m){
      sel('ifOwner','全部主辦人', DB.people.map(function(p){return p.name;}), IF.owner)+
      '<select id="ifStatus">'+[['open','僅未結'],['overdue','僅逾期'],['closed','僅已結案'],['','全部']]
        .map(function(o){return '<option value="'+o[0]+'"'+(IF.status===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+
-     '<button class="act" onclick="openNewIssue()">新增議題</button>'+
+     (isAdmin()?'<button class="act" onclick="openNewIssue()">新增議題</button>':'')+
    '</div></div></div>'+
    '<div class="card"><h2>議題追蹤（'+list.length+' 件）</h2><div class="scroll">'+issueTable(list)+'</div>'+
    '<div class="legend"><span>灰＝待對方回覆（不計我方逾期）　黃＝7 日內到期或逾兩週未更新　紅＝已逾期</span></div></div>';
@@ -903,7 +1172,9 @@ function issueTable(list){
         (t.blocker?'<div style="color:var(--red);font-size:11.5px">卡點：'+esc(t.blocker)+'</div>':'')+
         (t.note?'<div class="muted" style="font-size:11.5px">'+esc(t.note)+'</div>':'')+'</td>'+
       '<td><span class="tag">'+esc(t.minor||'')+'</span><div class="muted" style="font-size:11px">'+esc(t.major||'')+'</div></td>'+
-      '<td class="num">'+esc(t.link||'—')+'</td>'+
+      '<td class="num">'+(t.link
+        ? '<span style="color:var(--accent);font-weight:600">'+esc(t.link)+'</span>'
+        : '<span class="muted" style="font-size:11px">臨時</span>')+'</td>'+
       '<td style="white-space:nowrap">'+esc(t.owner||'')+'</td>'+
       '<td class="num"'+(t.overdue?' style="color:var(--red)"':'')+'>'+roc(t.due)+'</td>'+
       '<td class="num">'+esc(t.week||'')+'</td>'+
@@ -1057,7 +1328,7 @@ function assignCards(){
       cards.push({kind:'issue', table:'issue', row:t.row, ownerField:'主辦人',
         id:t.id, title:t.title, project:t.project, owner:t.owner||'',
         due:t.due, week:t.week||'', effort:t.effort||0,
-        badge:t.type, priority:t.priority, light:t.light,
+        badge:t.type, priority:t.priority, light:t.light, report:t.report,
         overdue:t.overdue, blocker:t.blocker});
     });
   }
@@ -1070,7 +1341,7 @@ function assignCards(){
           id:w.code, title:w.name, project:code, owner:w.owner||'',
           due:w.end, start:w.start, week:'', effort:0,
           badge:'工項', priority:'', light: late?'red':(w.pct>0?'green':'grey'),
-          overdue:false, pct:w.pct, plannedPct:w.plannedPct});
+          report:w.report, overdue:false, pct:w.pct, plannedPct:w.plannedPct});
       });
     });
   }
@@ -1141,7 +1412,9 @@ function viewAssign(m){
      '<select id="afKind">'+[['all','議題＋工項'],['issue','僅議題'],['item','僅工項']]
        .map(function(o){return '<option value="'+o[0]+'"'+(AF.kind===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+
      sel('afProj','全部專案', DB.projects.map(function(p){return p.code;}).concat(['內部']), AF.proj)+
-     '<span class="muted">把卡片拖到別人欄位即可改派；點卡片可調整週次與人天。'+
+     '<span class="muted">'+(isAdmin()
+       ? '把卡片拖到別人欄位即可改派；點卡片可調整週次與人天。'
+       : '點自己欄位的卡片即可回報進度。')+
      '選定週次時，議題依「排定週次」、工項依預計期間是否落在該週。</span>'+
    '</div></div></div>'+
 
@@ -1160,6 +1433,7 @@ function viewAssign(m){
       '</div>';
    }).join('') + '</div>'+
 
+   reportCard(cards, people)+
    '<div class="card"><h2>人員負荷（未結議題，依排定週次）</h2><div class="scroll"><table>'+
      '<thead><tr><th>承辦人</th><th class="r">在辦工項</th><th class="r">未結議題</th><th class="r">逾期</th>'+
      '<th class="r">待回覆</th>'+weeks.slice(1,5).map(function(w){return '<th class="r num">'+w+'</th>';}).join('')+
@@ -1177,10 +1451,53 @@ function viewAssign(m){
   bindBoard(m);
 }
 
+/** 回報時效統計：超過 N 天紅燈、N 天內綠燈 */
+function reportCard(cards, people){
+  var live = cards.filter(function(c){ return c.report && c.report.light!=='off'; });
+  if(!live.length) return '';
+  var red = live.filter(function(c){return c.report.light==='red';});
+  var green = live.filter(function(c){return c.report.light==='green';});
+  var rate = Math.round(green.length/live.length*100);
+
+  var rows = people.map(function(name){
+    var mine = live.filter(function(c){return c.owner===name;});
+    if(!mine.length) return '';
+    var r = mine.filter(function(c){return c.report.light==='red';});
+    var g = mine.length - r.length;
+    var pctG = Math.round(g/mine.length*100);
+    return '<tr><td><b>'+esc(name)+'</b></td>'+
+      '<td class="num r">'+mine.length+'</td>'+
+      '<td class="num r" style="color:var(--green);font-weight:700">'+g+'</td>'+
+      '<td class="num r" style="color:'+(r.length?'var(--red)':'var(--ink-3)')+';font-weight:700">'+r.length+'</td>'+
+      '<td><div class="prog" style="min-width:120px;margin-top:0"><b style="width:'+pctG+'%;background:'+
+        (pctG===100?'var(--green)':(pctG>=60?'var(--accent)':'var(--red)'))+'"></b></div></td>'+
+      '<td class="num r">'+pctG+'%</td>'+
+      '<td class="muted" style="font-size:11.5px">'+
+        (r.length? esc(r.slice(0,3).map(function(c){
+          return c.id+'（'+(c.report.days===null?'未回報':c.report.days+'天')+'）';}).join('、'))
+          + (r.length>3?' 等 '+r.length+' 件':'') : '—')+'</td></tr>';
+  }).filter(Boolean).join('');
+
+  return '<div class="card"><h2>回報狀況　<span class="muted" style="font-weight:400">'+
+    '綠燈＝'+DB.reportDays+' 天內有回報，紅燈＝超過 '+DB.reportDays+' 天未更新</span></h2>'+
+    '<div class="body"><div class="kpis" style="margin-bottom:14px">'+
+      kpi('準時回報率', rate+'%', green.length+'/'+live.length+' 件', 'check', rate>=80?'mint':'peach')+
+      kpi('逾期未回報', red.length, red.length?'請催辦':'全部都有回報', 'alert', red.length?'rose':'mint')+
+    '</div>'+
+    (rows?'<table><thead><tr><th>承辦人</th><th class="r">在辦</th><th class="r">綠燈</th>'+
+      '<th class="r">紅燈</th><th>準時率</th><th class="r">%</th><th>逾期項目</th></tr></thead>'+
+      '<tbody>'+rows+'</tbody></table>':'')+
+    '</div></div>';
+}
+
 function cardHTML(c){
-  return '<div class="bcard" draggable="true" data-kind="'+c.kind+'" data-row="'+c.row+'" data-table="'+c.table+'">'+
+  var rep = c.report || {};
+  var repTag = rep.light==='red'
+    ? '<span class="rep red" title="超過 '+DB.reportDays+' 天未回報">'+(rep.days===null?'未回報':rep.days+'天')+'</span>'
+    : (rep.light==='green' ? '<span class="rep green" title="'+rep.days+' 天內有回報">'+rep.days+'天</span>' : '');
+  return '<div class="bcard'+(rep.light==='red'?' stale':'')+'" draggable="true" data-kind="'+c.kind+'" data-row="'+c.row+'" data-table="'+c.table+'">'+
     '<div class="btop">'+lightDot(c.light)+'<span class="num">'+esc(c.id)+'</span>'+
-      '<span class="tag" style="margin-left:auto">'+esc(c.badge)+'</span></div>'+
+      repTag+'<span class="tag" style="margin-left:auto">'+esc(c.badge)+'</span></div>'+
     '<div class="btitle">'+esc(c.title)+'</div>'+
     '<div class="bmeta">'+
       '<span class="num">'+esc(c.project)+'</span>'+
@@ -1194,8 +1511,11 @@ function cardHTML(c){
 }
 
 function bindBoard(m){
+  var canAssign = isAdmin();
   [].forEach.call(m.querySelectorAll('.bcard'), function(el){
+    if(!canAssign){ el.setAttribute('draggable','false'); el.style.cursor='pointer'; }
     el.addEventListener('dragstart', function(e){
+      if(!canAssign){ e.preventDefault(); return; }
       DRAG = {row:Number(el.dataset.row), table:el.dataset.table, kind:el.dataset.kind};
       el.classList.add('dragging');
       e.dataTransfer.effectAllowed='move';
@@ -1209,7 +1529,7 @@ function bindBoard(m){
     col.addEventListener('dragleave', function(){ col.classList.remove('over'); });
     col.addEventListener('drop', function(e){
       e.preventDefault(); col.classList.remove('over');
-      if(!DRAG) return;
+      if(!canAssign || !DRAG) return;
       var to = col.dataset.owner;
       var patch = {};
       patch[DRAG.table==='issue' ? '主辦人' : '負責人'] = to;
@@ -1222,6 +1542,11 @@ function bindBoard(m){
 }
 
 function openAssignEdit(table, row, kind){
+  // 員工一律走回報介面，權限與其他頁面一致
+  if(!isAdmin()){
+    if(kind==='issue') openIssueEdit(row); else openWorkItem(row);
+    return;
+  }
   var people = DB.people.map(function(p){return p.name;});
   var weeks = weekLabels();
   if(kind==='issue'){
@@ -1289,6 +1614,205 @@ function weekly(name, thisWeek, nextWeek){
 function copyWeekly(){
   navigator.clipboard.writeText(document.getElementById('weekly').innerText)
     .then(function(){ alert('週報已複製，可貼到郵件或會議紀錄。'); });
+}
+
+
+/* ---------- 進度圖表（管理員） ---------- */
+var SVGNS='http://www.w3.org/2000/svg';
+
+function svgWrap(w,h,inner,title){
+  return '<div class="chart">'+(title?'<div class="ctitle">'+esc(title)+'</div>':'')+
+    '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid meet" role="img">'+inner+'</svg></div>';
+}
+function txt(x,y,t,cls,anchor,size){
+  return '<text x="'+x+'" y="'+y+'" class="'+(cls||'lbl')+'"'+
+    (anchor?' text-anchor="'+anchor+'"':'')+(size?' font-size="'+size+'"':'')+'>'+esc(t)+'</text>';
+}
+
+/** 圖一：各專案 預計 vs 實際 進度對比 */
+function chartProjects(){
+  var ps = DB.projects;
+  if(!ps.length) return '';
+  var rowH=50, padT=26, padL=118, padR=88, w=760, h=padT+ps.length*rowH+16;
+  var barW = w-padL-padR;
+  var g='';
+  [0,25,50,75,100].forEach(function(v){
+    var x=padL+barW*v/100;
+    g+='<line x1="'+x+'" y1="'+(padT-10)+'" x2="'+x+'" y2="'+(h-14)+'" class="grid"/>'+
+       txt(x,padT-16,v+'%','axis','middle',10);
+  });
+  ps.forEach(function(p,i){
+    var y=padT+i*rowH;
+    var pw=barW*Math.min(p.planned,100)/100, aw=barW*Math.min(p.actual,100)/100;
+    var col = p.diff<-10?'var(--red)':(p.diff<-5?'var(--amber)':'var(--accent)');
+    g+= txt(6,y+15,p.code,'lbl2')+
+        txt(6,y+29,(p.name||'').slice(0,9),'sub',null,10)+
+        '<rect x="'+padL+'" y="'+(y+4)+'" width="'+pw+'" height="10" rx="5" class="barplan"/>'+
+        '<rect x="'+padL+'" y="'+(y+17)+'" width="'+aw+'" height="10" rx="5" fill="'+col+'"/>'+
+        txt(padL+barW+10,y+12,'預計 '+pct(p.planned),'sub',null,10)+
+        txt(padL+barW+10,y+25,'實際 '+pct(p.actual),'lbl2',null,11)+
+        '<text x="'+(padL+barW+10)+'" y="'+(y+38)+'" font-size="10" font-weight="700" '+
+        'font-family="var(--mono)" fill="'+(p.diff<0?'var(--red)':'var(--green)')+'">'+
+        (p.diff>0?'+':'')+p.diff+'%</text>';
+  });
+  return svgWrap(w,h,g,'各專案進度：預計（淡）vs 實際（深）');
+}
+
+/** 圖二：選定專案的計畫 S 曲線與今日實際位置 */
+function chartSCurve(code){
+  var items=(DB.workItems[code]||[]).filter(function(w){return !w.parent && w.weight>0 && w.end;});
+  var p=DB.projects.filter(function(x){return x.code===code;})[0];
+  if(!items.length||!p) return '';
+  var sorted=items.slice().sort(function(a,b){return (a.end||'').localeCompare(b.end||'');});
+  var total=sorted.reduce(function(a,w){return a+w.weight;},0)||1;
+  var minD=d(p.start)||d(sorted[0].end), maxD=d(sorted[sorted.length-1].end);
+  var fin=d(p.finish); if(fin&&fin>maxD) maxD=fin;
+  var span=Math.max(days(minD,maxD),1);
+
+  var w=760,h=300,padL=48,padR=22,padT=22,padB=40;
+  var iw=w-padL-padR, ih=h-padT-padB;
+  var X=function(dt){ return padL+iw*Math.min(Math.max(days(minD,dt),0),span)/span; };
+  var Y=function(v){ return padT+ih-ih*Math.min(v,100)/100; };
+
+  var g='';
+  [0,25,50,75,100].forEach(function(v){
+    g+='<line x1="'+padL+'" y1="'+Y(v)+'" x2="'+(w-padR)+'" y2="'+Y(v)+'" class="grid"/>'+
+       txt(padL-8,Y(v)+4,v+'%','axis','end',10);
+  });
+  var cur=new Date(minD.getFullYear(),minD.getMonth(),1), guard=0;
+  while(cur<=maxD && guard++<80){
+    if(cur>=minD) g+=txt(X(cur),h-14,(cur.getFullYear()-1911)+'.'+('0'+(cur.getMonth()+1)).slice(-2),'axis','middle',9);
+    cur=new Date(cur.getFullYear(),cur.getMonth()+2,1);
+  }
+
+  var cum=0, pts=[[X(minD),Y(0)]];
+  sorted.forEach(function(it){ cum+=it.weight; pts.push([X(d(it.end)),Y(cum/total*100)]); });
+  g+='<polyline points="'+pts.map(function(a){return a[0]+','+a[1];}).join(' ')+'" class="scurve"/>';
+  var area='M'+padL+','+Y(0)+' '+pts.map(function(a){return 'L'+a[0]+','+a[1];}).join(' ')+
+           ' L'+pts[pts.length-1][0]+','+Y(0)+' Z';
+  g+='<path d="'+area+'" class="sarea"/>';
+
+  var tx=X(d(DB.today));
+  g+='<line x1="'+tx+'" y1="'+padT+'" x2="'+tx+'" y2="'+(padT+ih)+'" class="todayline"/>'+
+     txt(tx,padT-6,'今日','axis','middle',10);
+  g+='<circle cx="'+tx+'" cy="'+Y(p.planned)+'" r="5" class="dotplan"/>'+
+     '<circle cx="'+tx+'" cy="'+Y(p.actual)+'" r="5" class="dotact"/>'+
+     txt(tx+10,Y(p.planned)+4,'預計 '+pct(p.planned),'sub',null,10)+
+     txt(tx+10,Y(p.actual)+4,'實際 '+pct(p.actual),'lbl2',null,11);
+  return svgWrap(w,h,g,'計畫累積曲線與今日落點');
+}
+
+/** 圖三：同仁進度（負責工項加權完成率） */
+function chartStaffProgress(){
+  var people=DB.people.map(function(x){return x.name;});
+  var rows=people.map(function(name){
+    var mine=[];
+    Object.keys(DB.workItems).forEach(function(k){
+      DB.workItems[k].forEach(function(w){
+        if(w.owner===name && !w.parent && w.weight>0) mine.push(w);
+      });
+    });
+    var tw=mine.reduce(function(a,w){return a+w.weight;},0);
+    var act=tw?mine.reduce(function(a,w){return a+w.weight*w.pct/100;},0)/tw*100:0;
+    var pln=tw?mine.reduce(function(a,w){return a+w.weight*w.plannedPct/100;},0)/tw*100:0;
+    return {name:name, items:mine.length, actual:Math.round(act*10)/10, planned:Math.round(pln*10)/10};
+  }).filter(function(r){return r.items>0;});
+  if(!rows.length) return '';
+
+  var rowH=50,padT=26,padL=92,padR=96,w=760,h=padT+rows.length*rowH+16, barW=w-padL-padR;
+  var g='';
+  [0,25,50,75,100].forEach(function(v){
+    var x=padL+barW*v/100;
+    g+='<line x1="'+x+'" y1="'+(padT-10)+'" x2="'+x+'" y2="'+(h-14)+'" class="grid"/>'+
+       txt(x,padT-16,v+'%','axis','middle',10);
+  });
+  rows.forEach(function(r,i){
+    var y=padT+i*rowH, diff=Math.round((r.actual-r.planned)*10)/10;
+    var col=diff<-10?'var(--red)':(diff<-5?'var(--amber)':'var(--green)');
+    g+= txt(6,y+16,r.name,'lbl2')+
+        txt(6,y+30,r.items+' 項工項','sub',null,10)+
+        '<rect x="'+padL+'" y="'+(y+4)+'" width="'+(barW*Math.min(r.planned,100)/100)+'" height="9" rx="4.5" class="barplan"/>'+
+        '<rect x="'+padL+'" y="'+(y+16)+'" width="'+(barW*Math.min(r.actual,100)/100)+'" height="9" rx="4.5" fill="'+col+'"/>'+
+        txt(w-padR+8,y+12,'預計 '+pct(r.planned),'sub',null,10)+
+        txt(w-padR+8,y+25,'實際 '+pct(r.actual),'lbl2',null,11)+
+        '<text x="'+(w-padR+8)+'" y="'+(y+38)+'" font-size="10" font-weight="700" '+
+        'font-family="var(--mono)" fill="'+(diff<0?'var(--red)':'var(--green)')+'">'+
+        (diff>0?'+':'')+diff+'%</text>';
+  });
+  return svgWrap(w,h,g,'同仁進度：所負責工項的加權完成率');
+}
+
+/** 圖四：同仁交辦事項狀態堆疊 */
+function chartStaffTasks(){
+  var people=DB.people.map(function(x){return x.name;});
+  var rows=people.map(function(name){
+    var mine=DB.issues.filter(function(t){return t.owner===name;});
+    return {
+      name:name,
+      done:mine.filter(function(t){return !t.open;}).length,
+      doing:mine.filter(function(t){return t.open && !t.overdue;}).length,
+      late:mine.filter(function(t){return t.overdue;}).length,
+      linked:mine.filter(function(t){return t.link;}).length,
+      adhoc:mine.filter(function(t){return !t.link;}).length
+    };
+  }).filter(function(r){return r.done+r.doing+r.late>0;});
+  if(!rows.length) return '';
+  var max=Math.max.apply(null,rows.map(function(r){return r.done+r.doing+r.late;}).concat([1]));
+
+  var rowH=42,padT=24,padL=92,padR=120,w=760,h=padT+rows.length*rowH+16, barW=w-padL-padR;
+  var g='';
+  rows.forEach(function(r,i){
+    var y=padT+i*rowH, x=padL;
+    var seg=[[r.done,'var(--green)','已結'],[r.doing,'var(--accent)','進行'],[r.late,'var(--red)','逾期']];
+    seg.forEach(function(sg){
+      if(!sg[0]) return;
+      var wd=barW*sg[0]/max;
+      g+='<rect x="'+x+'" y="'+(y+6)+'" width="'+wd+'" height="18" fill="'+sg[1]+'"/>'+
+         (wd>22?txt(x+wd/2,y+19,String(sg[0]),'onbar','middle',11):'');
+      x+=wd;
+    });
+    g+= txt(6,y+16,r.name,'lbl2')+
+        txt(6,y+30,'連結 '+r.linked+'／臨時 '+r.adhoc,'sub',null,10)+
+        txt(x+10,y+20,'共 '+(r.done+r.doing+r.late)+' 件','sub',null,10);
+  });
+  g+='<g>'+
+    '<rect x="'+padL+'" y="6" width="9" height="9" fill="var(--green)"/>'+txt(padL+13,14,'已結案','axis',null,10)+
+    '<rect x="'+(padL+70)+'" y="6" width="9" height="9" fill="var(--accent)"/>'+txt(padL+83,14,'進行中','axis',null,10)+
+    '<rect x="'+(padL+140)+'" y="6" width="9" height="9" fill="var(--red)"/>'+txt(padL+153,14,'逾期','axis',null,10)+
+    '</g>';
+  return svgWrap(w,h,g,'同仁交辦事項狀態');
+}
+
+function viewCharts(m){
+  if(!isAdmin()){ m.innerHTML='<div class="card"><div class="empty">這個頁面僅管理員可檢視。</div></div>'; return; }
+  var p = DB.projects.filter(function(x){return x.code===PROJ;})[0] || DB.projects[0];
+  if(p) PROJ=p.code;
+
+  var linked=DB.issues.filter(function(t){return t.link;}).length;
+  var adhoc=DB.issues.length-linked;
+  var avgA=DB.projects.length?Math.round(DB.projects.reduce(function(a,x){return a+x.actual;},0)/DB.projects.length*10)/10:0;
+  var avgP=DB.projects.length?Math.round(DB.projects.reduce(function(a,x){return a+x.planned;},0)/DB.projects.length*10)/10:0;
+
+  m.innerHTML =
+   '<div class="kpis">'+
+     kpi('全案實際進度', pct(avgA), '預計 '+pct(avgP), 'layers', avgA>=avgP?'mint':'peach')+
+     kpi('連結工項的交辦', linked, '進度會回饋到工項', 'check','lilac')+
+     kpi('臨時交辦', adhoc, '未連結工項', 'inbox','sky')+
+     kpi('逾期交辦', DB.issues.filter(function(t){return t.overdue;}).length, '需優先處理', 'alert',
+         DB.issues.filter(function(t){return t.overdue;}).length?'rose':'mint')+
+   '</div>'+
+   '<div class="card"><h2>專案進度</h2><div class="body">'+chartProjects()+'</div></div>'+
+   '<div class="card"><h2>計畫曲線</h2><div class="body">'+
+     '<div class="toolbar"><select id="chProj">'+DB.projects.map(function(x){
+       return '<option value="'+esc(x.code)+'"'+(x.code===PROJ?' selected':'')+'>'+esc(x.code)+'　'+esc(x.name)+'</option>';
+     }).join('')+'</select></div>'+chartSCurve(PROJ)+
+     '<div class="legend"><span>曲線為依工項預計完成日累積的權重。今日線上兩個點分別是預計與實際落點，'+
+     '兩點差距就是進度落差。</span></div></div></div>'+
+   '<div class="card"><h2>同仁進度</h2><div class="body">'+chartStaffProgress()+'</div></div>'+
+   '<div class="card"><h2>同仁交辦</h2><div class="body">'+chartStaffTasks()+'</div></div>';
+
+  var sel=document.getElementById('chProj');
+  if(sel) sel.onchange=function(){ PROJ=this.value; render(); };
 }
 
 /* ---------- 匯入匯出 ---------- */
@@ -1432,6 +1956,7 @@ function field(label,name,value,type,options){
 function openDrawer(title, html, onSave){
   document.getElementById('drawerTitle').textContent=title;
   document.getElementById('drawerForm').innerHTML=html;
+  document.getElementById('drawerSave').style.display = onSave ? '' : 'none';
   document.getElementById('drawer').classList.add('open');
   document.getElementById('backdrop').classList.add('open');
   EDIT=onSave;
@@ -1444,13 +1969,31 @@ function closeDrawer(){
 document.getElementById('drawerClose').onclick=closeDrawer;
 document.getElementById('drawerCancel').onclick=closeDrawer;
 document.getElementById('backdrop').onclick=closeDrawer;
+document.getElementById('menuBtn').onclick=openMenu;
+
+function openMenu(){
+  var admin = isAdmin();
+  var html='<div class="cfgnote">登入身分：<b>'+esc(meName()||'（未登入）')+'</b>　'+
+    '<span class="tag">'+esc(DB&&DB.me?DB.me.role:'')+'</span>'+
+    (admin?'' : '<br><br>員工可回報自己負責工作的<b>狀態、現況說明、完成百分比</b>；'+
+      '新增專案、工項、調整權重與期限由管理員處理。')+'</div>'+
+    '<div style="display:flex;flex-direction:column;gap:9px">'+
+      '<button class="act ghost" onclick="closeDrawer();openMyPassword()">修改我的密碼</button>'+
+      (admin?'<button class="act ghost" onclick="closeDrawer();openUsers()">使用者管理</button>':'')+
+      (inAppsScript()?'':'<button class="act ghost" onclick="closeDrawer();openConfig()">連線設定</button>')+
+      '<button class="act" onclick="closeDrawer();doLogout()">登出</button>'+
+    '</div>';
+  openDrawer('帳號與設定', html, null);
+  document.getElementById('drawerSave').style.display='none';
+}
 document.getElementById('drawerSave').onclick=function(){
   if(!EDIT) return;
   var data={};
   [].forEach.call(document.querySelectorAll('#drawerForm [name]'), function(el){ data[el.name]=el.value; });
   var btn=this; btn.disabled=true; btn.textContent='儲存中…';
   EDIT(data, function(){ btn.disabled=false; btn.textContent='儲存'; closeDrawer(); load(); },
-             function(e){ btn.disabled=false; btn.textContent='儲存'; alert('儲存失敗：'+e.message); });
+             function(e){ btn.disabled=false; btn.textContent='儲存';
+                          if(e) alert('儲存失敗：'+e.message); });
 };
 
 function majors(){ var s={},o=[]; (DB.catalog||[]).forEach(function(c){ if(!s[c[0]]){s[c[0]]=1;o.push(c[0]);} }); return o; }
@@ -1460,15 +2003,50 @@ var CAUSES=['需求認知落差','資料來源不足','規格未明確','介接�
 var DUTIES=['本院','委外廠商','業主','第三方查證單位','待釐清'];
 var STATUSES=['未開始','進行中','待對方回覆','已完成','已結案','不列計'];
 
+function itemName(project, code){
+  var list = DB.workItems[project]||[];
+  var f = list.filter(function(w){return w.code===code;})[0];
+  return f ? f.name : '';
+}
+
 function openIssueEdit(row){
   var t = DB.issues.filter(function(x){return x.row===row;})[0];
   if(!t) return;
-  var html='<div class="readonly"><b class="num">'+esc(t.id)+'</b>　'+esc(t.project)+
+  var headI='<div class="readonly"><b class="num">'+esc(t.id)+'</b>　'+esc(t.project)+
     '　<span class="tag">'+esc(t.type)+'</span>'+
     '<div style="margin-top:6px;font-weight:600">'+esc(t.title)+'</div>'+
     (t.desc?'<div class="muted" style="margin-top:4px">'+esc(t.desc)+'</div>':'')+
     (t.basis?'<div class="muted num" style="margin-top:4px">依據：'+esc(t.basis)+'</div>':'')+
-    (t.ageDays!==null?'<div class="muted num" style="margin-top:4px">已開立 '+t.ageDays+' 日</div>':'')+'</div>'+
+    '<div style="margin-top:6px">'+(t.link
+      ? '<span class="tag" style="background:var(--accent-soft);color:var(--accent)">連結工項 '+esc(t.link)+
+        '　'+esc(itemName(t.project,t.link))+'</span>'
+      : '<span class="tag">臨時交辦（未連結工項）</span>')+'</div>'+
+    (t.ageDays!==null?'<div class="muted num" style="margin-top:4px">已開立 '+t.ageDays+' 日'+
+      (t.updated?'　上次回報 '+roc(t.updated):'')+'</div>':'')+'</div>';
+
+  if(!isAdmin()){
+    if(t.owner !== meName()){
+      openDrawer('議題　'+t.id, headI+
+        '<div class="cfgnote">這件議題的主辦人是 <b>'+esc(t.owner||'未指派')+'</b>，'+
+        '你只能回報自己負責的工作。</div>', null);
+      return;
+    }
+    openDrawer('回報　'+t.id, headI+
+      '<div class="cfgnote">回報處理狀況。'+
+      (t.report && t.report.light==='red'
+        ? '<b style="color:var(--red)">這件已超過 '+DB.reportDays+' 天沒有回報。</b>'
+        : '每 '+DB.reportDays+' 天至少回報一次，超過會亮紅燈。')+'</div>'+
+      field('狀態','狀態',t.status,'select',STATUSES)+
+      field('現況說明（只寫這次的變化）','現況說明',t.note,'textarea')+
+      field('卡點與需決策','卡點與需決策',t.blocker,'textarea')+
+      field('實際完成日','實際完成日',t.done,'date'),
+      function(data, ok, fail){
+        rpc('updateRecord', {table:'issue', row:row, patch:data}, ok, fail);
+      });
+    return;
+  }
+
+  var html= headI +
     field('狀態','狀態',t.status,'select',STATUSES)+
     field('現況說明（只寫本週變化）','現況說明',t.note,'textarea')+
     field('卡點與需決策','卡點與需決策',t.blocker,'textarea')+
@@ -1524,29 +2102,167 @@ function openNewIssue(){
   });
 }
 
-function openWorkItem(row){
-  var items = DB.workItems[PROJ]||[];
-  var i = items.filter(function(x){return x.row===row;})[0];
-  if(!i) return;
-  var html='<div class="readonly"><b class="num">'+esc(i.code)+'</b>　'+esc(i.name)+
-    '<div class="muted num" style="margin-top:4px">預計 '+roc(i.start)+' – '+roc(i.end)+
-    '（'+(i.duration||0)+' 天）　預計進度 '+i.plannedPct+'%</div></div>'+
-    field('狀態','狀態',i.status,'select',['未開始','進行中','已完成','暫停'])+
-    field('完成百分比(%)','完成百分比(%)',i.pct,'number')+
-    field('實際開始日','實際開始日',i.actualStart,'date')+
-    field('實際完成日','實際完成日',i.actualEnd,'date')+
-    field('工期天數','工期天數',i.duration,'number')+
-    field('權重(%)','權重(%)',i.weight,'number')+
-    field('負責人','負責人',i.owner,'select',DB.people.map(function(p){return p.name;}))+
-    field('交付成果','交付成果',i.deliverable)+
+/** 由工項編號的小數點數量推算階層：1 → 1、1.1 → 2、1.1.1 → 3 */
+function levelOf(code){ return String(code||'').split('.').length; }
+
+function openNewItem(){
+  var items = DB.workItems[PROJ] || [];
+  var people = DB.people.map(function(p){return p.name;});
+  var used = items.map(function(w){return w.code;});
+
+  // 猜一個還沒用過的編號：延續最後一個同層編號
+  var next = '1';
+  if(used.length){
+    var last = used[used.length-1];
+    var parts = String(last).split('.');
+    parts[parts.length-1] = String(Number(parts[parts.length-1] || 0) + 1);
+    next = parts.join('.');
+    while(used.indexOf(next) >= 0){
+      parts[parts.length-1] = String(Number(parts[parts.length-1]) + 1);
+      next = parts.join('.');
+    }
+  }
+  var weightLeft = Math.max(0, Math.round((100 - items.filter(function(w){return !w.parent;})
+    .reduce(function(a,w){return a+(w.weight||0);},0))*10)/10);
+
+  var html =
+    '<div class="cfgnote">新增到專案 <b>'+esc(PROJ)+'</b>。'+
+    '編號用小數點表示階層（<code>2</code> 是大項、<code>2.1</code> 是其下的工項），'+
+    '系統會自動判斷縮排與上下層關係。<b>日期不用填</b>——填工期天數與前置工項，系統會自動排程。'+
+    (weightLeft>0?'<br><br>這個專案的權重還剩 <b>'+weightLeft+'%</b> 可分配。'
+                 :'<br><br>這個專案的權重已滿 100%，若要新增請先調整其他工項。')+'</div>'+
+    field('工項編號（必填）','工項編號',next)+
+    field('工項名稱（必填）','名稱','')+
+    field('工期天數（大項留空，由子項自動彙整）','工期天數','','number')+
+    field('前置工項（留空＝從履約起始日起算）','前置工項','','select',[''].concat(used))+
+    field('權重 %（同專案末端工項合計 100；大項填 0）','權重(%)','','number')+
+    field('負責人','負責人',people[0]||'','select',[''].concat(people))+
+    field('交付成果（這個工項要產出什麼）','交付成果','')+
+    field('是否里程碑','里程碑','否','select',['否','是'])+
+    field('狀態','狀態','未開始','select',['未開始','進行中','已完成','暫停'])+
+    field('計價期別（選填）','計價期別','')+
     field('備註','備註','','textarea');
-  openDrawer('更新工項　'+i.code, html, function(data, ok, fail){
-    rpc('updateRecord', {table:'contract', row:row, patch:data}, ok, fail);
+
+  openDrawer('新增工項', html, function(data, ok, fail){
+    var code = String(data['工項編號']||'').trim();
+    if(!code){ alert('請填工項編號。'); fail(); return; }
+    if(used.indexOf(code) >= 0){ alert('工項編號 '+code+' 已存在，請換一個。'); fail(); return; }
+    if(!String(data['名稱']||'').trim()){ alert('請填工項名稱。'); fail(); return; }
+    data['記錄類型'] = '工項';
+    data['專案代號'] = PROJ;
+    data['階層'] = levelOf(code);
+    rpc('addRecord', {table:'contract', data:data}, ok, fail);
   });
 }
 
-function lsGet(k){ try{ return window.localStorage.getItem(k); }catch(e){ return null; } }
-function lsSet(k,v){ try{ window.localStorage.setItem(k,v); }catch(e){} }
+function openNewProject(){
+  var people = DB.people.map(function(p){return p.name;});
+  var html =
+    '<div class="cfgnote">建立新專案。<b>履約起始日</b>是整張甘特圖的零點，'+
+    '所有工項與檢核項目的日期都由它推算，務必填正確。'+
+    '<br><br>建好之後，到「甘特圖」頁按「新增工項」逐項建立，'+
+    '再到「專案檢核」頁按「套用標準檢核清單」帶入前置作業。</div>'+
+    field('專案代號（必填，其他資料靠它關聯）','專案代號','')+
+    field('專案名稱（必填）','名稱','')+
+    field('業主','業主','')+
+    field('契約編號','契約編號','')+
+    field('契約金額','契約金額','','number')+
+    field('履約起始日（必填）','履約起始日',DB.today,'date')+
+    field('契約工期（天，必填）','契約工期(天)','','number')+
+    field('工期計算方式','工期計算方式','日曆天','select',['日曆天','工作天'])+
+    field('展延天數','展延天數',0,'number')+
+    field('專案負責人','負責人',people[0]||'','select',[''].concat(people))+
+    field('狀態','狀態','履約中','select',['履約中','驗收中','已結案','暫停計期'])+
+    field('備註','備註','','textarea');
+
+  openDrawer('新增專案', html, function(data, ok, fail){
+    var code = String(data['專案代號']||'').trim();
+    if(!code){ alert('請填專案代號。'); fail(); return; }
+    if(DB.projects.some(function(p){return p.code===code;})){
+      alert('專案代號 '+code+' 已存在，請換一個。'); fail(); return;
+    }
+    if(!String(data['名稱']||'').trim()){ alert('請填專案名稱。'); fail(); return; }
+    if(!data['履約起始日']){ alert('請填履約起始日。'); fail(); return; }
+    data['記錄類型'] = '專案';
+    rpc('addRecord', {table:'contract', data:data}, function(r){ PROJ = code; ok(r); }, fail);
+  });
+}
+
+/** 工項底下掛的交辦事項清單 */
+function linkedTasksHTML(i){
+  var list = DB.issues.filter(function(t){ return t.project===PROJ && t.link===i.code; });
+  if(!list.length){
+    return '<div class="cfgnote">目前沒有交辦事項掛在這個工項下。'+
+      (isAdmin()?'到「議題追蹤」新增議題時，把「關聯工項編號」填 <b>'+esc(i.code)+'</b> 即可連結。':'')+
+      '</div>';
+  }
+  var done = list.filter(function(t){return !t.open;}).length;
+  return '<div class="tasklist"><div class="tlhead">交辦事項　'+done+'/'+list.length+' 已結案</div>'+
+    list.map(function(t){
+      return '<div class="tlrow" data-task="'+t.row+'">'+
+        lightDot(t.light)+'<span class="num">'+esc(t.id)+'</span>'+
+        '<span class="tlname">'+esc(t.title)+'</span>'+
+        '<span class="muted num">'+esc(t.owner||'未指派')+'</span>'+
+        '<span class="num"'+(t.overdue?' style="color:var(--red);font-weight:600"':'')+'>'+roc(t.due)+'</span>'+
+        '<span class="tag">'+esc(t.status)+'</span></div>';
+    }).join('')+'</div>';
+}
+
+function findItem(row){
+  var found=null;
+  Object.keys(DB.workItems).forEach(function(k){
+    DB.workItems[k].forEach(function(x){ if(x.row===row) found=x; });
+  });
+  return found;
+}
+function openWorkItem(row){
+  var i = findItem(row);
+  if(!i) return;
+  var mineOnly = !isAdmin();
+  if(mineOnly && i.owner !== meName()){
+    openDrawer('工項　'+i.code,
+      '<div class="readonly"><b class="num">'+esc(i.code)+'</b>　'+esc(i.name)+
+      '<div class="muted num" style="margin-top:4px">預計 '+roc(i.start)+' – '+roc(i.end)+
+      '　實際 '+i.pct+'%（預計 '+i.plannedPct+'%）</div></div>'+
+      '<div class="cfgnote">這項工作的負責人是 <b>'+esc(i.owner||'未指派')+'</b>，'+
+      '你只能回報自己負責的工作。若需調整請洽管理員。</div>', null);
+    return;
+  }
+  var head='<div class="readonly"><b class="num">'+esc(i.code)+'</b>　'+esc(i.name)+
+    '<div class="muted num" style="margin-top:4px">預計 '+roc(i.start)+' – '+roc(i.end)+
+    '（'+(i.duration||0)+' 天）　預計進度 '+i.plannedPct+'%'+
+    (i.lastReport?'　上次回報 '+roc(i.lastReport):'　尚未回報過')+'</div></div>'+
+    linkedTasksHTML(i);
+
+  var html = mineOnly
+    ? head +
+      '<div class="cfgnote">回報你的執行進度。'+
+      (i.report && i.report.light==='red'
+        ? '<b style="color:var(--red)">這項已超過 '+DB.reportDays+' 天沒有回報。</b>'
+        : '每 '+DB.reportDays+' 天至少回報一次，超過會亮紅燈。')+'</div>'+
+      field('完成百分比(%)（必填）','完成百分比(%)',i.pct,'number')+
+      field('狀態','狀態',i.status,'select',['未開始','進行中','已完成','暫停'])+
+      field('現況說明（只寫這次的變化）','現況說明','','textarea')+
+      field('實際開始日','實際開始日',i.actualStart,'date')+
+      field('實際完成日','實際完成日',i.actualEnd,'date')
+    : head +
+      field('狀態','狀態',i.status,'select',['未開始','進行中','已完成','暫停'])+
+      field('完成百分比(%)','完成百分比(%)',i.pct,'number')+
+      field('實際開始日','實際開始日',i.actualStart,'date')+
+      field('實際完成日','實際完成日',i.actualEnd,'date')+
+      field('工期天數','工期天數',i.duration,'number')+
+      field('權重(%)','權重(%)',i.weight,'number')+
+      field('負責人','負責人',i.owner,'select',DB.people.map(function(p){return p.name;}))+
+      field('交付成果','交付成果',i.deliverable)+
+      field('備註','備註','','textarea');
+
+  openDrawer((mineOnly?'回報進度　':'更新工項　')+i.code, html, function(data, ok, fail){
+    rpc('updateRecord', {table:'contract', row:row, patch:data}, ok, fail);
+  });
+  [].forEach.call(document.querySelectorAll('#drawerForm .tlrow'), function(el){
+    el.onclick = function(){ openIssueEdit(Number(el.dataset.task)); };
+  });
+}
 
 load();
 </script>
