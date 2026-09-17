@@ -370,7 +370,7 @@ tr.ck.na td{opacity:.5}
    B) 放在 GitHub Pages 等靜態主機 → 用下面的 API_URL 連回 Apps Script
       此時 Apps Script 部署的「存取權」必須設為「任何人」
    ============================================================ */
-var BUILD = 'v2026.08.24-a';
+var BUILD = 'v2026.08.24-b';
 
 /* 預設連線設定。也可以不改這裡，改用畫面右上角的「連線設定」直接填，
    填過的值會存在這台電腦的瀏覽器裡，換電腦要再填一次。 */
@@ -1536,12 +1536,156 @@ function viewBoard(m){
   bindBoard(m);
 }
 
-function viewReport(m){
-  var cards=assignCards();
-  var people=DB.people.map(function(x){return x.name;});
-  var weeks=weekLabels();
+/** 回報狀況：獨立篩選，不沿用分派看板的條件 */
+var RF = {who:'', scope:'todo'};
 
-  var loadRows = people.map(function(name){
+function reportTargets(){
+  var out=[];
+  DB.issues.filter(function(t){return t.open;}).forEach(function(t){
+    out.push({kind:'issue', table:'issue', row:t.row, id:t.id, title:t.title,
+      project:t.project, owner:t.owner||'', due:t.due, week:t.week||'',
+      badge:t.type, link:t.link, pct:null, plannedPct:null,
+      report:t.report||{}, overdue:t.overdue, status:t.status, note:t.note});
+  });
+  Object.keys(DB.workItems).forEach(function(code){
+    DB.workItems[code].forEach(function(w){
+      if(w.parent || w.status==='已完成') return;
+      out.push({kind:'item', table:'contract', row:w.row, id:w.code, title:w.name,
+        project:code, owner:w.owner||'', due:w.end, week:'',
+        badge:'工項', link:'', pct:w.pct, plannedPct:w.plannedPct,
+        report:w.report||{}, overdue:false, status:w.status, note:''});
+    });
+  });
+  return out;
+}
+
+function viewReport(m){
+  var all = reportTargets();
+  var people = DB.people.map(function(x){return x.name;});
+  var weeks = weekLabels();
+
+  // 同仁預設只看自己；主管預設看全部
+  if(!isAdmin() && !RF.who) RF.who = meName();
+
+  var list = all.filter(function(c){
+    if(RF.who && c.owner !== RF.who) return false;
+    if(RF.scope==='todo')   return c.report.light==='red';
+    if(RF.scope==='mine')   return true;
+    return true;
+  });
+
+  var pool = RF.who ? all.filter(function(c){return c.owner===RF.who;}) : all;
+  var live = pool.filter(function(c){ return c.report && c.report.light!=='off'; });
+  var red  = live.filter(function(c){return c.report.light==='red';});
+  var rate = live.length ? Math.round((live.length-red.length)/live.length*100) : 0;
+
+  var rows = list.slice().sort(function(x,y){
+    var a1=(x.report.days===null?9999:x.report.days), b1=(y.report.days===null?9999:y.report.days);
+    return b1-a1;
+  }).map(function(c){
+    var rep=c.report||{};
+    var tag = rep.light==='red'
+      ? '<span class="rep red">'+(rep.days===null?'未回報':rep.days+'天未報')+'</span>'
+      : (rep.light==='green'?'<span class="rep green">'+rep.days+'天前回報</span>':'');
+    var can = isAdmin() || c.owner===meName();
+    return '<tr'+(rep.light==='red'?' class="ck bad"':'')+'>'+
+      '<td class="num">'+esc(c.id)+'</td>'+
+      '<td><span class="tag">'+esc(c.badge)+'</span></td>'+
+      '<td>'+esc(c.title)+
+        (c.note?'<div class="muted" style="font-size:11px">'+esc(c.note)+'</div>':'')+'</td>'+
+      '<td class="num">'+esc(c.project)+'</td>'+
+      '<td style="white-space:nowrap">'+esc(c.owner||'未指派')+'</td>'+
+      '<td class="num"'+(c.overdue?' style="color:var(--red)"':'')+'>'+roc(c.due)+'</td>'+
+      '<td class="num r">'+(c.pct===null?'—':c.pct+'%')+'</td>'+
+      '<td>'+tag+'</td>'+
+      '<td>'+(can
+        ? '<button class="act" style="padding:6px 14px" data-rep="'+c.kind+':'+c.row+'">回報</button>'
+        : '<span class="muted" style="font-size:11px">非本人</span>')+'</td></tr>';
+  }).join('');
+
+  var scopeLabel = {todo:'待回報（超過 '+DB.reportDays+' 天未更新）', mine:'全部在辦工作'};
+
+  m.innerHTML =
+   '<div class="kpis">'+
+     kpi(RF.who?RF.who+' 的在辦工作':'全部在辦工作', pool.length, '工項＋交辦', 'layers','lilac')+
+     kpi('待回報', red.length, '超過 '+DB.reportDays+' 天沒更新', 'alert', red.length?'rose':'mint')+
+     kpi('準時回報率', rate+'%', (live.length-red.length)+'/'+live.length+' 件', 'check', rate>=80?'mint':'peach')+
+     kpi('本週應完成', pool.filter(function(c){return c.week===weeks[1];}).length, weeks[1], 'clock','sky')+
+   '</div>'+
+
+   '<div class="card"><div class="body"><div class="toolbar">'+
+     '<select id="rfWho">'+(isAdmin()?'<option value="">全部人員</option>':'')+
+       people.map(function(n){
+         return '<option'+(RF.who===n?' selected':'')+'>'+esc(n)+'</option>';}).join('')+'</select>'+
+     '<select id="rfScope">'+[['todo',scopeLabel.todo],['mine',scopeLabel.mine]]
+       .map(function(o){return '<option value="'+o[0]+'"'+(RF.scope===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+
+     '<span class="muted">點「回報」即可更新進度與現況說明。每 '+DB.reportDays+' 天至少回報一次。</span>'+
+   '</div></div></div>'+
+
+   '<div class="card"><h2>'+(RF.scope==='todo'?'待回報工作':'在辦工作')+'（'+list.length+' 件）</h2>'+
+     (list.length
+       ? '<div class="scroll"><table><thead><tr><th>編號</th><th>類型</th><th>工作內容</th>'+
+         '<th>專案</th><th>負責人</th><th>期限</th><th class="r">完成%</th><th>回報狀況</th><th></th>'+
+         '</tr></thead><tbody>'+rows+'</tbody></table></div>'
+       : '<div class="empty">'+(all.length
+           ? (RF.scope==='todo' ? '很好，目前沒有超過 '+DB.reportDays+' 天未回報的工作。'
+              : '這個條件下沒有在辦工作。')
+           : '目前沒有在辦的工作。請先到「分派看板」新增交辦，或到「專案進度」建立工項。')+'</div>')+
+   '</div>'+
+
+   (live.length ? reportCard(pool, people) : '')+
+   (isAdmin() ? loadTable(people, weeks) : '')+
+   '<div id="weekly"></div>';
+
+  var w=document.getElementById('rfWho');
+  if(w) w.onchange=function(){ RF.who=this.value; render(); };
+  var sc=document.getElementById('rfScope');
+  if(sc) sc.onchange=function(){ RF.scope=this.value; render(); };
+
+  [].forEach.call(m.querySelectorAll('[data-rep]'), function(btn){
+    btn.onclick=function(e){
+      e.stopPropagation();
+      var x=btn.dataset.rep.split(':');
+      if(x[0]==='issue') openIssueEdit(Number(x[1])); else openWorkItem(Number(x[1]));
+    };
+  });
+  [].forEach.call(m.querySelectorAll('tr[data-person]'), function(tr){
+    tr.onclick=function(){ weekly(tr.dataset.person, weeks[1], weeks[2]); };
+  });
+}
+
+/** 回報準時率統計：綠燈＝N 天內有回報，紅燈＝超過 N 天未更新 */
+function reportCard(cards, people){
+  var live = (cards||[]).filter(function(c){ return c.report && c.report.light!=='off'; });
+  if(!live.length) return '';
+  var rows = people.map(function(name){
+    var mine = live.filter(function(c){return c.owner===name;});
+    if(!mine.length) return '';
+    var r = mine.filter(function(c){return c.report.light==='red';});
+    var g = mine.length - r.length;
+    var pctG = Math.round(g/mine.length*100);
+    return '<tr><td><b>'+esc(name)+'</b></td>'+
+      '<td class="num r">'+mine.length+'</td>'+
+      '<td class="num r" style="color:var(--green);font-weight:700">'+g+'</td>'+
+      '<td class="num r" style="color:'+(r.length?'var(--red)':'var(--ink-3)')+';font-weight:700">'+r.length+'</td>'+
+      '<td><div class="prog" style="min-width:120px;margin-top:0"><b style="width:'+pctG+'%;background:'+
+        (pctG===100?'var(--green)':(pctG>=60?'var(--accent)':'var(--red)'))+'"></b></div></td>'+
+      '<td class="num r">'+pctG+'%</td>'+
+      '<td class="muted" style="font-size:11.5px">'+
+        (r.length? esc(r.slice(0,3).map(function(c){
+          return c.id+'（'+(c.report.days===null?'未回報':c.report.days+'天')+'）';}).join('、'))
+          +(r.length>3?' 等 '+r.length+' 件':'') : '—')+'</td></tr>';
+  }).filter(Boolean).join('');
+  if(!rows) return '';
+  return '<div class="card"><h2>回報準時率　<span class="muted" style="font-weight:400">'+
+    '綠燈＝'+DB.reportDays+' 天內有回報，紅燈＝超過 '+DB.reportDays+' 天未更新</span></h2>'+
+    '<div class="scroll"><table><thead><tr><th>承辦人</th><th class="r">在辦</th><th class="r">綠燈</th>'+
+    '<th class="r">紅燈</th><th>準時率</th><th class="r">%</th><th>逾期未回報項目</th></tr></thead>'+
+    '<tbody>'+rows+'</tbody></table></div></div>';
+}
+
+function loadTable(people, weeks){
+  var rows = people.map(function(name){
     var mine=DB.issues.filter(function(t){return t.owner===name && t.open;});
     var cells=weeks.slice(1,5).map(function(w){
       var e=mine.filter(function(t){return t.week===w;}).reduce(function(a,t){return a+(t.effort||0);},0);
@@ -1558,18 +1702,12 @@ function viewReport(m){
       '<td class="num r">'+mine.filter(function(t){return t.status==='待對方回覆';}).length+'</td>'+
       cells+'</tr>';
   }).join('');
-
-  m.innerHTML = reportCard(cards, people)+
-   '<div class="card"><h2>人員負荷（未結交辦，依排定週次）</h2><div class="scroll"><table>'+
-     '<thead><tr><th>承辦人</th><th class="r">在辦工項</th><th class="r">未結交辦</th><th class="r">逾期</th>'+
-     '<th class="r">待回覆</th>'+weeks.slice(1,5).map(function(w){return '<th class="r num">'+w+'</th>';}).join('')+
-     '</tr></thead><tbody>'+loadRows+'</tbody></table></div>'+
-     '<div class="legend"><span>單週超過 4 人天亮黃、超過 5 人天亮紅。點承辦人可看個人週報。</span></div></div>'+
-   '<div id="weekly"></div>';
-
-  [].forEach.call(m.querySelectorAll('tr[data-person]'), function(tr){
-    tr.onclick=function(){ weekly(tr.dataset.person, weeks[1], weeks[2]); };
-  });
+  if(!rows) return '';
+  return '<div class="card"><h2>人員負荷（未結交辦，依排定週次）</h2><div class="scroll"><table>'+
+    '<thead><tr><th>承辦人</th><th class="r">在辦工項</th><th class="r">未結交辦</th><th class="r">逾期</th>'+
+    '<th class="r">待回覆</th>'+weeks.slice(1,5).map(function(w){return '<th class="r num">'+w+'</th>';}).join('')+
+    '</tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div class="legend"><span>單週超過 4 人天亮黃、超過 5 人天亮紅。點承辦人可看個人週報。</span></div></div>';
 }
 
 function cardHTML(c){
